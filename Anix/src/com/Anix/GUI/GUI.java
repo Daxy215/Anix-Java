@@ -17,6 +17,8 @@ import com.Anix.Math.Color;
 import com.Anix.Math.Vector2f;
 import com.Anix.Math.Vector3f;
 
+import imgui.flag.ImGuiWindowFlags;
+
 public final class GUI {
 	private Core core;
 	
@@ -30,13 +32,21 @@ public final class GUI {
 	private Console console;
 	private AssetsStore assetsStore = new AssetsStore();
 	
+	public static int defaultFlags;
+	
 	public GUI(Core core) {
 		this.core = core;
+		
+		//window_flags |= ImGuiWindowFlags_NoTitleBar;
+		defaultFlags |= ImGuiWindowFlags.NoMove;
+		defaultFlags |= ImGuiWindowFlags.NoCollapse;
+		defaultFlags |= ImGuiWindowFlags.NoResize;
+		//window_flags |= ImGuiWindowFlags_NoDecoration;
 	}
 	
 	public void init() {
 		menuBar = new MenuBar(core);
-		hierachy = new Hierachy(core);
+		hierachy = new Hierachy();
 		sceneViewer = new SceneViewer(core);
 		inspector = new Inspector(core);
 		assets = new Assets(core);
@@ -50,7 +60,6 @@ public final class GUI {
 	
 	public void update() throws IllegalArgumentException, IllegalAccessException {
 		sceneViewer.update();
-		hierachy.update();
 		inspector.update(true);
 		assetsMenuBar.update();
 		
@@ -70,6 +79,7 @@ public final class GUI {
 	
 	public void render() {
 		sceneViewer.render(); //TODO: MEMROY LEAKAGE
+		hierachy.render();
 		inspector.render();
 	}
 	

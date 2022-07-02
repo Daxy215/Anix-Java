@@ -17,6 +17,7 @@ import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.lwjgl.glfw.Callbacks;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWDropCallback;
 import org.lwjgl.glfw.GLFWErrorCallback;
@@ -27,7 +28,6 @@ import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL43;
 import org.lwjgl.opengl.GLUtil;
-import org.lwjgl.system.MemoryUtil;
 
 import com.Anix.Behaviours.Camera;
 import com.Anix.Behaviours.Camera.ProjectionType;
@@ -42,10 +42,15 @@ import com.Anix.Math.Matrix4f;
 import com.Anix.SceneManager.Scene;
 import com.Anix.SceneManager.SceneManager;
 
+import imgui.ImGui;
+import imgui.gl3.ImGuiImplGl3;
+import imgui.glfw.ImGuiImplGlfw;
+
 public final class Application {
+	private String glslVersion = null;
+	
 	private static byte minimized = 0;
 	private static long window;
-	public static long otherWindow;
 	
 	private static int width, height;
 	private static float fov = 70.0f;
@@ -67,6 +72,8 @@ public final class Application {
 	public static List<String> droppedFiles = new ArrayList<String>();
 	
 	private static WinRegistry wr = new WinRegistry();
+	public final ImGuiImplGlfw imGuiGlfw = new ImGuiImplGlfw();
+	public final ImGuiImplGl3 imGuiGl3 = new ImGuiImplGl3();
 	
 	public Application(GUI gui, int width, int height, String title) {
 		Application.gui = gui;
@@ -79,6 +86,8 @@ public final class Application {
 			
 			return;
 		}
+		
+		glslVersion = "#version 130";
 	}
 	
 	public void create() {
@@ -86,7 +95,9 @@ public final class Application {
 		// will print the error message in System.err.
 		GLFWErrorCallback.createPrint(System.err).set();
 		
-		GLFW.glfwDefaultWindowHints();
+		GLFW.glfwWindowHint(GLFW.GLFW_CONTEXT_VERSION_MAJOR, 3);
+		GLFW.glfwWindowHint(GLFW.GLFW_CONTEXT_VERSION_MINOR, 0);
+		
 		GLFW.glfwWindowHint(GLFW.GLFW_VISIBLE, GLFW.GLFW_FALSE);
 		GLFW.glfwWindowHint(GLFW.GLFW_RESIZABLE, GLFW.GLFW_TRUE);
 		
@@ -105,8 +116,9 @@ public final class Application {
 		windowPosY[0] = (videoMode.height() - height) / 2;
 		
 		GLFW.glfwMakeContextCurrent(window);
-		GL.createCapabilities();
 		GLFW.glfwShowWindow(window);
+		
+		GL.createCapabilities();
 		
 		GLFW.glfwWindowHint(GLFW.GLFW_OPENGL_DEBUG_CONTEXT, GLFW.GLFW_TRUE);
 		GLUtil.setupDebugMessageCallback(System.err);
@@ -120,45 +132,26 @@ public final class Application {
 		GLFW.glfwWindowHint(GLFW.GLFW_CONTEXT_VERSION_MINOR, 3);
 	    GLFW.glfwWindowHint(GLFW.GLFW_OPENGL_PROFILE, GLFW.GLFW_OPENGL_CORE_PROFILE);
         
-        //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-        //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-        //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
-        //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
-        //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-        //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-        
-		//TODO: Works but when rotating camera, it breaks.
-		//GL11.glEnable(GL11.GL_CULL_FACE);
-		//GL11.glCullFace(GL11.GL_BACK/*FRONT*/);
-		
 		glMatrixMode(GL_PROJECTION);
 		glLoadIdentity();
 		
 		glOrtho(0, width, height, 0, 1, -1);
 		
 		glMatrixMode(GL_MODELVIEW);
-		//glEnable(GL_TEXTURE_2D);
-		//glEnable(GL13.GL_BLEND);
-		//glBlendFunc(GL_SRC_ALPHA, GL_ONE);
-		//GL13.glBlendFunc(GL13.GL_SRC_ALPHA, GL13.GL_ONE_MINUS_SRC_ALPHA);
 		glEnable(GL_ALPHA_TEST);
 		glAlphaFunc(GL_GREATER, 0.1f);
 		glEnable(GL_DEPTH_TEST);
-		//glEnable(GL_MULT);
-        glEnable(GL_DEPTH_TEST);
-        //glEnable(GL_STENCIL_TEST);
-        
+		
 		createCallbacks();
 		
 		GLFW.glfwShowWindow(window);
 		GLFW.glfwSwapInterval(0);
 		updateProjection();
 		
-        otherWindow = GLFW.glfwCreateWindow(1, 1, "", MemoryUtil.NULL, window);
-        if (otherWindow == MemoryUtil.NULL)
-            throw new RuntimeException("Failed to create the GLFW window");
+		ImGui.createContext();
+		
+		imGuiGlfw.init(window, true);
+		imGuiGl3.init(glslVersion);		
 	}
 	
 	public void update() {
@@ -300,6 +293,10 @@ public final class Application {
 		sizeCallback.free();
 		OnDropCallBack.free();
 		
+		imGuiGl3.dispose();
+		imGuiGlfw.dispose();
+		ImGui.destroyContext();
+		Callbacks.glfwFreeCallbacks(window);
 		GLFW.glfwWindowShouldClose(window);
 		GLFW.glfwDestroyWindow(window);
 		GLFW.glfwTerminate();

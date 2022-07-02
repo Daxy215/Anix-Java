@@ -39,5 +39,11 @@
 	<classpathentry kind="lib" path="C:/Users/Daxy/git/Anix-Java/Anix/includes/imgui/imgui-lwjgl3-1.86.4.jar"/>
 	<classpathentry kind="lib" path="C:/Users/Daxy/git/Anix-Java/Anix/includes/imgui/imgui-lwjgl3-1.86.4-javadoc.jar"/>
 	<classpathentry kind="lib" path="C:/Users/Daxy/git/Anix-Java/Anix/includes/imgui/imgui-lwjgl3-1.86.4-sources.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Daxy/git/Anix-Java/Anix/includes/imgui/imgui-app-1.86.4.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Daxy/git/Anix-Java/Anix/includes/imgui/imgui-app-1.86.4-javadoc.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Daxy/git/Anix-Java/Anix/includes/imgui/imgui-app-1.86.4-sources.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Daxy/git/Anix-Java/Anix/includes/imgui/imgui-binding-1.86.4.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Daxy/git/Anix-Java/Anix/includes/imgui/imgui-binding-1.86.4-javadoc.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Daxy/git/Anix-Java/Anix/includes/imgui/imgui-binding-1.86.4-sources.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

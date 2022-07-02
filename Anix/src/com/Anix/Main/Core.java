@@ -11,6 +11,8 @@ import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.lwjgl.glfw.GLFW;
+
 import com.Anix.Behaviours.Behaviour;
 import com.Anix.Behaviours.Collider2D;
 import com.Anix.Engine.Editor;
@@ -34,6 +36,12 @@ import com.Anix.IO.Time;
 import com.Anix.Objects.GameObject;
 import com.Anix.SceneManager.Scene;
 import com.Anix.SceneManager.SceneManager;
+
+import imgui.ImGui;
+import imgui.ImGuiStyle;
+import imgui.ImVec2;
+import imgui.flag.ImGuiCol;
+import imgui.flag.ImGuiConfigFlags;
 
 //https://stackoverflow.com/questions/6327482/how-can-i-read-the-registry-values-using-java
 //https://stackoverflow.com/questions/2846664/implementing-coroutines-in-java
@@ -98,6 +106,66 @@ public final class Core implements Runnable {
 	private static List<Sprite> sprites = new ArrayList<Sprite>();
 	public static List<GameObject> updateAbleObjects = new ArrayList<GameObject>();
 	
+	private ImGuiStyle redDarkTheme() {
+		ImGuiStyle style = ImGui.getStyle();
+		
+		style.getWindowMinSize(new ImVec2(160, 20));
+		style.getFramePadding(new ImVec2(4, 2));
+		style.getItemSpacing(new ImVec2(6, 2));
+		style.getItemInnerSpacing(new ImVec2(6, 4));
+		style.setAlpha(0.95f);
+		style.setWindowRounding(4.0f);
+		style.setFrameRounding(2.0f);
+		style.setIndentSpacing(6.0f);
+		style.setItemInnerSpacing(2, 4);
+		style.setColumnsMinSpacing(50.0f);
+		style.setGrabMinSize(14.0f);
+		style.setGrabRounding(16.0f);
+		style.setScrollbarSize(12.0f);
+		style.setScrollbarRounding(16.0f);
+		
+		style.setColor(ImGuiCol.Text, 0.86f, 0.93f, 0.89f, 0.78f);
+		style.setColor(ImGuiCol.TextDisabled, 0.86f, 0.93f, 0.89f, 0.28f);
+		style.setColor(ImGuiCol.WindowBg, 0.13f, 0.14f, 0.17f, 1.00f);
+		style.setColor(ImGuiCol.Border, 0.31f, 0.31f, 1.00f, 0.00f);
+		style.setColor(ImGuiCol.BorderShadow, 0.00f, 0.00f, 0.00f, 0.00f);
+		style.setColor(ImGuiCol.FrameBg, 0.20f, 0.22f, 0.27f, 1.00f);
+		style.setColor(ImGuiCol.FrameBgHovered, 0.92f, 0.18f, 0.29f, 0.78f);
+		style.setColor(ImGuiCol.FrameBgActive, 0.92f, 0.18f, 0.29f, 1.00f);
+		style.setColor(ImGuiCol.TitleBg, 0.20f, 0.22f, 0.27f, 1.00f);
+		style.setColor(ImGuiCol.TitleBgCollapsed, 0.20f, 0.22f, 0.27f, 0.75f);
+		style.setColor(ImGuiCol.TitleBgActive, 0.92f, 0.18f, 0.29f, 1.00f);
+		style.setColor(ImGuiCol.MenuBarBg, 0.20f, 0.22f, 0.27f, 0.47f);
+		style.setColor(ImGuiCol.ScrollbarBg, 0.20f, 0.22f, 0.27f, 1.00f);
+		style.setColor(ImGuiCol.ScrollbarGrab, 0.09f, 0.15f, 0.16f, 1.00f);
+		style.setColor(ImGuiCol.ScrollbarGrabHovered, 0.92f, 0.18f, 0.29f, 0.78f);
+		style.setColor(ImGuiCol.ScrollbarGrabActive, 0.92f, 0.18f, 0.29f, 1.00f);
+		style.setColor(ImGuiCol.CheckMark, 0.71f, 0.22f, 0.27f, 1.00f);
+		style.setColor(ImGuiCol.SliderGrab, 0.47f, 0.77f, 0.83f, 0.14f);
+		style.setColor(ImGuiCol.SliderGrabActive, 0.92f, 0.18f, 0.29f, 1.00f);
+		style.setColor(ImGuiCol.Button, 0.47f, 0.77f, 0.83f, 0.14f);
+		style.setColor(ImGuiCol.ButtonHovered, 0.92f, 0.18f, 0.29f, 0.86f);
+		style.setColor(ImGuiCol.ButtonActive, 0.92f, 0.18f, 0.29f, 1.00f);
+		style.setColor(ImGuiCol.Header, 0.92f, 0.18f, 0.29f, 0.76f);
+		style.setColor(ImGuiCol.HeaderHovered, 0.92f, 0.18f, 0.29f, 0.86f);
+		style.setColor(ImGuiCol.HeaderActive, 0.92f, 0.18f, 0.29f, 1.00f);
+		style.setColor(ImGuiCol.Separator, 0.14f, 0.16f, 0.19f, 1.00f);
+		style.setColor(ImGuiCol.SeparatorHovered, 0.92f, 0.18f, 0.29f, 0.78f);
+		style.setColor(ImGuiCol.SeparatorActive, 0.92f, 0.18f, 0.29f, 1.00f);
+		style.setColor(ImGuiCol.ResizeGrip, 0.47f, 0.77f, 0.83f, 0.04f);
+		style.setColor(ImGuiCol.ResizeGripHovered, 0.92f, 0.18f, 0.29f, 0.78f);
+		style.setColor(ImGuiCol.ResizeGripActive, 0.92f, 0.18f, 0.29f, 1.00f);
+		style.setColor(ImGuiCol.PlotLines, 0.86f, 0.93f, 0.89f, 0.63f);
+		style.setColor(ImGuiCol.PlotLinesHovered, 0.92f, 0.18f, 0.29f, 1.00f);
+		style.setColor(ImGuiCol.PlotHistogram, 0.86f, 0.93f, 0.89f, 0.63f);
+		style.setColor(ImGuiCol.PlotHistogramHovered, 0.92f, 0.18f, 0.29f, 1.00f);
+		style.setColor(ImGuiCol.TextSelectedBg, 0.92f, 0.18f, 0.29f, 0.43f);
+		style.setColor(ImGuiCol.PopupBg, 0.20f, 0.22f, 0.27f, 0.9f);
+		////style.Colors[ImGuiCol_ModalWindowDarkening] = ImVec4(0.20f, 0.22f, 0.27f, 0.73f);
+
+		return style;
+	}
+	
 	private void init() {
 		new Material(Shader.defaultShader);
 		new SceneManager(this);
@@ -124,6 +192,9 @@ public final class Core implements Runnable {
 		application = new Application(gui, 1280, 720, "Anix " + editor.getVersion());
 		application.create();
 		masterRenderer = new MasterRenderer(false);
+		
+		ImGui.styleColorsDark();
+		redDarkTheme();
 		
 		init();
 		UI.init("Serif", Font.BOLD, 32);
@@ -185,6 +256,9 @@ public final class Core implements Runnable {
 			}
 			
 			if(render) {
+				application.imGuiGlfw.newFrame();
+				ImGui.newFrame();
+				
 				frameBuffer.bindReflectionFrameBuffer();
 				
 				render();
@@ -193,8 +267,19 @@ public final class Core implements Runnable {
 				
 				renderBehaviours();
 				Panel.render();
-				
 				gui.render();
+				
+				//EndFrame
+				ImGui.render();
+				application.imGuiGl3.renderDrawData(ImGui.getDrawData());
+				
+				if(ImGui.getIO().hasConfigFlags(ImGuiConfigFlags.ViewportsEnable)) {
+					final long backupWindowPtr = GLFW.glfwGetCurrentContext();
+					ImGui.updatePlatformWindows();
+					ImGui.renderPlatformWindowsDefault();
+					GLFW.glfwMakeContextCurrent(backupWindowPtr);
+				}
+				
 				Input.update();
 				
 				application.swapBuffers();
@@ -249,11 +334,11 @@ public final class Core implements Runnable {
 			s.update();
 		
 		if(ProjectSettings.isEditor) {
-			try {
+			/*try {
 				gui.update();
 			} catch (IllegalArgumentException | IllegalAccessException e) {
 				e.printStackTrace();
-			}
+			}*/
 			
 			for(int i = 0; i < Application.droppedFiles.size(); i++) {
 				String path = Application.droppedFiles.get(i);
@@ -377,8 +462,6 @@ public final class Core implements Runnable {
 		if(!Application.isMinimized() /*&& Application.isFocused(*/ && masterRenderer != null) {
 			masterRenderer.render();
 		}
-		
-		
 	}
 	
 	public void renderBehaviours() {

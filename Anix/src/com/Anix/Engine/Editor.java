@@ -177,9 +177,7 @@ public final class Editor {
 			
 			if(!isPlaying) {
 				reLoad();
-			} /*else {
-				shouldUpdate = true;
-			}*/
+			}
 		} else if(!lastIsFocused) {
 			if(!once) {
 				saveProject();
@@ -219,7 +217,7 @@ public final class Editor {
 							
 							if(!scriptableObjectFolder.exists()) {
 								System.err.println("folder been deleted? " + datas[1] + " IN " + datas[2]);
-
+								
 								continue;
 							}
 							
@@ -261,10 +259,6 @@ public final class Editor {
 				}
 			}
 		}
-		
-		/*if(shouldUpdate && !isPlaying) {
-			reLoad();
-		}*/
 	}
 	
 	public void togglePlay() {
@@ -1142,6 +1136,8 @@ public final class Editor {
 				e.printStackTrace();
 			}
 		}
+		
+		addFolder("New Scene.scene", null);
 	}
 	
 	private File[] getProjects() {
@@ -1168,6 +1164,12 @@ public final class Editor {
 			return null;
 		}
 		
+		if(Files.exists(Paths.get(fullPath))) {
+			System.err.println("[ERROR] Cannot add a file with the path of(it already eixsts): " + fullPath);
+			
+			return null;
+		}
+
 		Texture texture = null;
 		
 		if(!fullPath.contains("\\")) {//It's a normal folder.
