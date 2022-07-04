@@ -79,9 +79,11 @@ public final class GUI {
 	}
 	
 	public void render() {
+		sceneViewer.update();
 		sceneViewer.render(); //TODO: MEMROY LEAKAGE
 		hierachy.render();
 		inspector.render();
+		assets.render();
 		
 		menuBar.render();
 	}

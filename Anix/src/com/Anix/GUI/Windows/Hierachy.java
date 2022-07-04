@@ -23,7 +23,7 @@ import imgui.flag.ImGuiTreeNodeFlags;
 public final class Hierachy {
 	private final int startX = 0, startY = 25;
 	private int width = 250, height;
-
+	
 	public static GameObject selectedObject, draggedObject;
 
 	public void init() {

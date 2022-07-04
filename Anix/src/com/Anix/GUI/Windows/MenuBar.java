@@ -118,9 +118,21 @@ public class MenuBar {
 	            ImGui.endMenu();
 	        }
 	        
+			ImGui.popStyleVar();
+	        
+	        //68 Button width - 88 idk :D
+			ImGui.dummy(Application.getFullWidth() * 0.5f - (88)/* - (68*0.5f)*/, 0);
+			
+	        if(ImGui.button("Toggle Play", 68, height)) {
+	        	core.getEditor().togglePlay();
+	        }
+	        
+	        /*if(ImGui.button("Stop", 68, height)) {
+	        	
+	        }*/
+	        
 	        ImGui.endMainMenuBar();
 	    }
-		ImGui.popStyleVar();
 		
 		//ImGui.end();
 		//ImGui.popStyleVar();

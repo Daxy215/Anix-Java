@@ -873,6 +873,8 @@ public final class Editor {
 					@Override
 					public void run() {
 						try {
+							//TODO: Check if file exists.
+							
 							Files.walkFileTree(tempPath, new SimpleFileVisitor<Path>() {
 								@Override
 								public FileVisitResult visitFile(Path file,

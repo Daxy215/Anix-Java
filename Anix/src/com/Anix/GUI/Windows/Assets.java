@@ -13,6 +13,7 @@ import java.util.List;
 
 import com.Anix.Engine.Editor;
 import com.Anix.Engine.Graphics.Material;
+import com.Anix.GUI.GUI;
 import com.Anix.GUI.Texture;
 import com.Anix.GUI.UI;
 import com.Anix.IO.Application;
@@ -23,6 +24,8 @@ import com.Anix.Math.Color;
 import com.Anix.Math.Vector2f;
 import com.Anix.Objects.GameObject;
 import com.Anix.SceneManager.SceneManager;
+
+import imgui.ImGui;
 
 public final class Assets {
 	public static class Folder {
@@ -60,7 +63,7 @@ public final class Assets {
 		}
 	}
 	
-	private final int startX = 0, startY = 0;
+	private int startX = 0, startY = 0;
 	private int width = 0, height = 250;
 	private final float lineWidth = 1f, lineHeight = 1;
 	
@@ -77,7 +80,7 @@ public final class Assets {
 		folders = new ArrayList<Folder>();
 	}
 	
-	public void render() {
+	public void update() {
 		width = Application.getFullWidth();
 		
 		//Panel
@@ -185,6 +188,17 @@ public final class Assets {
 		if(core.getDraggedObject() instanceof Folder && Input.isMouseButtonUp(KeyCode.Mouse0)) {
 			core.setDraggedObject(null);
 		}
+	}
+	
+	public void render() {
+		startY = Application.getHeight();
+		
+		ImGui.setNextWindowPos(startX, startY);
+		ImGui.setNextWindowSize(Application.getFullWidth(), height);
+		
+		ImGui.begin("##", GUI.defaultFlags);
+		
+		ImGui.end();
 	}
 	
 	private void drawFolder(Folder folder, float x, float y) {

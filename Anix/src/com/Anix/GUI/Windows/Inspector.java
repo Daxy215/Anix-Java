@@ -45,16 +45,16 @@ public final class Inspector {
 
 		ImGui.setNextWindowPos(startX, startY);
 		ImGui.setNextWindowSize(width, height);
-
+		
 		ImGui.begin("Inspector", GUI.defaultFlags);
-
+		
 		drawObjectInformation();
 		drawBehaviours();
 		
 		for(int i = 0; i < 10; i++) {
 			ImGui.spacing();
 		}
-
+		
 		if(Hierachy.selectedObject != null) {
 			if(GUI.centeredButton("Add Behaviour", 150, 35, 0.35f)) {
 				//Testing - TODO: Add a search bar.

@@ -376,7 +376,7 @@ public final class Application {
 	
 	public static int getWidth() {
 		if(ProjectSettings.isEditor) {
-			return getFullWidth() - (gui.getHierachy().getWidth() - gui.getInspector().getWidth());
+			return getFullWidth() - (gui.getHierachy().getWidth() + gui.getInspector().getWidth());
 		}
 		
 		return getFullWidth();
