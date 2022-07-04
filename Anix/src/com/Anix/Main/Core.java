@@ -262,10 +262,10 @@ public final class Core implements Runnable {
 				frameBuffer.bindReflectionFrameBuffer();
 				
 				render();
+				renderBehaviours();
 				
 				frameBuffer.unbindCurrentFrameBuffer();
 				
-				renderBehaviours();
 				Panel.render();
 				gui.render();
 				
@@ -312,16 +312,6 @@ public final class Core implements Runnable {
 	private void update() {
 		if(Application.isMinimized() /*|| !Application.isFocused()*/)
 			return;
-		
-		if(gui.getInspector().canBeRemoved() && gui.getAssets().canBeRemoved()) {
-			gui.getInspector().setCanBeRemoved(false);
-			//Assets.canBeRemoved = false;
-			
-			draggedObject = null;
-		} else {
-			gui.getInspector().setCanBeRemoved(false);
-			//Assets.canBeRemoved = false;
-		}
 		
 		editor.update();
 		masterRenderer.update();

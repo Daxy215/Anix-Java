@@ -59,7 +59,6 @@ import com.Anix.GUI.UI;
 import com.Anix.GUI.Windows.Assets;
 import com.Anix.GUI.Windows.Assets.Folder;
 import com.Anix.GUI.Windows.Console;
-import com.Anix.GUI.Windows.Inspector;
 import com.Anix.IO.Application;
 import com.Anix.IO.ProjectSettings;
 import com.Anix.IO.ProjectSettings.ProjectType;
@@ -240,12 +239,12 @@ public final class Editor {
 											continue;
 										}
 										
-										Inspector.updateField(scriptableObjectFolder, scriptAbleObject, shader, scriptAbleObject.getClass().getFields()[j]);
-
+											//Inspector.updateField(scriptableObjectFolder, scriptAbleObject, shader, scriptAbleObject.getClass().getFields()[j]);
+										
 										continue;
 									}
 
-									Inspector.updateField(scriptableObjectFolder, scriptAbleObject, readObjectFromFile(getInputStream(folder.getAbsolutePath())), scriptAbleObject.getClass().getFields()[j]);
+									//Inspector.updateField(scriptableObjectFolder, scriptAbleObject, readObjectFromFile(getInputStream(folder.getAbsolutePath())), scriptAbleObject.getClass().getFields()[j]);
 									
 									continue;
 								}
@@ -823,8 +822,6 @@ public final class Editor {
 		canAddObjects = false;
 		
 		System.out.println("Reloading the project..");
-		
-		core.getGUI().getInspector().setShouldUpdate(true);
 		
 		try {
 			complier.compile();

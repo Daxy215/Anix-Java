@@ -122,7 +122,6 @@ public final class Assets {
 					ObjectOutputStream stream = new ObjectOutputStream(fos);
 					
 					core.getEditor().writeGameObject(((GameObject)core.getDraggedObject()), stream);
-					core.getGUI().getInspector().linkObject(((GameObject)core.getDraggedObject()), file, null);
 					
 					stream.flush();
 					stream.close();

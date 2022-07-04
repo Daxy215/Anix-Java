@@ -51,7 +51,7 @@ public final class GUI {
 		menuBar = new MenuBar(core);
 		hierachy = new Hierachy();
 		sceneViewer = new SceneViewer(core);
-		inspector = new Inspector(core);
+		inspector = new Inspector();
 		assets = new Assets(core);
 		assetsMenuBar = new AssetsMenuBar(this);
 		console = new Console(this);
@@ -63,7 +63,6 @@ public final class GUI {
 	
 	public void update() throws IllegalArgumentException, IllegalAccessException {
 		sceneViewer.update();
-		inspector.update(true);
 		assetsMenuBar.update();
 		
 		if(ProjectSettings.isEditor) {

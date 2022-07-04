@@ -70,6 +70,14 @@ public final class Hierachy {
 
 				ImGui.endMenu();
 			}
+	        
+	        ImGui.separator();
+	        
+	        if(ImGui.menuItem("Camera")) {
+	        	GameObject gameObject = new GameObject("Camera", new Vector3f(0, 0, 5), new Vector3f(0, 0, 0), new Vector3f(1, 1, 1));
+
+				gameObject.addBehaviour(new Camera());
+	        }
 
 			ImGui.endPopup();
 	    }
