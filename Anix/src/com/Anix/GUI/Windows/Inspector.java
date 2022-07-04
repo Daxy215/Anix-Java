@@ -283,7 +283,6 @@ public final class Inspector {
 			}
 		};
 	}
-
 	
 	public int getStartX() {
 		return startX;

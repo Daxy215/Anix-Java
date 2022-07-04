@@ -39,7 +39,6 @@ import com.Anix.SceneManager.SceneManager;
 
 import imgui.ImGui;
 import imgui.ImGuiStyle;
-import imgui.ImVec2;
 import imgui.flag.ImGuiCol;
 import imgui.flag.ImGuiConfigFlags;
 
@@ -109,10 +108,10 @@ public final class Core implements Runnable {
 	private ImGuiStyle redDarkTheme() {
 		ImGuiStyle style = ImGui.getStyle();
 		
-		style.getWindowMinSize(new ImVec2(160, 20));
-		style.getFramePadding(new ImVec2(4, 2));
-		style.getItemSpacing(new ImVec2(6, 2));
-		style.getItemInnerSpacing(new ImVec2(6, 4));
+		style.setWindowMinSize(1, 1);
+		style.setFramePadding(4, 2);
+		style.setItemSpacing(6, 2);
+		style.setItemInnerSpacing(6, 4);
 		style.setAlpha(0.95f);
 		style.setWindowRounding(4.0f);
 		style.setFrameRounding(2.0f);

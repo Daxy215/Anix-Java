@@ -66,7 +66,6 @@ public final class GUI {
 		assetsMenuBar.update();
 		
 		if(ProjectSettings.isEditor) {
-			menuBar.update();
 			assetsStore.update();
 		}
 		
@@ -83,6 +82,8 @@ public final class GUI {
 		sceneViewer.render(); //TODO: MEMROY LEAKAGE
 		hierachy.render();
 		inspector.render();
+		
+		menuBar.render();
 	}
 	
 	public static boolean centeredButton(String label, float sizeX, float sizeY, float alignment){
