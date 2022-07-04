@@ -25,7 +25,8 @@ import com.Anix.Math.Vector4f;
 public class Shader implements Serializable {
 	private static final long serialVersionUID = -7257198393116909124L;
 	
-	private String name, vertexFile = "", fragmentFile = "";
+	public String name;
+	private String vertexFile = "", fragmentFile = "";
 	private int vertexID, fragmentID, programID;
 	
 	public static final Shader defaultShader = new Shader("Default", "/shaders/mainVertex.glsl", "/shaders/mainFragment.glsl");
@@ -377,7 +378,7 @@ public class Shader implements Serializable {
 
 	public static Shader getShader(String name) {
 		for(int i = 0; i < shaders.size(); i++) {
-			if(shaders.get(i).getName().equals(name))
+			if(shaders.get(i).name.equals(name))
 				return shaders.get(i);
 		}
 
@@ -394,9 +395,5 @@ public class Shader implements Serializable {
 
 		GL20.glDeleteShader(vertexID);
 		GL20.glDeleteShader(fragmentID);
-	}
-	
-	public String getName() {
-		return name;
 	}
 }

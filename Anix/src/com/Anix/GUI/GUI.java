@@ -17,6 +17,9 @@ import com.Anix.Math.Color;
 import com.Anix.Math.Vector2f;
 import com.Anix.Math.Vector3f;
 
+import imgui.ImGui;
+import imgui.ImGuiStyle;
+import imgui.ImVec2;
 import imgui.flag.ImGuiWindowFlags;
 
 public final class GUI {
@@ -81,6 +84,27 @@ public final class GUI {
 		sceneViewer.render(); //TODO: MEMROY LEAKAGE
 		hierachy.render();
 		inspector.render();
+	}
+	
+	public static boolean centeredButton(String label, float sizeX, float sizeY, float alignment){
+	    ImGuiStyle style = ImGui.getStyle();
+
+	    float size = 0;
+		try {
+			ImVec2 pos = new ImVec2();
+			ImGui.calcTextSize(pos, label);
+			size = pos.x + style.getFramePaddingX() * 2.0f;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+	    float avail = ImGui.getContentRegionAvail().x;
+
+	    float off = (avail - size) * alignment;
+	    if (off > 0.0f)
+	        ImGui.setCursorPosX(ImGui.getCursorPosX() + off);
+
+	    return ImGui.button(label, sizeX, sizeY);
 	}
 	
 	public void drawFloatFiled(float value, float padding, float x, float y, float z, float width, float height, float lineWidth, float lineHeight, Color backgroundColor, Color lineColor) {

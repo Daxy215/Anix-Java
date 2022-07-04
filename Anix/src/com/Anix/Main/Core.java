@@ -116,7 +116,7 @@ public final class Core implements Runnable {
 		style.setAlpha(0.95f);
 		style.setWindowRounding(4.0f);
 		style.setFrameRounding(2.0f);
-		style.setIndentSpacing(6.0f);
+		//style.setIndentSpacing(6.0f);
 		style.setItemInnerSpacing(2, 4);
 		style.setColumnsMinSpacing(50.0f);
 		style.setGrabMinSize(14.0f);
@@ -149,7 +149,7 @@ public final class Core implements Runnable {
 		style.setColor(ImGuiCol.Header, 0.92f, 0.18f, 0.29f, 0.76f);
 		style.setColor(ImGuiCol.HeaderHovered, 0.92f, 0.18f, 0.29f, 0.86f);
 		style.setColor(ImGuiCol.HeaderActive, 0.92f, 0.18f, 0.29f, 1.00f);
-		style.setColor(ImGuiCol.Separator, 0.14f, 0.16f, 0.19f, 1.00f);
+		style.setColor(ImGuiCol.Separator, 0.3f, 0.16f, 0.19f, 1.00f); //0.14, 0.16, 0.19
 		style.setColor(ImGuiCol.SeparatorHovered, 0.92f, 0.18f, 0.29f, 0.78f);
 		style.setColor(ImGuiCol.SeparatorActive, 0.92f, 0.18f, 0.29f, 1.00f);
 		style.setColor(ImGuiCol.ResizeGrip, 0.47f, 0.77f, 0.83f, 0.04f);
@@ -162,7 +162,7 @@ public final class Core implements Runnable {
 		style.setColor(ImGuiCol.TextSelectedBg, 0.92f, 0.18f, 0.29f, 0.43f);
 		style.setColor(ImGuiCol.PopupBg, 0.20f, 0.22f, 0.27f, 0.9f);
 		////style.Colors[ImGuiCol_ModalWindowDarkening] = ImVec4(0.20f, 0.22f, 0.27f, 0.73f);
-
+		
 		return style;
 	}
 	

@@ -21,7 +21,7 @@ import imgui.flag.ImGuiStyleVar;
 import imgui.flag.ImGuiTreeNodeFlags;
 
 public final class Hierachy {
-	private final int startX = 0, startY = 50;
+	private final int startX = 0, startY = 25;
 	private int width = 250, height;
 
 	public static GameObject selectedObject, draggedObject;
@@ -31,9 +31,11 @@ public final class Hierachy {
 	}
 
 	public void render() {
-		ImGui.setNextWindowPos(0, 0);
-		ImGui.setNextWindowSize(250, Application.getFullHeight() - 200);
-
+		height = Application.getFullHeight() - 200;
+		
+		ImGui.setNextWindowPos(startX, startY);
+		ImGui.setNextWindowSize(width, height);
+		
 		ImGui.begin("Hierarchy", GUI.defaultFlags);
 		ImGui.pushStyleVar(ImGuiStyleVar.ButtonTextAlign, 0, 0.5f);
 
@@ -53,7 +55,9 @@ public final class Hierachy {
 			
 	        if (ImGui.beginMenu("3D Object")) {
 	            if (ImGui.menuItem("Cube")) {
+	            	GameObject gameObject = new GameObject("New GameObject", new Vector3f(0, 0, 0), new Vector3f(0, 0, 0), new Vector3f(1, 1, 1));
 
+	    			gameObject.addBehaviour(new SpriteRenderer());
 	            }
 
 				if (ImGui.beginMenu("Light")) {
@@ -159,7 +163,11 @@ public final class Hierachy {
 			
 			if(object.hasChildren() && open) {
 				drawObjects(object.getChildren(), index + 1);
-				ImGui.treePop();
+				try {
+					ImGui.treePop();
+				} catch(Exception e) {
+					System.err.println(object.getName() + " - " + e.getMessage());
+				}
 			}
 		}
 	}

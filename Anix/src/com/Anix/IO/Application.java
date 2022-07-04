@@ -17,7 +17,6 @@ import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.lwjgl.glfw.Callbacks;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWDropCallback;
 import org.lwjgl.glfw.GLFWErrorCallback;
@@ -296,7 +295,7 @@ public final class Application {
 		imGuiGl3.dispose();
 		imGuiGlfw.dispose();
 		ImGui.destroyContext();
-		Callbacks.glfwFreeCallbacks(window);
+		//Callbacks.glfwFreeCallbacks(window);
 		GLFW.glfwWindowShouldClose(window);
 		GLFW.glfwDestroyWindow(window);
 		GLFW.glfwTerminate();
