@@ -20,28 +20,16 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 import org.lwjgl.glfw.GLFW;
 
-import com.Anix.Engine.Editor;
-import com.Anix.GUI.UI;
 import com.Anix.IO.Application;
-import com.Anix.IO.Input;
-import com.Anix.IO.KeyCode;
 import com.Anix.IO.ProjectSettings;
 import com.Anix.Main.Core;
-import com.Anix.Math.Color;
-import com.Anix.Math.Vector2f;
+
+import imgui.ImGui;
+import imgui.flag.ImGuiStyleVar;
 
 public class MenuBar {
-	/**
-	 * Scene - Will display from a different position than the camera's position.<br>
-	 * Game - Will display from the actual camera's position.<br>
-	 */
-	private enum ViewType {
-		Scene, Game
-	}
-	
 	private final int startX = 0, startY = 0;	
 	private int width = 0, height = 25;
-	private final float lineWidth = 1f, lineHeight = 1f;
 	
 	private Core core;
 	
@@ -49,108 +37,93 @@ public class MenuBar {
 		this.core = core;
 	}
 	
-	/**
-	 * Scene - Will display from a different position than the camera's position.<br>
-	 * Game - Will display from the actual camera's position.<br>
-	 */
-	public ViewType viewType = ViewType.Scene;
-	
-	public void update() {
-		width = Application.getFullWidth();
+	@SuppressWarnings("deprecation")
+	public void render() {
+		ImGui.setNextWindowPos(startX, startY);
+		ImGui.setNextWindowSize(Application.getFullWidth(), height);
 		
-		//Panel - Tool bar
-		UI.drawButtonWithOutline(startX, startY, 0f, width, height, lineWidth, lineHeight, Color.gray, Color.black);
+		//TODO: Doesn't work, fix it somehow.
+		//ImGui.pushStyleVar(ImGuiStyleVar.WindowRounding, 6.0f);
+		//ImGui.begin("MenuBar", GUI.defaultFlags | ImGuiWindowFlags.NoTitleBar);
 		
-		if(UI.drawButton(startX + 8, startY + 2, -0.1f, 50, 20, "File", 7f, -0.5f, -0.1f, 0.5f, 0.5f, Color.black, Color.lightGray)
-				&& Input.isMouseButtonDown(KeyCode.Mouse0)) {
-			UI.addPopup(-0.2f, new Vector2f(130, 30), "FilePopup", Color.white, Color.black, new String[] {"Save", "New Project", "Export"}, this::Popup);
-		}
+		ImGui.pushStyleVar(ImGuiStyleVar.FramePadding, Application.getFullWidth(), 6);
+		if (ImGui.beginMainMenuBar()) {
+	        if (ImGui.beginMenu("File")) {
+	        	if(ImGui.menuItem("Save")) {
+	    			core.getEditor().saveProject();
+	        	}
+	        	
+	        	if(ImGui.menuItem("New Project")) {
+	        		String fullPath = System.getProperty("user.dir");
+	    			
+	    			File dirctory = new File(fullPath);
+	    			File[] files = dirctory.listFiles();
+	    			
+	    			int engineIndex = -1;
+	    			for(int i = 0; i < files.length; i++) {
+	    				if(files[i].getName().equals("AnixLoader.jar")) {
+	    					engineIndex = i;
+	    				}
+	    			}
+	    			
+	    			if(engineIndex == -1) {
+	    				System.err.println("[ERROR] Couldn't find any versions of AnixLoader.");
+	    				
+	    				return;
+	    			}
+	    			
+	    			try {
+	    				Runtime.getRuntime().exec("cmd.exe /c cd \"" + fullPath + "\" & start cmd.exe /k \"java -cp AnixLoader.jar net.Anix.Main.Core");
+	    				
+	    				GLFW.glfwSetWindowShouldClose(Application.getWindow(), true);
+	    			} catch (IOException e) {
+	    				e.printStackTrace(System.err);
+	    			}
+	        	}
+	        	
+	        	if(ImGui.menuItem("Export")) {
+	        		//https://docs.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html#available
+	    			try {
+	    				UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
+	    			} catch (ClassNotFoundException | InstantiationException | IllegalAccessException
+	    					| UnsupportedLookAndFeelException e) {
+	    				e.printStackTrace();
+	    			}
+	    			
+	    			JFileChooser fc = new JFileChooser();
+	    			fc.setCurrentDirectory(new File("."));
+	    			fc.setFileFilter(new FileNameExtensionFilter("Export Build", "jar"));
+	    			fc.setFocusable(true);
+	    			
+	    			int result = fc.showSaveDialog(null);
+	    			
+	    			if(result == JFileChooser.APPROVE_OPTION) {
+	    				File temp = fc.getSelectedFile();
+	    				String path = temp.getAbsolutePath();
+	    				
+	    				if(!path.endsWith("jar")) {
+	    					path += ".jar";
+	    				}
+	    				
+	    				try {
+	    					export(path);
+	    				} catch(IOException | URISyntaxException e) {
+	    					e.printStackTrace();
+	    				}
+	    			} else {
+	    				System.out.println("No Selection ");
+	    			}
+	        	}
+	        	
+	            ImGui.endMenu();
+	        }
+	        
+	        ImGui.endMainMenuBar();
+	    }
+		ImGui.popStyleVar();
 		
-		if(UI.drawButton(startX + 8 + 52, startY + 2, -0.1f, 50, 20, "Assets", 2, -0.5f, -0.1f, 0.5f, 0.5f, Color.black, Color.lightGray)
-				&& Input.isMouseButtonDown(KeyCode.Mouse0)) {
-			
-		}
-		
-		if(Editor.isPlaying()) {
-			viewType = ViewType.Game;
-		} else {
-			viewType = ViewType.Scene;
-		}
-		
-		if(UI.drawButton(startX + ((width * 0.5f) - (50 * 1.5f) + (50 * 2)), startY + 2, -0.1f, 50, 20, "Game", 0, -0.5f, -0.1f, 0.5f, 0.5f, Color.black, (viewType == ViewType.Game ? Color.silver : Color.lightGray)) && Input.isMouseButtonDown(KeyCode.Mouse0)) {
-			if(!Editor.isPlaying())
-				core.getEditor().togglePlay();
-		}
-		
-		if(UI.drawButton(startX + ((width * 0.5f) - (50 * 1.5f)), startY + 2, -0.1f, 50, 20, "Scene", 0, -0.5f, -0.1f, 0.5f, 0.5f, Color.black,
-				(viewType == ViewType.Scene ? Color.silver : Color.lightGray)) && Input.isMouseButtonDown(KeyCode.Mouse0)) {
-			if(Editor.isPlaying())
-				core.getEditor().togglePlay();
-		}
-	}
-	
-	public void Popup(String f) {
-		if(f.equalsIgnoreCase("save")) {
-			core.getEditor().saveProject();
-		} else if(f.equalsIgnoreCase("new project")) {
-			String fullPath = System.getProperty("user.dir");
-			
-			File dirctory = new File(fullPath);
-			File[] files = dirctory.listFiles();
-			
-			int engineIndex = -1;
-			for(int i = 0; i < files.length; i++) {
-				if(files[i].getName().equals("AnixLoader.jar")) {
-					engineIndex = i;
-				}
-			}
-			
-			if(engineIndex == -1) {
-				System.err.println("[ERROR] Couldn't find any versions of AnixLoader.");
-				
-				return;
-			}
-			
-			try {
-				Runtime.getRuntime().exec("cmd.exe /c cd \"" + fullPath + "\" & start cmd.exe /k \"java -cp AnixLoader.jar net.Anix.Main.Core");
-				
-				GLFW.glfwSetWindowShouldClose(Application.getWindow(), true);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		} else if(f.equalsIgnoreCase("export")) {
-			//https://docs.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html#available
-			try {
-				UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
-			} catch (ClassNotFoundException | InstantiationException | IllegalAccessException
-					| UnsupportedLookAndFeelException e) {
-				e.printStackTrace();
-			}
-			
-			JFileChooser fc = new JFileChooser();
-			fc.setCurrentDirectory(new File("."));
-			fc.setFileFilter(new FileNameExtensionFilter("Export Build", "jar"));
-			fc.setFocusable(true);
-			
-			int result = fc.showSaveDialog(null);
-			
-			if(result == JFileChooser.APPROVE_OPTION) {
-				File temp = fc.getSelectedFile();
-				String path = temp.getAbsolutePath();
-				
-				if(!path.endsWith("jar")) {
-					path += ".jar";
-				}
-				
-				try {
-					export(path);
-				} catch(IOException | URISyntaxException e) {
-					e.printStackTrace();
-				}
-			} else {
-				System.out.println("No Selection ");
-			}
-		}
+		//ImGui.end();
+		//ImGui.popStyleVar();
 	}
 	
 	private void export(String path) throws IOException, URISyntaxException {
