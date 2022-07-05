@@ -8,6 +8,9 @@ import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,39 +24,31 @@ import com.Anix.IO.Input;
 import com.Anix.IO.KeyCode;
 import com.Anix.Main.Core;
 import com.Anix.Math.Color;
-import com.Anix.Math.Vector2f;
-import com.Anix.Objects.GameObject;
 import com.Anix.SceneManager.SceneManager;
 
 import imgui.ImGui;
+import imgui.ImVec2;
+import imgui.type.ImString;
 
 public final class Assets {
-	public static class Folder {
-		private String name, absolutePath;
-		
+	public static class Folder extends File {
+		private static final long serialVersionUID = 5698977623695708210L;
+
 		private Folder parentFolder = null;
 		private Texture texture;
-
+		
 		public List<Folder> subFolders = new ArrayList<Folder>();
-
+		
 		public Folder(String name, String absolutePath, Texture texture) {
-			this.name = name;
-			this.absolutePath = absolutePath;
+			super(absolutePath);
+			
 			this.texture = texture;
 		}
-
-		public String getName() {
-			return name;
-		}
-
-		public String getAbsolutePath() {
-			return absolutePath;
-		}
-
+		
 		public Folder getParentFolder() {
 			return parentFolder;
 		}
-
+		
 		public void setParentFolder(Folder parentFolder) {
 			this.parentFolder = parentFolder;
 		}
@@ -65,9 +60,6 @@ public final class Assets {
 	
 	private int startX = 0, startY = 0;
 	private int width = 0, height = 250;
-	private final float lineWidth = 1f, lineHeight = 1;
-	
-	private boolean canBeRemoved;
 	
 	private Folder inFolder, selectedFolder;
 	private Core core;
@@ -80,127 +72,104 @@ public final class Assets {
 		folders = new ArrayList<Folder>();
 	}
 	
-	public void update() {
-		width = Application.getFullWidth();
-		
-		//Panel
-		if(UI.drawButtonWithOutline(startX, startY + Application.getFullHeight() - height, -0.1f, width, height, lineWidth, lineHeight,
-				Color.gray, Color.black)/* && !Editor.isPlaying()*/) {
-			if(Input.isMouseButtonDown(KeyCode.Mouse1)) {
-				UI.addPopup(-0.2f, new Vector2f(130, 30), "Pro", Color.white, Color.black, new String[] {"New Folder", "New Script", "New Material", "New Shader", "New Scene"}, this::Popup);
-			}
-			
-			//If dragged a gameObject into the assets panel.
-			if(core.getDraggedObject() != null && core.getDraggedObject() instanceof GameObject && Input.isMouseButtonUp(KeyCode.Mouse0)) {
-				String path = "";
-				
-				if(inFolder != null) {
-					if(inFolder.parentFolder != null) {
-						path = inFolder.parentFolder.getAbsolutePath() + "\\";
-					} else {
-						path = inFolder.getAbsolutePath() + "\\";
-					}
-				} else {
-					String fullPath = System.getProperty("user.dir");
-					String fileSeparator = System.getProperty("file.separator");
-					
-					path = fullPath + fileSeparator + core.getProjectName() + fileSeparator + "Assets" + fileSeparator;
-				}
-				
-				core.getEditor().addFolder(((GameObject)core.getDraggedObject()).getName() + ".gameobject", inFolder);
-				
-				File file = new File(path + "\\" + ((GameObject)core.getDraggedObject()).getName() + ".gameobject");
-				file.getParentFile().mkdirs();
-				
-				if(!file.exists()) {
-					try {
-						file.createNewFile();
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
-				}
-				
-				try {
-					FileOutputStream fos = new FileOutputStream(file, false);
-					ObjectOutputStream stream = new ObjectOutputStream(fos);
-					
-					core.getEditor().writeGameObject(((GameObject)core.getDraggedObject()), stream);
-					
-					stream.flush();
-					stream.close();
-					fos.flush();
-					fos.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-				
-				core.setDraggedObject(null);
-			}
-		} else {
-			if(core.getDraggedObject() != null && Input.isMouseButtonUp(KeyCode.Mouse0)) {
-				core.setDraggedObject(null);
-			}
-		}
-		
-		if(inFolder != null) {
-			String path = inFolder.getName();
-			
-			Folder curFolder = inFolder;
-			
-			while(curFolder != null) {
-				path += "/" + curFolder.getName();
-				
-				curFolder = curFolder.parentFolder;
-			}
-			
-			String[] fullPath = path.split("/");
-			
-			path = "";
-			
-			for(int i = fullPath.length - 1; i > 0; i--) {
-				path += "/" + fullPath[i];
-			}
-			
-			//Selected folder path
-			if(UI.drawButton(startX, startY + Application.getFullHeight() - height + (lineHeight * 2) + (core.getGUI().getAssetsMenuBar().getHeight()), -0.2f,
-					width, 15, path, 0, -(UI.getFontMatrics().getHeight() * 0.18f), -0.1f, 0.5f, 0.5f, Color.black, Color.lightGray)
-					&& Input.isMouseButtonDown(KeyCode.Mouse0)) {
-				if(inFolder != null) {
-					if(inFolder.parentFolder != null) {
-						inFolder = inFolder.parentFolder;
-					} else {
-						inFolder = null;
-					}
-				}
-			}
-		}
-		
-		if(inFolder == null) {
-			for(int i = 0; i < folders.size(); i++) {
-				drawFolder(folders.get(i), startX + (lineWidth * 2) + i * 68, startY + Application.getFullHeight() - (height - 20) + (core.getGUI().getAssetsMenuBar().getHeight() * 1.5f));
-			}
-		} else {
-			for(int i = 0; i < inFolder.subFolders.size(); i++) {
-				drawFolder(inFolder.subFolders.get(i), startX + (lineWidth * 2) + i * 68, Application.getFullHeight() - (height - 20) + (core.getGUI().getAssetsMenuBar().getHeight() * 1.5f));
-			}
-		}
-		
-		if(core.getDraggedObject() instanceof Folder && Input.isMouseButtonUp(KeyCode.Mouse0)) {
-			core.setDraggedObject(null);
-		}
-	}
+	//Used for text calculation - A class variable to safe memory.
+	private ImVec2 vec2 = new ImVec2();
+	private ImString s = new ImString("", 187);
 	
 	public void render() {
 		startY = Application.getHeight();
-		
+
 		ImGui.setNextWindowPos(startX, startY);
 		ImGui.setNextWindowSize(Application.getFullWidth(), height);
-		
+
 		ImGui.begin("##", GUI.defaultFlags);
+
+		int width = 90;
+		int amount = Application.getFullWidth() / width;
+		
+		ImGui.columns(amount, "##", false);
+		
+		for(int i = 0; i < folders.size(); i++) {
+			Folder folder = folders.get(i);
+			
+			ImGui.setColumnWidth(ImGui.getColumnIndex(), width);
+			
+			if(ImGui.imageButton(folder.getTexture().getId(), 
+					folder.getTexture().getWidth(), folder.getTexture().getHeight())) {
+			}
+			
+			ImGui.sameLine();
+			ImGui.calcTextSize(vec2, folder.getName());
+			
+			//Move to under of the folder, for it's name.
+			ImGui.setCursorPos(ImGui.getCursorPosX() - folder.getTexture().getWidth() - 20, ImGui.getCursorPosY() + folders.get(0).getTexture().getHeight() + 5);
+			
+			ImGui.pushID(s.get() + " " + i);
+			
+			s.set(folder.getName());
+			ImGui.pushItemWidth(100);
+			if(ImGui.inputText("##", s)) {
+				if(s.get().length() > 0) {
+					//folder.renameTo(new File(folder.getParent() + "\\" + s.get()));
+					Path source = Paths.get(folder.getAbsolutePath());
+					
+					try {
+						source = Files.move(source, source.resolveSibling(s.get()));
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+					
+					folders.set(i, new Folder("", source.toString(), folder.getTexture()));
+				}
+			}
+			
+			ImGui.popItemWidth();
+			ImGui.popID();
+			
+			//Move back, for padding.
+			ImGui.setCursorPos(ImGui.getCursorPosX(), ImGui.getCursorPosY() - 50);
+			
+			ImGui.nextColumn();
+		}
+		
+		ImGui.columns(1);
+		
+		if(ImGui.getIO().getWantCaptureMouse() && ImGui.isWindowFocused()) {
+			//TODO: Check if any of the gameObjects were hovered.
+			if(ImGui.isMouseClicked(1)) {
+				ImGui.openPopup("AssetsOptions");
+			}
+		}
+		
+		//"New Folder", "New Script", "New Material", "New Shader", "New Scene"
+		if (ImGui.beginPopup("AssetsOptions")) {
+			if (ImGui.menuItem("New Folder")) {
+				core.getEditor().addFolder("New Folder", inFolder);
+			}
+			
+			if (ImGui.menuItem("New Script")) {
+				
+			}
+			
+			if (ImGui.menuItem("New Material")) {
+				
+			}
+			
+			if (ImGui.menuItem("New Shader")) {
+				
+			}
+			
+			if (ImGui.menuItem("New Scene")) {
+				
+			}
+			
+			ImGui.endPopup();
+	    }
 		
 		ImGui.end();
 	}
-	
+
+	@SuppressWarnings("unused")
 	private void drawFolder(Folder folder, float x, float y) {
 		if(folder.equals(core.getDraggedObject())) {
 			x = (float)Input.getMouseX();
@@ -348,10 +317,10 @@ public final class Assets {
 		String name = "";
 		
 		if(folder.getAbsolutePath().contains("/")) {
-			folder.absolutePath = folder.getAbsolutePath().replace("/", "\\");
+			name = folder.getAbsolutePath().replace("/", "\\");
 		}
 		
-		if(folder.getAbsolutePath().contains("\\")) {
+		if(name.contains("\\")) {
 			String[] fullName = folder.getAbsolutePath().split("\\\\");
 			
 			name = fullName[fullName.length - 1];
@@ -498,11 +467,7 @@ public final class Assets {
 	public Folder getSelectedFolder() {
 		return selectedFolder;
 	}
-
-	public boolean canBeRemoved() {
-		return canBeRemoved;
-	}
-
+	
 	public List<Folder> getFolders() {
 		return folders;
 	}
