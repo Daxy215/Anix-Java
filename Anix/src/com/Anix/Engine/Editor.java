@@ -1163,11 +1163,11 @@ public final class Editor {
 			return null;
 		}
 		
-		if(Files.exists(Paths.get(fullPath))) {
+		/*if(Files.exists(Paths.get(fullPath))) {
 			System.err.println("[ERROR] Cannot add a file with the path of(it already eixsts): " + fullPath);
 			
 			return null;
-		}
+		}*/
 
 		Texture texture = null;
 		

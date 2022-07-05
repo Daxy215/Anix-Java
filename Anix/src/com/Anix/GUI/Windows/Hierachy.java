@@ -31,7 +31,7 @@ public final class Hierachy {
 	}
 
 	public void render() {
-		height = Application.getFullHeight() - 200;
+		height = Application.getFullHeight() - 250;
 		
 		ImGui.setNextWindowPos(startX, startY);
 		ImGui.setNextWindowSize(width, height);
@@ -39,7 +39,7 @@ public final class Hierachy {
 		ImGui.begin("Hierarchy", GUI.defaultFlags);
 		ImGui.pushStyleVar(ImGuiStyleVar.ButtonTextAlign, 0, 0.5f);
 
-		if(ImGui.getIO().getWantCaptureMouse()) {
+		if(ImGui.getIO().getWantCaptureMouse() && ImGui.isWindowFocused()) {
 			//TODO: Check if any of the gameObjects were hovered.
 			if(ImGui.isMouseClicked(1)) {
 				ImGui.openPopup("HierarchyOptions");

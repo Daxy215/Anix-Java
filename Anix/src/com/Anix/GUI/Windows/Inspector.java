@@ -41,7 +41,7 @@ public final class Inspector {
 	
 	public void render() {
 		startX = Application.getFullWidth() - width;
-		height = Application.getFullHeight() - 200;//assets
+		height = Application.getFullHeight() - 250;//assets
 
 		ImGui.setNextWindowPos(startX, startY);
 		ImGui.setNextWindowSize(width, height);

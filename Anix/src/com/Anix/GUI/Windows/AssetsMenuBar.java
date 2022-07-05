@@ -25,8 +25,7 @@ public class AssetsMenuBar {
 	}
 	
 	public void update() {
-		startX = gui.getAssets().getStartX();
-		startY = Application.getFullHeight() - (gui.getAssets().getStartY() + gui.getAssets().getHeight());
+		startY = Application.getFullHeight() - (gui.getAssets().getHeight());
 		width = Application.getFullWidth();
 		
 		//Panel - Tool bar

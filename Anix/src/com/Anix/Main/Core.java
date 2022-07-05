@@ -113,7 +113,7 @@ public final class Core implements Runnable {
 		style.setItemSpacing(6, 2);
 		style.setItemInnerSpacing(6, 4);
 		style.setAlpha(0.95f);
-		style.setWindowRounding(4.0f);
+		style.setWindowRounding(0.0f); //4.0f
 		style.setFrameRounding(2.0f);
 		//style.setIndentSpacing(6.0f);
 		style.setItemInnerSpacing(2, 4);

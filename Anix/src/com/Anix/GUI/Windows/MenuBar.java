@@ -37,10 +37,9 @@ public class MenuBar {
 		this.core = core;
 	}
 	
-	@SuppressWarnings("deprecation")
 	public void render() {
-		ImGui.setNextWindowPos(startX, startY);
-		ImGui.setNextWindowSize(Application.getFullWidth(), height);
+		//ImGui.setNextWindowPos(startX, startY);
+		//ImGui.setNextWindowSize(Application.getFullWidth(), height);
 		
 		//TODO: Doesn't work, fix it somehow.
 		//ImGui.pushStyleVar(ImGuiStyleVar.WindowRounding, 6.0f);
@@ -73,7 +72,7 @@ public class MenuBar {
 	    			}
 	    			
 	    			try {
-	    				Runtime.getRuntime().exec("cmd.exe /c cd \"" + fullPath + "\" & start cmd.exe /k \"java -cp AnixLoader.jar net.Anix.Main.Core");
+	    				Runtime.getRuntime().exec(new String[] { "cmd.exe /c cd \"" + fullPath + "\" & start cmd.exe /k \"java -cp AnixLoader.jar net.Anix.Main.Core" });
 	    				
 	    				GLFW.glfwSetWindowShouldClose(Application.getWindow(), true);
 	    			} catch (IOException e) {

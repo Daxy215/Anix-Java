@@ -37,8 +37,7 @@ public final class Console {
 	}
 	
 	public void update() {
-		startX = gui.getAssets().getStartX();
-		startY = Application.getFullHeight() - (gui.getAssets().getStartY() + gui.getAssets().getHeight());
+		startY = Application.getFullHeight() - (gui.getAssets().getHeight());
 		width = Application.getFullWidth();
 		
 		scrollY += Input.getScrollY() * 4;
