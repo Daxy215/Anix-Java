@@ -38,14 +38,14 @@ public final class Hierachy {
 		
 		ImGui.begin("Hierarchy", GUI.defaultFlags);
 		ImGui.pushStyleVar(ImGuiStyleVar.ButtonTextAlign, 0, 0.5f);
-
-		if(ImGui.getIO().getWantCaptureMouse() && ImGui.isWindowFocused()) {
+		
+		if(ImGui.getIO().getWantCaptureMouse() && ImGui.isWindowHovered()) {
 			//TODO: Check if any of the gameObjects were hovered.
 			if(ImGui.isMouseClicked(1)) {
 				ImGui.openPopup("HierarchyOptions");
 			}
 		}
-
+		
 		if (ImGui.beginPopup("HierarchyOptions")) {
 			if (ImGui.menuItem("Create Empty")) {
 				new GameObject("Empty GameObject", new Vector3f(0, 0, 0), new Vector3f(0, 0, 0), new Vector3f(1, 1, 1));  

@@ -873,7 +873,8 @@ public final class Editor {
 					@Override
 					public void run() {
 						try {
-							//TODO: Check if file exists.
+							if(!Files.exists(tempPath))
+								return;
 							
 							Files.walkFileTree(tempPath, new SimpleFileVisitor<Path>() {
 								@Override
@@ -1103,7 +1104,7 @@ public final class Editor {
 								
 								System.out.println("Adding a new scene with the name of " + absolutePath[absolutePath.length - 1].split("\\.")[0]);
 								
-								SceneManager.addScene(new Scene(absolutePath[absolutePath.length - 1].split("\\.")[0], new Folder(absolutePath[absolutePath.length - 1].split("\\.")[0], name, null)));
+								SceneManager.addScene(new Scene(absolutePath[absolutePath.length - 1].split("\\.")[0], new Folder(name, null)));
 							} else if(extension.equalsIgnoreCase("glsl")) {
 								String[] absolutePath = name.split("/");
 								String sName = absolutePath[absolutePath.length - 1].split("\\.")[0];
@@ -1135,8 +1136,6 @@ public final class Editor {
 				e.printStackTrace();
 			}
 		}
-		
-		addFolder("New Scene.scene", null);
 	}
 	
 	private File[] getProjects() {
@@ -1205,7 +1204,6 @@ public final class Editor {
 		}
 		
 		String[] absolutePath = fullPath.split("\\\\");
-		String folderName = absolutePath[absolutePath.length - 1].split("\\.")[0];
 		
 		String extension = "";
 		
@@ -1223,7 +1221,7 @@ public final class Editor {
 		}
 		
 		File file = new File(fullPath);
-		Folder folder = new Folder(folderName + (file.isDirectory() ? "" : "." + extension), fullPath, texture);
+		Folder folder = new Folder(fullPath, texture);
 		file.getParentFile().mkdirs();
 		//System.out.println("Adding a folder with the path of: " + fullPath + " inside " + (parent != null ? parent.getAbsolutePath() : "nothing"));
 		
