@@ -39,7 +39,7 @@ public final class Assets {
 		
 		public List<Folder> subFolders = new ArrayList<Folder>();
 		
-		public Folder(String name, String absolutePath, Texture texture) {
+		public Folder(String absolutePath, Texture texture) {
 			super(absolutePath);
 			
 			this.texture = texture;
@@ -72,10 +72,6 @@ public final class Assets {
 		folders = new ArrayList<Folder>();
 	}
 	
-	//Used for text calculation - A class variable to safe memory.
-	private ImVec2 vec2 = new ImVec2();
-	private ImString s = new ImString("", 187);
-	
 	public void render() {
 		startY = Application.getHeight();
 
@@ -83,58 +79,19 @@ public final class Assets {
 		ImGui.setNextWindowSize(Application.getFullWidth(), height);
 
 		ImGui.begin("##", GUI.defaultFlags);
-
-		int width = 90;
-		int amount = Application.getFullWidth() / width;
 		
-		ImGui.columns(amount, "##", false);
-		
-		for(int i = 0; i < folders.size(); i++) {
-			Folder folder = folders.get(i);
-			
-			ImGui.setColumnWidth(ImGui.getColumnIndex(), width);
-			
-			if(ImGui.imageButton(folder.getTexture().getId(), 
-					folder.getTexture().getWidth(), folder.getTexture().getHeight())) {
+		if(inFolder != null) {
+			if(ImGui.button(inFolder.getAbsolutePath())) {
+				inFolder = inFolder.parentFolder;
 			}
-			
-			ImGui.sameLine();
-			ImGui.calcTextSize(vec2, folder.getName());
-			
-			//Move to under of the folder, for it's name.
-			ImGui.setCursorPos(ImGui.getCursorPosX() - folder.getTexture().getWidth() - 20, ImGui.getCursorPosY() + folders.get(0).getTexture().getHeight() + 5);
-			
-			ImGui.pushID(s.get() + " " + i);
-			
-			s.set(folder.getName());
-			ImGui.pushItemWidth(100);
-			if(ImGui.inputText("##", s)) {
-				if(s.get().length() > 0) {
-					//folder.renameTo(new File(folder.getParent() + "\\" + s.get()));
-					Path source = Paths.get(folder.getAbsolutePath());
-					
-					try {
-						source = Files.move(source, source.resolveSibling(s.get()));
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
-					
-					folders.set(i, new Folder("", source.toString(), folder.getTexture()));
-				}
-			}
-			
-			ImGui.popItemWidth();
-			ImGui.popID();
-			
-			//Move back, for padding.
-			ImGui.setCursorPos(ImGui.getCursorPosX(), ImGui.getCursorPosY() - 50);
-			
-			ImGui.nextColumn();
 		}
 		
-		ImGui.columns(1);
+		if(inFolder == null)
+			drawFolders(folders);
+		else
+			drawFolders(inFolder.subFolders);
 		
-		if(ImGui.getIO().getWantCaptureMouse() && ImGui.isWindowFocused()) {
+		if(ImGui.getIO().getWantCaptureMouse() && ImGui.isWindowHovered()) {
 			//TODO: Check if any of the gameObjects were hovered.
 			if(ImGui.isMouseClicked(1)) {
 				ImGui.openPopup("AssetsOptions");
@@ -167,6 +124,69 @@ public final class Assets {
 	    }
 		
 		ImGui.end();
+	}
+
+	//Used for text calculation - A class variable to safe memory.
+	private ImVec2 vec2 = new ImVec2();
+	private ImString s = new ImString("", 187);
+	
+	private void drawFolders(List<Folder> folders) {
+		int width = 90;
+		int amount = Application.getFullWidth() / width;
+		
+		ImGui.columns(amount, "##", false);
+		
+		for(int i = 0; i < folders.size(); i++) {
+			Folder folder = folders.get(i);
+			
+			ImGui.setColumnWidth(ImGui.getColumnIndex(), width);
+			
+			if(ImGui.imageButton(folder.getTexture().getId(), 
+					folder.getTexture().getWidth(), folder.getTexture().getHeight())) {
+				
+			}
+			
+	        if (ImGui.isItemHovered() && ImGui.isMouseDoubleClicked(0)) {
+	        	if(folder.isDirectory()) {
+	        		inFolder = folder;
+	        	}
+	        }
+			
+			ImGui.sameLine();
+			ImGui.calcTextSize(vec2, folder.getName());
+			
+			//Move to under of the folder, for it's name.
+			ImGui.setCursorPos(ImGui.getCursorPosX() - folder.getTexture().getWidth() - 20, ImGui.getCursorPosY() + folders.get(0).getTexture().getHeight() + 5);
+			
+			ImGui.pushID(s.get());
+			
+			s.set(folder.getName());
+			ImGui.pushItemWidth(100);
+			if(ImGui.inputText("##", s)) {
+				if(s.get().length() > 0) {
+					//folder.renameTo(new File(folder.getParent() + "\\" + s.get()));
+					Path source = Paths.get(folder.getAbsolutePath());
+					
+					try {
+						source = Files.move(source, source.resolveSibling(s.get()));
+					} catch (IOException e) {
+						e.printStackTrace(System.err);
+					}
+					
+					folders.set(i, new Folder(source.toString(), folder.getTexture()));
+				}
+			}
+			
+			ImGui.popItemWidth();
+			ImGui.popID();
+			
+			//Move back, for padding.
+			ImGui.setCursorPos(ImGui.getCursorPosX(), ImGui.getCursorPosY() - 50);
+			
+			ImGui.nextColumn();
+		}
+		
+		ImGui.columns(1);
 	}
 
 	@SuppressWarnings("unused")
