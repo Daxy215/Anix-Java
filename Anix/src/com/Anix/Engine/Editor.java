@@ -264,7 +264,6 @@ public final class Editor {
 		core.getGUI().getConsole().clear();
 		Application.setFOV(70);
 		Core.meshManager.clear();
-		Core.getMasterRenderer().destroy();
 		
 		Application.setMouseState(false);
 		Application.setCursorIcon(null);
@@ -310,8 +309,10 @@ public final class Editor {
 		if(!isPlaying) {
 			canAddObjects = false;
 			
+			
 			if(Core.getMasterRenderer() != null) {
-				Core.getMasterRenderer().getEntities().clear();
+				Core.getMasterRenderer().destroy();
+				//Core.getMasterRenderer().getEntities().clear();
 			}
 			
 			if(SceneManager.getCurrentScene() != null) {
@@ -1004,7 +1005,7 @@ public final class Editor {
 			}
 		}
 		
-		if(behaviourName.equalsIgnoreCase("camera")) {
+		/*if(behaviourName.equalsIgnoreCase("camera")) {
 			return new Camera();
 		} else if(behaviourName.equalsIgnoreCase("spriterenderer")) {
 			return new SpriteRenderer();
@@ -1019,12 +1020,12 @@ public final class Editor {
 		} else if(behaviourName.equalsIgnoreCase("lightsource")) {
 			return new LightSource();
 		} else if(behaviourName.equalsIgnoreCase("meshrenderer")) {
-			return new MeshRenderer();
-		} else {
+			return new MeshRenderer();*/
+		//} else {
 			System.err.println("[ERROR] #1291 Couldn't find a script with the name of " + behaviourName);
 			
 			return null;
-		}
+		//}
 	}
 	
 	public void loadProject() {
