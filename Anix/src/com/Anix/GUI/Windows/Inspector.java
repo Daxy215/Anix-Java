@@ -6,6 +6,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.function.Consumer;
 
+import com.Anix.Annotation.Header;
 import com.Anix.Behaviours.Behaviour;
 import com.Anix.Behaviours.Physics2D;
 import com.Anix.GUI.GUI;
@@ -14,7 +15,10 @@ import com.Anix.Math.Vector2f;
 import com.Anix.Math.Vector3f;
 import com.Anix.Objects.GameObject;
 
+import imgui.ImColor;
+import imgui.ImDrawList;
 import imgui.ImGui;
+import imgui.type.ImInt;
 import imgui.type.ImString;
 
 /**
@@ -38,6 +42,8 @@ public final class Inspector {
 	public void init() {
 		
 	}
+	
+	ImInt cur = new ImInt();
 	
 	public void render() {
 		startX = Application.getFullWidth() - width;
@@ -168,7 +174,25 @@ public final class Inspector {
 	private void drawField(Field f, Object object) throws IllegalArgumentException, IllegalAccessException {
 		Class<?> type = f.getType();
 		String typeName = type.getSimpleName();
-
+		
+		Header header = f.getAnnotation(Header.class);
+		
+		if(header != null) {
+            ImDrawList drawList = ImGui.getWindowDrawList();
+            
+            float x = ImGui.getCursorScreenPosX();
+            float y = ImGui.getCursorScreenPosY();
+            
+            //33.15, 35.7, 43.35 - Window background.
+            drawList.addRectFilled(x, y,
+            		width + x, ImGui.getTextLineHeight() + y,
+                    ImColor.intToColor(23, 25, 33, 255));
+			
+            ImGui.setCursorPosY(ImGui.getCursorPosY() - 1);
+			ImGui.text(header.value());
+		}
+		
+		//ImGui.sameLine();
 		ImGui.text(f.getName() + ": ");
 		ImGui.sameLine();
 		

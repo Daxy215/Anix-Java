@@ -73,9 +73,10 @@ public class Matrix4f implements Serializable {
 		set(0, 1, get(0, 1) * axis.getX() * axis.getY() * C - axis.getZ() * sin);
 		set(0, 2, get(0, 2) * axis.getX() * axis.getZ() * C + axis.getY() * sin);
 		
-		set(1, 0, get(1, 0) * axis.getY() * axis.getX() * C + axis.getZ() * sin);
+		//Inverted these.
+		set(0, 1, get(0, 1) * axis.getY() * axis.getX() * C + axis.getZ() * sin);
 		set(1, 1, get(1, 1) * cos + axis.getY() * axis.getY() * C);
-		set(1, 2, get(1, 2) * axis.getY() * axis.getZ() * C - axis.getX() * sin);
+		set(2, 1, get(2, 1) * axis.getY() * axis.getZ() * C - axis.getX() * sin);
 		
 		set(2, 0, get(2, 0) * axis.getZ() * axis.getX() * C - axis.getY() * sin);
 		set(2, 1, get(2, 1) * axis.getZ() * axis.getY() * C + axis.getX() * sin);
@@ -116,7 +117,7 @@ public class Matrix4f implements Serializable {
 		translationMatrix.rotateLocal(rotation.getX(), new Vector3f(1, 0, 0));
 		translationMatrix.rotateLocal(rotation.getY(), new Vector3f(0, 1, 0));
 		translationMatrix.rotateLocal(rotation.getZ(), new Vector3f(0, 0, 1));
-		translationMatrix.scaleLocal(scale); //TODO: upon rotation, if scale isn't 1. If it was 90, then it'll be 1.
+		translationMatrix.scaleLocal(scale); //TODO: upon rotation, if scale isn't 1. If rotation was 90, then it'll be 1.
 		
 		return translationMatrix;
 	}
@@ -172,8 +173,6 @@ public class Matrix4f implements Serializable {
 	}
 	
 	public static Matrix4f view(Vector3f position, Vector3f rotation) {
-		Matrix4f result = Matrix4f.identity();
-		
 		Vector3f negative = new Vector3f(-position.x, -position.y, -position.z);
 		Matrix4f translationMatrix = Matrix4f.translate(negative);
 		Matrix4f rotXMatrix = Matrix4f.rotate(rotation.getX(), new Vector3f(1, 0, 0));
@@ -182,8 +181,7 @@ public class Matrix4f implements Serializable {
 		
 		Matrix4f rotationMatrix = Matrix4f.multiply(rotYMatrix, Matrix4f.multiply(rotZMatrix, rotXMatrix));
 		
-		result = Matrix4f.multiply(translationMatrix, rotationMatrix);
-		return result;
+		return Matrix4f.multiply(translationMatrix, rotationMatrix);
 	}
 	
 	public static Matrix4f multiply(Matrix4f matrix, Matrix4f other) {
