@@ -127,7 +127,7 @@ public final class SceneViewer {
 	}
 	
 	public void render() {
-		if(!ProjectSettings.isEditor || Editor.isPlaying()) {
+		if(!ProjectSettings.isEditor) {
 			UI.drawImageInverted(core.getFrameBuffer().getReflectionTexture(), 0, 0, 0.5f, Application.getFullWidth(), Application.getFullHeight());
 		} else {
 			UI.drawImageInverted(core.getFrameBuffer().getReflectionTexture(), Application.getStartX(), Application.getStartY(), 0.5f, Application.getWidth(), Application.getHeight());			

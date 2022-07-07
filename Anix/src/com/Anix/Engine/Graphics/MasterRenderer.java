@@ -256,7 +256,7 @@ public final class MasterRenderer {
 		}
 		
 		if(Input.isKeyDown(KeyCode.L)) {
-			System.err.println("Took " + (Math.abs(System.currentTimeMillis() - start) + "ms to render " +amount + " entities"));
+			System.err.println("Took " + (Math.abs(System.currentTimeMillis() - start) + "ms to render " + amount + " entities"));
 		}
 		//System.err.println("rendered: " + amount + " entities");
 		

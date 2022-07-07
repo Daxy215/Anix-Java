@@ -7,7 +7,7 @@ import java.util.Map;
 
 public class AutoCorrector {
 	public class Node {
-        Map<Character, Node> children;
+        public Map<Character, Node> children;
         char c;
         boolean isWord;
  
@@ -24,7 +24,7 @@ public class AutoCorrector {
             if (word == null || word.isEmpty())
                 return;
             
-            char firstChar = word.charAt(0);
+            char firstChar = Character.toLowerCase(word.charAt(0));
             Node child = children.get(firstChar);
             
             if (child == null) {
@@ -39,16 +39,26 @@ public class AutoCorrector {
         }
     }
 	
-	private Node root;
+	public Node root;
+	
+	public AutoCorrector() {
+		root = new Node();
+	}
     
     public AutoCorrector(List<String> words) {
         root = new Node();
         
         for (String word : words)
             root.insert(word);
- 
     }
- 
+    
+    public AutoCorrector(String[] words) {
+    	root = new Node();
+    	
+    	for(String word : words)
+    		root.insert(word);
+    }
+    
     public boolean find(String prefix, boolean exact) {
     	Node lastNode = root;
     	
@@ -61,19 +71,19 @@ public class AutoCorrector {
         
         return !exact || lastNode.isWord;
     }
- 
+    
     public boolean find(String prefix) {
         return find(prefix, false);
     }
  
     public void suggestHelper(Node root, List<String> list, StringBuffer curr) {
         if (root.isWord) {
-            list.add(curr.toString());
+            list.add(curr.toString().toLowerCase());
         }
- 
+        
         if (root.children == null || root.children.isEmpty())
             return;
-        	
+        
         for (Node child : root.children.values()) {
             suggestHelper(child, list, curr.append(child.c));
             curr.setLength(curr.length() - 1);
@@ -85,10 +95,12 @@ public class AutoCorrector {
         Node lastNode = root;
         StringBuffer curr = new StringBuffer();
         
-        for (char c : prefix.toCharArray()) {
+        for (char c : prefix.toLowerCase().toCharArray()) {
             lastNode = lastNode.children.get(c);
+            
             if (lastNode == null)
                 return list;
+            
             curr.append(c);
         }
         

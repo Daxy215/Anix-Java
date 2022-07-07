@@ -105,7 +105,9 @@ public final class Assets {
 			}
 			
 			if (ImGui.menuItem("New Script")) {
+				Folder f = core.getEditor().addFolder("test.java", inFolder);
 				
+				createScript(f);
 			}
 			
 			if (ImGui.menuItem("New Material")) {
@@ -334,19 +336,7 @@ public final class Assets {
 	}
 	
 	private void createScript(Folder folder) {
-		String name = "";
-		
-		if(folder.getAbsolutePath().contains("/")) {
-			name = folder.getAbsolutePath().replace("/", "\\");
-		}
-		
-		if(name.contains("\\")) {
-			String[] fullName = folder.getAbsolutePath().split("\\\\");
-			
-			name = fullName[fullName.length - 1];
-		} else {
-			name = folder.getAbsolutePath();
-		}
+		String name = folder.getName();
 		
 		//To remove .java
 		name = name.contains(".") ? name.split("\\.")[0] : name;

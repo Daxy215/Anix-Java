@@ -4,13 +4,15 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.List;
 import java.util.function.Consumer;
 
 import com.Anix.Annotation.Header;
 import com.Anix.Behaviours.Behaviour;
-import com.Anix.Behaviours.Physics2D;
+import com.Anix.Engine.Editor;
 import com.Anix.GUI.GUI;
 import com.Anix.IO.Application;
+import com.Anix.IO.AutoCorrector;
 import com.Anix.Math.Vector2f;
 import com.Anix.Math.Vector3f;
 import com.Anix.Objects.GameObject;
@@ -18,7 +20,6 @@ import com.Anix.Objects.GameObject;
 import imgui.ImColor;
 import imgui.ImDrawList;
 import imgui.ImGui;
-import imgui.type.ImInt;
 import imgui.type.ImString;
 
 /**
@@ -35,15 +36,17 @@ public final class Inspector {
 	private int width = 250, height = 0;
 	private int counter;
 	
+	private AutoCorrector autoCorrector;
+	
 	public Inspector() {
 		
 	}
 
 	public void init() {
-		
+		autoCorrector = new AutoCorrector();
 	}
 	
-	ImInt cur = new ImInt();
+	ImString behName = new ImString("", 256);
 	
 	public void render() {
 		startX = Application.getFullWidth() - width;
@@ -64,9 +67,33 @@ public final class Inspector {
 		if(Hierachy.selectedObject != null) {
 			if(GUI.centeredButton("Add Behaviour", 150, 35, 0.35f)) {
 				//Testing - TODO: Add a search bar.
-				Hierachy.selectedObject.addBehaviour(new Physics2D());
+				//Hierachy.selectedObject.addBehaviour(new Physics2D());
+				
+				ImGui.openPopup("addBehaviour");
 			}
 		}
+		
+		if (ImGui.beginPopup("addBehaviour")) {
+			ImGui.inputText("##", behName);
+			
+			autoCorrector.root.children.clear();
+			
+			for(int i = 0; i < Editor.importedClasses.size(); i++) {
+				autoCorrector.root.insert(Editor.importedClasses.get(i).getName());
+			}
+			
+			List<String> behaviours = autoCorrector.suggest(behName.get());
+			
+			for(int i = 0; i < behaviours.size(); i++) {
+				if(ImGui.button(behaviours.get(i))) {
+					Hierachy.selectedObject.addBehaviour(Editor.getBehaviour(behaviours.get(i)));
+					
+					ImGui.closeCurrentPopup();
+				}
+			}
+		
+			ImGui.endPopup();
+	    }
 		
 		ImGui.end();
 		
@@ -311,15 +338,15 @@ public final class Inspector {
 	public int getStartX() {
 		return startX;
 	}
-
+	
 	public int getStartY() {
 		return startY;
 	}
-
+	
 	public int getWidth() {
 		return width;
 	}
-
+	
 	public int getHeight() {
 		return height;
 	}
