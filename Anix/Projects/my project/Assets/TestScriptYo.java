@@ -1,6 +1,6 @@
 import com.Anix.Behaviours.Behaviour;
 
-public class test extends Behaviour {
+public class TestScriptYo extends Behaviour {
 	/*
 	* Please ignore this tyvm :)
 	*/

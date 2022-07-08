@@ -623,7 +623,12 @@ public final class Editor {
 		for(int i = 0; i < size; i++) {
 			GameObject obj = (GameObject)readObjectFromFile(stream);
 			
-			String parentInfo = stream.readUTF();
+			String parentInfo = "";
+			try {
+				parentInfo = stream.readUTF();
+			} catch(Exception e) {
+				continue;
+			}
 			
 			if(obj == null) {
 				System.err.println("[ERROR] [TSH] #546 Couldn't load gameobject..");
@@ -1152,7 +1157,6 @@ public final class Editor {
 	
 	//TODO: Future me, please make this better..
 	//jeez it has such trashy code
-	//TODO: Errror - ghmm C:\Users\Daxy\git\Anix-Java\Anix\Projects\my project\Assets\\yo.java - Has double \
 	public Folder addFolder(String fullPath, Folder parent) {
 		if(!ProjectSettings.isEditor) {
 			return null;
@@ -1166,7 +1170,7 @@ public final class Editor {
 		
 		Texture texture = null;
 		
-		if(!fullPath.contains("\\")) {//It's a normal folder.
+		if(!fullPath.contains("\\") && !fullPath.contains("/")) {//It's a normal folder.
 			String folderName = fullPath;
 			
 			String full = System.getProperty("user.dir");
@@ -1196,7 +1200,9 @@ public final class Editor {
 				fullPath += path;
 			}
 			
-			fullPath += fileSeparator + folderName;
+			String seperator = fullPath.charAt(fullPath.length() - 1) == '\\' ? "" : fileSeparator;
+			
+			fullPath += seperator + folderName;
 		}
 		
 		String[] absolutePath = fullPath.split("\\\\");
@@ -1240,8 +1246,6 @@ public final class Editor {
 			}
 		}
 		
-		System.err.println("ex " + extension + " " + file.isDirectory());
-		
 		if(file.isDirectory()) {
 			File[] files = file.listFiles();
 			
@@ -1265,7 +1269,6 @@ public final class Editor {
 			}
 		} else {
 			if(extension.equalsIgnoreCase("java")) {
-				System.err.println("ghmm " + fullPath);
 				createBytes(fullPath);
 			} else if(extension.equalsIgnoreCase("png") || extension.equalsIgnoreCase("jpg")) {
 				try {

@@ -1,8 +1,5 @@
 package com.Anix.GUI.Windows;
 
-import static org.lwjgl.util.tinyfd.TinyFileDialogs.tinyfd_inputBox;
-
-import java.awt.Desktop;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
@@ -18,13 +15,10 @@ import com.Anix.Engine.Editor;
 import com.Anix.Engine.Graphics.Material;
 import com.Anix.GUI.GUI;
 import com.Anix.GUI.Texture;
-import com.Anix.GUI.UI;
 import com.Anix.IO.Application;
 import com.Anix.IO.Input;
 import com.Anix.IO.KeyCode;
 import com.Anix.Main.Core;
-import com.Anix.Math.Color;
-import com.Anix.SceneManager.SceneManager;
 
 import imgui.ImGui;
 import imgui.ImVec2;
@@ -105,16 +99,17 @@ public final class Assets {
 		//"New Folder", "New Script", "New Material", "New Shader", "New Scene"
 		if (ImGui.beginPopup("AssetsOptions")) {
 			if (ImGui.menuItem("New Folder")) {
-				core.getEditor().addFolder("New Folder", inFolder);
+
+				ImGui.closeCurrentPopup();
+				
+				popup = "Folder";
+				openNewPopup = true;
 			}
 			
 			if (ImGui.menuItem("New Script")) {
-				//Folder f = core.getEditor().addFolder("test.java", inFolder);
-				
-				//createScript(f);
 				ImGui.closeCurrentPopup();
 				
-				popup = "script";
+				popup = "Script";
 				openNewPopup = true;
 				
 			}
@@ -122,21 +117,21 @@ public final class Assets {
 			if (ImGui.menuItem("New Material")) {
 				ImGui.closeCurrentPopup();
 				
-				popup = "material";
+				popup = "Material";
 				openNewPopup = true;
 			}
 			
 			if (ImGui.menuItem("New Shader")) {
 				ImGui.closeCurrentPopup();
 				
-				popup = "shader";
+				popup = "Shader";
 				openNewPopup = true;
 			}
 			
 			if (ImGui.menuItem("New Scene")) {
 				ImGui.closeCurrentPopup();
 				
-				popup = "scene";
+				popup = "Scene";
 				openNewPopup = true;
 			}
 			
@@ -150,15 +145,38 @@ public final class Assets {
 		}
 				
 		if(ImGui.beginPopup(popup)) {
+			ImGui.text(popup + " name");
+			
+			folderName.set(popup);
 			ImGui.inputText("##", folderName);
 			
 			if(Input.isKeyDown(KeyCode.Return)) {
 				if(folderName.get().length() > 0) {
-					switch(popup) {
+					switch(popup.toLowerCase()) {
+					case "folder":
+						core.getEditor().addFolder(folderName.get(), inFolder);
+						
+						break;
 					case "script":
 						Folder f = core.getEditor().addFolder(folderName.get() + ".java", inFolder);
 						
 						createScript(f);
+						
+						break;
+					case "material":
+						Folder f2 = core.getEditor().addFolder(folderName.get() + ".material", inFolder);
+						
+						createMaterial(f2);
+						
+						break;
+					case "shader":
+						Folder f3 = core.getEditor().addFolder(folderName.get() + ".glsl", inFolder);
+						
+						createShader(f3);
+						
+						break;
+					case "scene":
+						core.getEditor().addFolder(folderName.get() + ".scene", inFolder);
 						
 						break;
 					default:
@@ -238,122 +256,6 @@ public final class Assets {
 		}
 		
 		ImGui.columns(1);
-	}
-
-	@SuppressWarnings("unused")
-	private void drawFolder(Folder folder, float x, float y) {
-		if(folder.equals(core.getDraggedObject())) {
-			x = (float)Input.getMouseX();
-			y = (float)Input.getMouseY();
-		}
-		
-		String name = folder.getName();
-		float txtSize = 0.50f;
-		
-		if(name.length() > 7) {
-			name = name.substring(0, 7);
-			txtSize = 0.40f;
-			name += "..";
-		}
-		
-		if(UI.drawButton(x, y, -0.2f, 64, 64, name,4, 60, -0.2f, txtSize, txtSize,
-				 folder.equals(selectedFolder) ? Color.cyan : Color.black, Color.white,
-				folder.getTexture())/* && !Editor.isPlaying()*/) {
-			if(core.getDraggedObject() == null && Input.isMouseButton(KeyCode.Mouse0) && Input.isDragging()) {
-				File f = new File(folder.getAbsolutePath());
-				
-				if(f.isFile()) {
-					core.setDraggedObject(folder);
-				}
-			}
-			
-			if(folder.equals(selectedFolder) && Input.doubleClicked()) {
-				selectedFolder = null;
-				
-				File f = new File(folder.getAbsolutePath());
-				
-				if(f.isDirectory()) {
-					inFolder = folder;
-				} else {
-					if(folder.getName().endsWith(".scene")) {
-						core.getEditor().saveProject();
-						
-						String sceneName = folder.getName().substring(0, folder.getName().length() - 6); //6 - .scene
-						
-						SceneManager.loadScene(sceneName);
-					} else {
-						if(Desktop.isDesktopSupported()) {
-							try {
-								Desktop.getDesktop().edit(new File(folder.getAbsolutePath()));
-							} catch (Exception e) {
-								if(e.getMessage().contains("No application is associated with the specified file for this operation")) {
-									//TODO: Make error log
-									System.err.println("[ERROR] Couldn't find an application to open this type of file; " + folder.getName());
-								} else {
-									System.err.println(e.getMessage());
-								}
-							}
-						} else {
-							//TODO: Make error log
-							System.err.println("[ERROR] Desktop is not supported! This game engine is made for Windows only!");
-						}
-					}
-				}
-			} else if(!Input.isDragging() && Input.isMouseButtonUp(KeyCode.Mouse0)) {
-				selectedFolder = folder;
-				
-				//if(folder.getAbsolutePath().endsWith(".java")) {
-					core.getGUI().getHierachy().setSelectedObject(null);
-					core.setLastSelectedObject(folder);
-				//}
-			}
-		}
-	}
-	
-	public void Popup(String s) {
-		if(s.equals("New Folder")) {
-			String folderName = tinyfd_inputBox("Folder name!", "What would you like to name the folder?", "");
-			
-			if(folderName == null)
-				return;
-			
-			core.getEditor().addFolder(folderName, inFolder);
-		} else if(s.equals("New Script")) {
-			String folderName = tinyfd_inputBox("Script name!", "What would you like to name the Script?", "");
-			
-			if(folderName == null)
-				return;
-			
-			Folder f = core.getEditor().addFolder(folderName + ".java", inFolder);
-			
-			createScript(f);
-		} else if(s.equals("New Material")) {
-			String folderName = tinyfd_inputBox("Material name!", "What would you like to name the Material?", "");
-			
-			if(folderName == null)
-				return;
-			
-			Folder f = core.getEditor().addFolder(folderName + ".material", inFolder);
-			
-			createMaterial(f);
-		} else if(s.equals("New Shader")) {
-			String folderName = tinyfd_inputBox("Shader name!", "What would you like to name the Shader?", "");
-			
-			if(folderName == null)
-				return;
-			
-			Folder f = core.getEditor().addFolder(folderName + ".glsl", inFolder);
-			
-			createShader(f);
-		} else if(s.equals("New Scene")) {
-			String folderName = tinyfd_inputBox("Scene name!", "What would you like to name the Scene?", "");
-			
-			if(folderName == null) {
-				return;
-			}
-			
-			core.getEditor().addFolder(folderName + ".scene", inFolder);
-		}
 	}
 	
 	public Folder getFolder(String name) {
