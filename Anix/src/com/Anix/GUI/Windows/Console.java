@@ -71,6 +71,10 @@ public final class Console {
 		}
 	}
 	
+	public void render() {
+		
+	}
+	
 	public void clear() {
 		messages.clear();
 	}

@@ -22,6 +22,7 @@ import com.Anix.Main.Core;
 
 import imgui.ImGui;
 import imgui.ImVec2;
+import imgui.flag.ImGuiWindowFlags;
 import imgui.type.ImString;
 
 public final class Assets {
@@ -72,11 +73,11 @@ public final class Assets {
 	
 	public void render() {
 		startY = Application.getHeight();
-
-		ImGui.setNextWindowPos(startX, startY);
-		ImGui.setNextWindowSize(Application.getFullWidth(), height);
-
-		ImGui.begin("##", GUI.defaultFlags);
+		
+		ImGui.setNextWindowPos(startX, startY+25);
+		ImGui.setNextWindowSize(Application.getFullWidth(), height-25);
+		
+		ImGui.begin("##", GUI.defaultFlags | ImGuiWindowFlags.NoDecoration);
 		
 		if(inFolder != null) {
 			if(ImGui.button(inFolder.getAbsolutePath())) {
@@ -96,7 +97,6 @@ public final class Assets {
 			}
 		}
 		
-		//"New Folder", "New Script", "New Material", "New Shader", "New Scene"
 		if (ImGui.beginPopup("AssetsOptions")) {
 			if (ImGui.menuItem("New Folder")) {
 

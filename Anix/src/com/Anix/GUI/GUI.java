@@ -52,8 +52,8 @@ public final class GUI {
 		hierachy = new Hierachy();
 		sceneViewer = new SceneViewer(core);
 		inspector = new Inspector();
+		assetsMenuBar = new AssetsMenuBar();
 		assets = new Assets(core);
-		assetsMenuBar = new AssetsMenuBar(this);
 		console = new Console(this);
 		
 		inspector.init();
@@ -63,7 +63,6 @@ public final class GUI {
 	
 	public void update() throws IllegalArgumentException, IllegalAccessException {
 		sceneViewer.update();
-		assetsMenuBar.update();
 		
 		if(ProjectSettings.isEditor) {
 			assetsStore.update();
@@ -83,8 +82,13 @@ public final class GUI {
 		sceneViewer.render(); //TODO: MEMROY LEAKAGE
 		hierachy.render();
 		inspector.render();
-		assets.render();
+		assetsMenuBar.render();
 		
+		if(assetsMenuBar.getSelectedMenu() == MenuType.Assets)
+			assets.render();
+		else if(assetsMenuBar.getSelectedMenu() == MenuType.Console)
+			console.render();
+			
 		menuBar.render();
 	}
 	

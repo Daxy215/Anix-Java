@@ -1,11 +1,11 @@
 package com.Anix.GUI.Windows;
 
 import com.Anix.GUI.GUI;
-import com.Anix.GUI.UI;
 import com.Anix.IO.Application;
-import com.Anix.IO.Input;
-import com.Anix.IO.KeyCode;
-import com.Anix.Math.Color;
+
+import imgui.ImGui;
+import imgui.flag.ImGuiCol;
+import imgui.flag.ImGuiWindowFlags;
 
 public class AssetsMenuBar {
 	public static enum MenuType {
@@ -14,34 +14,40 @@ public class AssetsMenuBar {
 	
 	private int startX = 0, startY = 0;	
 	private int width = 0, height = 25;
-	private final float lineWidth = 1f, lineHeight = 1f;
-	
-	private GUI gui;
 	
 	private MenuType selectedMenu = MenuType.Assets;
 	
-	public AssetsMenuBar(GUI gui) {
-		this.gui = gui;
-	}
-	
-	public void update() {
-		startY = Application.getFullHeight() - (gui.getAssets().getHeight());
+	public void render() {
+		startY = Application.getHeight();
 		width = Application.getFullWidth();
 		
-		//Panel - Tool bar
-		UI.drawButtonWithOutline(startX, startY, -0.2f, width, height, lineWidth, lineHeight, Color.silver, Color.black);
+		ImGui.setNextWindowPos(startX, startY);
+		ImGui.setNextWindowSize(Application.getFullWidth(), height);
 		
-		if(UI.drawButton(startX + 8, startY + 2, -0.3f, 50, 20, "Assets", 0, -0.5f, -0.1f, 0.5f, 0.5f, Color.black,
-				(selectedMenu == MenuType.Assets ? Color.DARK_GRAY : Color.gray))
-				&& Input.isMouseButtonDown(KeyCode.Mouse0)) {
-			selectedMenu = MenuType.Assets;
+		ImGui.begin("##AssetsMenuBar", GUI.defaultFlags | ImGuiWindowFlags.NoDecoration);
+		
+		for(int i = 0; i < MenuType.values().length; i++) {
+			if(selectedMenu.equals(MenuType.values()[i])) {
+				ImGui.pushStyleColor(ImGuiCol.Button, 0.95f, 0.21f, 0.32f, 255);
+			}
+			
+			if(ImGui.button(MenuType.values()[i].name())) {
+				if(selectedMenu.equals(MenuType.values()[i]))
+					ImGui.popStyleColor();
+				
+				selectedMenu = MenuType.values()[i];
+				
+				continue;
+			}
+			
+			if(selectedMenu.equals(MenuType.values()[i])) {
+				ImGui.popStyleColor();
+			}
+			
+			ImGui.sameLine();
 		}
 		
-		if(UI.drawButton(startX + 70, startY + 2, -0.3f, 60, 20, "Console", 0, -0.5f, -0.1f, 0.5f, 0.5f, Color.black,
-				(selectedMenu == MenuType.Console ? Color.DARK_GRAY : Color.gray))
-				&& Input.isMouseButtonDown(KeyCode.Mouse0)) {
-			selectedMenu = MenuType.Console;
-		}
+		ImGui.end();
 	}
 
 	public int getStartX() {

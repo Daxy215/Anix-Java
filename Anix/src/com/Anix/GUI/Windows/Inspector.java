@@ -51,7 +51,7 @@ public final class Inspector {
 	public void render() {
 		startX = Application.getFullWidth() - width;
 		height = Application.getFullHeight() - 250;//assets
-
+		
 		ImGui.setNextWindowPos(startX, startY);
 		ImGui.setNextWindowSize(width, height);
 		
@@ -91,7 +91,7 @@ public final class Inspector {
 					ImGui.closeCurrentPopup();
 				}
 			}
-		
+			
 			ImGui.endPopup();
 	    }
 		
@@ -170,7 +170,7 @@ public final class Inspector {
 		for(int i = 0; i < Hierachy.selectedObject.getBehaviours().size(); i++) {
 			Behaviour behaviour = Hierachy.selectedObject.getBehaviours().get(i);
 			//TODO: Add flags - If behaviour has no fields. Don't show arrow.
-			if(ImGui.treeNode(behaviour.getName())) {
+			if(ImGui.treeNodeEx(behaviour.getName())) {
 				try {
 					drawFields(behaviour);
 				} catch (IllegalArgumentException | IllegalAccessException e) {

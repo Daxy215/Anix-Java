@@ -143,8 +143,8 @@ public final class Core implements Runnable {
 		style.setColor(ImGuiCol.SliderGrab, 0.47f, 0.77f, 0.83f, 0.14f);
 		style.setColor(ImGuiCol.SliderGrabActive, 0.92f, 0.18f, 0.29f, 1.00f);
 		style.setColor(ImGuiCol.Button, 0.47f, 0.77f, 0.83f, 0.14f);
-		style.setColor(ImGuiCol.ButtonHovered, 0.92f, 0.18f, 0.29f, 0.86f);
-		style.setColor(ImGuiCol.ButtonActive, 0.92f, 0.18f, 0.29f, 1.00f);
+		style.setColor(ImGuiCol.ButtonHovered, 0.92f, 0.18f, 0.29f, 0.75f);
+		style.setColor(ImGuiCol.ButtonActive, 0.95f, 0.21f, 0.32f, 1.00f);
 		style.setColor(ImGuiCol.Header, 0.92f, 0.18f, 0.29f, 0.76f);
 		style.setColor(ImGuiCol.HeaderHovered, 0.92f, 0.18f, 0.29f, 0.86f);
 		style.setColor(ImGuiCol.HeaderActive, 0.92f, 0.18f, 0.29f, 1.00f);
