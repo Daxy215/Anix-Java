@@ -61,19 +61,11 @@ public final class GUI {
 		assetsStore.init();
 	}
 	
-	public void update() throws IllegalArgumentException, IllegalAccessException {
+	public void update() {
 		sceneViewer.update();
 		
 		if(ProjectSettings.isEditor) {
 			assetsStore.update();
-		}
-		
-		if(assetsMenuBar.getSelectedMenu() == MenuType.Assets) {
-			assets.render();
-		}
-		
-		if(assetsMenuBar.getSelectedMenu() == MenuType.Console) {
-			console.update();
 		}
 	}
 	

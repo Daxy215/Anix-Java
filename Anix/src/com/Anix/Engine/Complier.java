@@ -18,7 +18,15 @@ import javax.tools.JavaFileObject;
 import javax.tools.StandardJavaFileManager;
 import javax.tools.ToolProvider;
 
+import com.Anix.Behaviours.AudioPlayer;
 import com.Anix.Behaviours.Behaviour;
+import com.Anix.Behaviours.BoxCollider2D;
+import com.Anix.Behaviours.Button;
+import com.Anix.Behaviours.Camera;
+import com.Anix.Behaviours.LightSource;
+import com.Anix.Behaviours.MeshRenderer;
+import com.Anix.Behaviours.Physics2D;
+import com.Anix.Behaviours.SpriteRenderer;
 import com.Anix.GUI.Windows.Console;
 import com.Anix.IO.ProjectSettings;
 
@@ -88,6 +96,15 @@ final class Complier {
 		}
 		
 		Editor.importedClasses.clear();
+		
+		Editor.importedClasses.add(new AudioPlayer());
+		Editor.importedClasses.add(new BoxCollider2D());
+		Editor.importedClasses.add(new Button());
+		Editor.importedClasses.add(new Camera());
+		Editor.importedClasses.add(new LightSource());
+		Editor.importedClasses.add(new MeshRenderer());
+		Editor.importedClasses.add(new Physics2D());
+		Editor.importedClasses.add(new SpriteRenderer());
 		
 		classLoader = new URLClassLoader(new URL[]{classesDir.toURI().toURL()});
 		Thread.currentThread().setContextClassLoader(classLoader);

@@ -75,9 +75,9 @@ public final class Assets {
 		startY = Application.getHeight();
 		
 		ImGui.setNextWindowPos(startX, startY+25);
-		ImGui.setNextWindowSize(Application.getFullWidth(), height-25);
+		ImGui.setNextWindowSize(Application.getFullWidth(), height-50);
 		
-		ImGui.begin("##", GUI.defaultFlags | ImGuiWindowFlags.NoDecoration);
+		ImGui.begin("##Assets", GUI.defaultFlags | ImGuiWindowFlags.NoDecoration);
 		
 		if(inFolder != null) {
 			if(ImGui.button(inFolder.getAbsolutePath())) {
