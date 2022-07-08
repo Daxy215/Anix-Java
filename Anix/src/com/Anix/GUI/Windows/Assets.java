@@ -72,6 +72,10 @@ public final class Assets {
 		folders = new ArrayList<Folder>();
 	}
 	
+	private String popup = "";
+	private boolean openNewPopup;
+	private ImString folderName = new ImString("", 256);
+	
 	public void render() {
 		startY = Application.getHeight();
 
@@ -105,25 +109,70 @@ public final class Assets {
 			}
 			
 			if (ImGui.menuItem("New Script")) {
-				Folder f = core.getEditor().addFolder("test.java", inFolder);
+				//Folder f = core.getEditor().addFolder("test.java", inFolder);
 				
-				createScript(f);
+				//createScript(f);
+				ImGui.closeCurrentPopup();
+				
+				popup = "script";
+				openNewPopup = true;
+				
 			}
 			
 			if (ImGui.menuItem("New Material")) {
+				ImGui.closeCurrentPopup();
 				
+				popup = "material";
+				openNewPopup = true;
 			}
 			
 			if (ImGui.menuItem("New Shader")) {
+				ImGui.closeCurrentPopup();
 				
+				popup = "shader";
+				openNewPopup = true;
 			}
 			
 			if (ImGui.menuItem("New Scene")) {
+				ImGui.closeCurrentPopup();
 				
+				popup = "scene";
+				openNewPopup = true;
 			}
 			
 			ImGui.endPopup();
 	    }
+		
+		if(openNewPopup) {
+			ImGui.openPopup(popup);
+			
+			openNewPopup = false;
+		}
+				
+		if(ImGui.beginPopup(popup)) {
+			ImGui.inputText("##", folderName);
+			
+			if(Input.isKeyDown(KeyCode.Return)) {
+				if(folderName.get().length() > 0) {
+					switch(popup) {
+					case "script":
+						Folder f = core.getEditor().addFolder(folderName.get() + ".java", inFolder);
+						
+						createScript(f);
+						
+						break;
+					default:
+						System.err.println("Couldn't find a popup name of " + popup);
+						
+						break;
+					}
+				}
+				
+				ImGui.closeCurrentPopup();
+			}
+			
+			ImGui.endPopup();
+		}
 		
 		ImGui.end();
 	}

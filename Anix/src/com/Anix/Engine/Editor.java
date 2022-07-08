@@ -42,15 +42,9 @@ import java.util.stream.Collectors;
 
 import org.lwjgl.glfw.GLFW;
 
-import com.Anix.Behaviours.AudioPlayer;
 import com.Anix.Behaviours.Behaviour;
-import com.Anix.Behaviours.BoxCollider2D;
-import com.Anix.Behaviours.Button;
 import com.Anix.Behaviours.Camera;
 import com.Anix.Behaviours.LightSource;
-import com.Anix.Behaviours.MeshRenderer;
-import com.Anix.Behaviours.Physics2D;
-import com.Anix.Behaviours.SpriteRenderer;
 import com.Anix.Engine.Graphics.Mesh;
 import com.Anix.Engine.Graphics.Shader;
 import com.Anix.GUI.Sprite;
@@ -975,13 +969,13 @@ public final class Editor {
 	public static Behaviour getBehaviour(String behaviourName) {
 		for(int i = Editor.importedClasses.size() - 1; i >= 0; i--) {
 			String name = "";
-
+			
 			if(behaviourName.contains("\\")) {
 				String[] fullName = behaviourName.split("\\\\");
 
 				behaviourName = fullName[fullName.length - 1];
 			}
-
+			
 			if(Editor.importedClasses.get(i).getName().contains("\\")) {
 				String[] fullName = Editor.importedClasses.get(i).getName().split("\\\\");
 
@@ -989,10 +983,10 @@ public final class Editor {
 			} else {
 				name = Editor.importedClasses.get(i).getName();
 			}
-
+			
 			behaviourName = behaviourName.contains(".") ? behaviourName.split("\\.")[0] : behaviourName;
 			name = name.contains(".") ? name.split("\\.")[0] : name;
-
+			
 			if(name.equalsIgnoreCase(behaviourName)) {
 				try {
 					Behaviour beh = Editor.importedClasses.get(i).getClass().getConstructor().newInstance();
@@ -1158,6 +1152,7 @@ public final class Editor {
 	
 	//TODO: Future me, please make this better..
 	//jeez it has such trashy code
+	//TODO: Errror - ghmm C:\Users\Daxy\git\Anix-Java\Anix\Projects\my project\Assets\\yo.java - Has double \
 	public Folder addFolder(String fullPath, Folder parent) {
 		if(!ProjectSettings.isEditor) {
 			return null;
@@ -1168,7 +1163,7 @@ public final class Editor {
 			
 			return null;
 		}*/
-
+		
 		Texture texture = null;
 		
 		if(!fullPath.contains("\\")) {//It's a normal folder.
@@ -1245,6 +1240,8 @@ public final class Editor {
 			}
 		}
 		
+		System.err.println("ex " + extension + " " + file.isDirectory());
+		
 		if(file.isDirectory()) {
 			File[] files = file.listFiles();
 			
@@ -1268,6 +1265,7 @@ public final class Editor {
 			}
 		} else {
 			if(extension.equalsIgnoreCase("java")) {
+				System.err.println("ghmm " + fullPath);
 				createBytes(fullPath);
 			} else if(extension.equalsIgnoreCase("png") || extension.equalsIgnoreCase("jpg")) {
 				try {

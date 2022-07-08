@@ -169,7 +169,7 @@ public final class Inspector {
 		
 		for(int i = 0; i < Hierachy.selectedObject.getBehaviours().size(); i++) {
 			Behaviour behaviour = Hierachy.selectedObject.getBehaviours().get(i);
-			
+			//TODO: Add flags - If behaviour has no fields. Don't show arrow.
 			if(ImGui.treeNode(behaviour.getName())) {
 				try {
 					drawFields(behaviour);
