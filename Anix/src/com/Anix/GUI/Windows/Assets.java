@@ -1,5 +1,6 @@
 package com.Anix.GUI.Windows;
 
+import java.awt.Desktop;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
@@ -22,6 +23,7 @@ import com.Anix.Main.Core;
 
 import imgui.ImGui;
 import imgui.ImVec2;
+import imgui.flag.ImGuiDragDropFlags;
 import imgui.flag.ImGuiWindowFlags;
 import imgui.type.ImString;
 
@@ -99,7 +101,7 @@ public final class Assets {
 		
 		if (ImGui.beginPopup("AssetsOptions")) {
 			if (ImGui.menuItem("New Folder")) {
-
+				
 				ImGui.closeCurrentPopup();
 				
 				popup = "Folder";
@@ -143,7 +145,7 @@ public final class Assets {
 			
 			openNewPopup = false;
 		}
-				
+		
 		if(ImGui.beginPopup(popup)) {
 			ImGui.text(popup + " name");
 			
@@ -194,7 +196,7 @@ public final class Assets {
 		
 		ImGui.end();
 	}
-
+	
 	//Used for text calculation - A class variable to safe memory.
 	private ImVec2 vec2 = new ImVec2();
 	private ImString s = new ImString("", 187);
@@ -210,14 +212,25 @@ public final class Assets {
 			
 			ImGui.setColumnWidth(ImGui.getColumnIndex(), width);
 			
+			ImGui.pushID(s.get());
+			
+			//If folder was pressed - There is no use for it atm.
 			if(ImGui.imageButton(folder.getTexture().getId(), 
-					folder.getTexture().getWidth(), folder.getTexture().getHeight())) {
-				
-			}
+					folder.getTexture().getWidth(), folder.getTexture().getHeight())) {}
 			
 	        if (ImGui.isItemHovered() && ImGui.isMouseDoubleClicked(0)) {
 	        	if(folder.isDirectory()) {
 	        		inFolder = folder;
+	        	} else { //Open the file
+	        		if(!folder.getName().split("\\.")[1].equalsIgnoreCase("scene")) {
+		        		if(Desktop.isDesktopSupported()) {
+		        			try {
+								Desktop.getDesktop().open(folder);
+							} catch (IOException e) {
+								e.printStackTrace();
+							}
+		        		}
+	        		}
 	        	}
 	        }
 			
@@ -226,14 +239,12 @@ public final class Assets {
 			
 			//Move to under of the folder, for it's name.
 			ImGui.setCursorPos(ImGui.getCursorPosX() - folder.getTexture().getWidth() - 20, ImGui.getCursorPosY() + folders.get(0).getTexture().getHeight() + 5);
-			
-			ImGui.pushID(s.get());
-			
+						
 			s.set(folder.getName());
 			ImGui.pushItemWidth(100);
+			
 			if(ImGui.inputText("##", s)) {
 				if(s.get().length() > 0) {
-					//folder.renameTo(new File(folder.getParent() + "\\" + s.get()));
 					Path source = Paths.get(folder.getAbsolutePath());
 					
 					try {
@@ -244,6 +255,31 @@ public final class Assets {
 					
 					folders.set(i, new Folder(source.toString(), folder.getTexture()));
 				}
+			}
+			
+			if(ImGui.beginDragDropTarget()) {
+				Object o = ImGui.acceptDragDropPayload("Folder", ImGuiDragDropFlags.None);
+				
+				if(o != null) {
+					System.err.println("AOYOYOYOYOO " + (o.toString()));
+				}
+				
+				ImGui.endDragDropTarget();
+			}
+			
+			int src_flags = ImGuiDragDropFlags.SourceNoDisableHover; // Keep the source displayed as hovered
+			src_flags |= ImGuiDragDropFlags.SourceNoHoldToOpenOthers; // Because our dragging is local, we disable the feature of opening foreign treenodes/tabs while dragging
+			//src_flags |= ImGuiDragDropFlags.SourceNoPreviewTooltip; // Hide the tooltip
+			
+			if(ImGui.beginDragDropSource(src_flags)) {
+				//??
+				//if(!(src_flags & ImGuiDragDropFlags.SourceNoPreviewTooltip)) {
+				ImGui.text(folder.getName());
+				//}
+				
+				ImGui.setDragDropPayload("Folder", folder.getName());
+				
+				ImGui.endDragDropSource();
 			}
 			
 			ImGui.popItemWidth();

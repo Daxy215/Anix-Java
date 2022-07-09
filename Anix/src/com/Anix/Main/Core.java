@@ -114,6 +114,7 @@ public final class Core implements Runnable {
 		style.setItemInnerSpacing(6, 4);
 		style.setAlpha(0.95f);
 		style.setWindowRounding(0.0f); //4.0f
+		style.setWindowBorderSize(1);
 		style.setFrameRounding(2.0f);
 		//style.setIndentSpacing(6.0f);
 		style.setItemInnerSpacing(2, 4);
@@ -126,7 +127,7 @@ public final class Core implements Runnable {
 		style.setColor(ImGuiCol.Text, 0.86f, 0.93f, 0.89f, 0.78f);
 		style.setColor(ImGuiCol.TextDisabled, 0.86f, 0.93f, 0.89f, 0.28f);
 		style.setColor(ImGuiCol.WindowBg, 0.13f, 0.14f, 0.17f, 1.00f);
-		style.setColor(ImGuiCol.Border, 0.31f, 0.31f, 1.00f, 0.00f);
+		//style.setColor(ImGuiCol.Border, 0.31f, 0.31f, 1.00f, 0.00f);
 		style.setColor(ImGuiCol.BorderShadow, 0.00f, 0.00f, 0.00f, 0.00f);
 		style.setColor(ImGuiCol.FrameBg, 0.20f, 0.22f, 0.27f, 1.00f);
 		style.setColor(ImGuiCol.FrameBgHovered, 0.92f, 0.18f, 0.29f, 0.78f);

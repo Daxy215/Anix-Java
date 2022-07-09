@@ -7,7 +7,7 @@ import com.Anix.Objects.GameObject;
 
 public class Physics2D extends Behaviour {
 	private static final long serialVersionUID = -2911730552588220134L;
-
+	
 	private transient float currentGravity;
 	
 	public float friction = 1f;
@@ -15,8 +15,7 @@ public class Physics2D extends Behaviour {
 	public float mass = 0.25f;
 	
 	public boolean useGravity = true;
-	
-	public boolean isGrounded;
+	private boolean isGrounded;
 	
 	public Vector2f velocity = new Vector2f();
 	public Vector2f force = new Vector2f();
@@ -47,15 +46,15 @@ public class Physics2D extends Behaviour {
 		velocity.x = roundOffTo2DecPlaces(velocity.x);
 		velocity.y = roundOffTo2DecPlaces(velocity.y);
 		
-		if(velocity.x > 0.0f) {
+		if(velocity.x > 0.0000000f) {
 			velocity.x -= friction*Time.getDeltaTime();
-		} else if(velocity.x < 0.0f) {
+		} else if(velocity.x < 0.0000000f) {
 			velocity.x += friction*Time.getDeltaTime();
 		}
 		
-		if(velocity.y > 0.0f) {
+		if(velocity.y > 0.0000000f) {
 			velocity.y -= friction*Time.getDeltaTime();
-		} else if(velocity.y < 0.0f) {
+		} else if(velocity.y < 0.0000000f) {
 			velocity.y += friction*Time.getDeltaTime();
 		}
 		
@@ -92,7 +91,7 @@ public class Physics2D extends Behaviour {
 				velocity.y = 0;
 		}
 		
-		if(collision.getDirection() == 1) {
+		if(collision.getDirection() == 1) { //Bottom
 			isGrounded = true;
 			
 			collidedObject = collision.other;

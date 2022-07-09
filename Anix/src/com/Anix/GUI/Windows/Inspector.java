@@ -20,6 +20,7 @@ import com.Anix.Objects.GameObject;
 import imgui.ImColor;
 import imgui.ImDrawList;
 import imgui.ImGui;
+import imgui.flag.ImGuiDragDropFlags;
 import imgui.type.ImString;
 
 /**
@@ -59,6 +60,16 @@ public final class Inspector {
 		
 		drawObjectInformation();
 		drawBehaviours();
+		
+		if(ImGui.beginDragDropTarget()) {
+			Object o = ImGui.acceptDragDropPayload("Folder", ImGuiDragDropFlags.None);
+			
+			if(o != null) {
+				System.err.println("AOYOYOYOYOO " + (o.toString()));
+			}
+			
+			ImGui.endDragDropTarget();
+		}
 		
 		for(int i = 0; i < 10; i++) {
 			ImGui.spacing();
@@ -195,6 +206,7 @@ public final class Inspector {
 
 	//Fields variables
 	ImString sv = new ImString("", 256);
+	int[] iv = new int[1];
 	float[] fv = new float[3];
 	float[] cv = new float[3];
 	
@@ -228,13 +240,22 @@ public final class Inspector {
 		if(type.isPrimitive()) {
 			switch(typeName.toLowerCase()) {
 			case "byte":
+				iv[0] = f.getByte(object);
 				
+				if(ImGui.dragInt("", iv, 0.1f))
+					f.set(object, iv[0]);
 				break;
 			case "int":
-
+				iv[0] = f.getInt(object);
+				
+				if(ImGui.dragInt("", iv, 0.1f))
+					f.set(object, iv[0]);
 				break;
 			case "long":
-
+				iv[0] = (int) f.getLong(object);
+				
+				if(ImGui.dragInt("", iv, 0.1f))
+					f.set(object, iv[0]);
 				break;
 			case "float":
 				fv[0] = f.getFloat(object);
@@ -244,7 +265,10 @@ public final class Inspector {
 				
 				break;
 			case "double":
+				fv[0] = (float) f.getDouble(object);
 				
+				if(ImGui.dragFloat("", fv, 0.1f))
+					f.set(object, fv[0]);
 				break;
 			case "boolean":
 				boolean bv = f.getBoolean(object);
@@ -255,6 +279,7 @@ public final class Inspector {
 
 				break;
 			default:
+				System.err.println("couldn't find " + typeName);
 				ImGui.newLine();
 
 				break;
@@ -265,7 +290,8 @@ public final class Inspector {
 			if(ImGui.inputText(typeName, sv))
 				f.set(object, sv.toString());
 		} else if(type.getSimpleName().equalsIgnoreCase("gameobject")) {
-			ImGui.text(((GameObject)f.get(object)).getName());
+			if(((GameObject)f.get(object)) != null)
+				ImGui.text(((GameObject)f.get(object)).getName());
 		} else if(type.getSimpleName().equalsIgnoreCase("vector2f")) {
 			fv[0] = ((Vector2f)f.get(object)).x;
 			fv[1] = ((Vector2f)f.get(object)).y;

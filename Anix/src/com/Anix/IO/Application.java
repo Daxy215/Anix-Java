@@ -1,15 +1,6 @@
 package com.Anix.IO;
 
-import static org.lwjgl.opengl.GL11.GL_ALPHA_TEST;
-import static org.lwjgl.opengl.GL11.GL_DEPTH_TEST;
-import static org.lwjgl.opengl.GL11.GL_GREATER;
-import static org.lwjgl.opengl.GL11.GL_MODELVIEW;
-import static org.lwjgl.opengl.GL11.GL_PROJECTION;
-import static org.lwjgl.opengl.GL11.glAlphaFunc;
-import static org.lwjgl.opengl.GL11.glEnable;
-import static org.lwjgl.opengl.GL11.glLoadIdentity;
-import static org.lwjgl.opengl.GL11.glMatrixMode;
-import static org.lwjgl.opengl.GL11.glOrtho;
+import static org.lwjgl.opengl.GL11.*;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -94,13 +85,14 @@ public final class Application {
 		// will print the error message in System.err.
 		GLFWErrorCallback.createPrint(System.err).set();
 		
-		GLFW.glfwWindowHint(GLFW.GLFW_CONTEXT_VERSION_MAJOR, 3);
-		GLFW.glfwWindowHint(GLFW.GLFW_CONTEXT_VERSION_MINOR, 0);
+		//GLFW.glfwWindowHint(GLFW.GLFW_CONTEXT_VERSION_MAJOR, 3);
+		//GLFW.glfwWindowHint(GLFW.GLFW_CONTEXT_VERSION_MINOR, 0);
 		
 		GLFW.glfwWindowHint(GLFW.GLFW_VISIBLE, GLFW.GLFW_FALSE);
 		GLFW.glfwWindowHint(GLFW.GLFW_RESIZABLE, GLFW.GLFW_TRUE);
 		
 		input = new Input();
+		
 		window = GLFW.glfwCreateWindow(width, height, title, isFullscreen ? GLFW.glfwGetPrimaryMonitor() : 0, 0);
 		
 		if(window == 0) {
@@ -117,6 +109,8 @@ public final class Application {
 		GLFW.glfwMakeContextCurrent(window);
 		GLFW.glfwShowWindow(window);
 		
+		GLFW.glfwGetWindowPos(window, windowPosX, windowPosY);
+		
 		GL.createCapabilities();
 		
 		GLFW.glfwWindowHint(GLFW.GLFW_OPENGL_DEBUG_CONTEXT, GLFW.GLFW_TRUE);
@@ -127,7 +121,7 @@ public final class Application {
         GL11.glHint(GL11.GL_POLYGON_SMOOTH_HINT, GL11.GL_NICEST); //  Really Nice Perspective Calculations
 		GL11.glHint(GL11.GL_POINT_SMOOTH_HINT, GL11.GL_NICEST);
 		
-		GLFW.glfwWindowHint(GLFW.GLFW_CONTEXT_VERSION_MAJOR, 3);
+		GLFW.glfwWindowHint(GLFW.GLFW_CONTEXT_VERSION_MAJOR, 0);
 		GLFW.glfwWindowHint(GLFW.GLFW_CONTEXT_VERSION_MINOR, 3);
 	    GLFW.glfwWindowHint(GLFW.GLFW_OPENGL_PROFILE, GLFW.GLFW_OPENGL_CORE_PROFILE);
         
@@ -138,13 +132,15 @@ public final class Application {
 		
 		glMatrixMode(GL_MODELVIEW);
 		glEnable(GL_ALPHA_TEST);
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		glAlphaFunc(GL_GREATER, 0.1f);
 		glEnable(GL_DEPTH_TEST);
 		
 		createCallbacks();
 		
 		GLFW.glfwShowWindow(window);
-		GLFW.glfwSwapInterval(0);
+		GLFW.glfwSwapInterval(1);
 		updateProjection();
 		
 		ImGui.createContext();

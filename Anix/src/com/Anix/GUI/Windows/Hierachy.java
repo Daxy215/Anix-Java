@@ -9,6 +9,8 @@ import com.Anix.Behaviours.SpriteRenderer;
 import com.Anix.Engine.Editor;
 import com.Anix.GUI.GUI;
 import com.Anix.IO.Application;
+import com.Anix.IO.Input;
+import com.Anix.IO.KeyCode;
 import com.Anix.Math.Vector3f;
 import com.Anix.Objects.GameObject;
 import com.Anix.SceneManager.Scene;
@@ -56,10 +58,10 @@ public final class Hierachy {
 	        if (ImGui.beginMenu("3D Object")) {
 	            if (ImGui.menuItem("Cube")) {
 	            	GameObject gameObject = new GameObject("New GameObject", new Vector3f(0, 0, 0), new Vector3f(0, 0, 0), new Vector3f(1, 1, 1));
-
+	            	
 	    			gameObject.addBehaviour(new SpriteRenderer());
 	            }
-
+	            
 				if (ImGui.beginMenu("Light")) {
 					if (ImGui.menuItem("Directional Light")) {
 
@@ -75,10 +77,10 @@ public final class Hierachy {
 	        
 	        if(ImGui.menuItem("Camera")) {
 	        	GameObject gameObject = new GameObject("Camera", new Vector3f(0, 0, 5), new Vector3f(0, 0, 0), new Vector3f(1, 1, 1));
-
+	        	
 				gameObject.addBehaviour(new Camera());
 	        }
-
+	        
 			ImGui.endPopup();
 	    }
 
@@ -86,6 +88,12 @@ public final class Hierachy {
 
 		if(curScene != null) {
 			drawObjects(curScene.getGameObjects(), 0);
+		}
+		
+		if(selectedObject != null) {
+			if(Input.isKeyDown(KeyCode.Delete)) {
+				selectedObject.destroy();
+			}
 		}
 
 		ImGui.popStyleVar();
@@ -171,6 +179,7 @@ public final class Hierachy {
 			
 			if(object.hasChildren() && open) {
 				drawObjects(object.getChildren(), index + 1);
+				
 				try {
 					ImGui.treePop();
 				} catch(Exception e) {

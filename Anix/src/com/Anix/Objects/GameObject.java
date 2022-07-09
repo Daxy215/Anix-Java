@@ -387,18 +387,18 @@ public class GameObject /*extends Entity*/ implements Cloneable, Serializable {
 		return behaviours.stream().filter(b -> b.getClass().equals(behaviour)).findFirst().orElse(null);
 	}
 	
-	public void addBehaviour(Behaviour behaviour) {
+	public Behaviour addBehaviour(Behaviour behaviour) {
 		if(behaviour == null) {
 			System.err.println("[ERROR] Cannot add a null behaviour!");
 			
-			return;
+			return null;
 		}
 		
 		for(int i = 0; i < behaviours.size(); i++) {
 			if(behaviours.get(i).getName().equals(behaviour.getName())) {
 				System.err.println("[ERROR] This behaviour already exists in this GameObject!");
 				
-				return;
+				return null;
 			}
 		}
 		
@@ -417,6 +417,8 @@ public class GameObject /*extends Entity*/ implements Cloneable, Serializable {
 		}
 		
 		behaviours.add(behaviour);
+		
+		return behaviour;
 	}
 	
 	public void removeBehaviour(Behaviour behaviour) {

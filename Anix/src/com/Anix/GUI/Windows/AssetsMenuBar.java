@@ -26,6 +26,8 @@ public class AssetsMenuBar {
 		
 		ImGui.begin("##AssetsMenuBar", GUI.defaultFlags | ImGuiWindowFlags.NoDecoration);
 		
+		ImGui.setCursorPos(ImGui.getCursorPosX(), ImGui.getCursorPosY() - 3.5f);
+		
 		for(int i = 0; i < MenuType.values().length; i++) {
 			if(selectedMenu.equals(MenuType.values()[i])) {
 				ImGui.pushStyleColor(ImGuiCol.Button, 0.95f, 0.21f, 0.32f, 255);
