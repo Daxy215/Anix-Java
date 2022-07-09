@@ -16,6 +16,7 @@ import com.Anix.Behaviours.LightSource;
 import com.Anix.IO.Application;
 import com.Anix.IO.Input;
 import com.Anix.IO.KeyCode;
+import com.Anix.Math.MathD;
 import com.Anix.Math.Matrix4f;
 import com.Anix.Math.Vector3f;
 import com.Anix.Objects.GameObject;
@@ -91,13 +92,6 @@ public final class MasterRenderer {
 		if(Camera.main == null) {
 			return;
 		}
-		
-		//offsetX = gui.getHierachy().getStartX() + gui.getHierachy().getWidth();
-		//offsetY = gui.getMenuBar().getStartY() + gui.getMenuBar().getHeight();
-		
-		//int buffer = GL15.glGenBuffers();
-		//GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, buffer);
-		//GL15.glBufferData(GL15.GL_ARRAY_BUFFER, meshes.length * matrixSize, FloatBuffer.allocate(2), GL15.GL_STATIC_DRAW);
 		
 		Object[] meshes = null;
 		
@@ -206,16 +200,16 @@ public final class MasterRenderer {
 					continue;
 				}
 								
-				//if(MathD.distanceBetweenVector2(entity.getPosition().getXY(), Camera.main.gameObject.getPosition().getXY()) > 30 + Camera.main.gameObject.getPosition().z - 10)
-				//	continue;
+				if(MathD.distanceBetweenVector2(entity.getPosition().getXY(), Camera.main.gameObject.getPosition().getXY()) > 30 + Camera.main.gameObject.getPosition().z - 10)
+					continue;
 				
 				//Slow method.
-				/*Vector3f pos = Camera.main.convertWorldToScreenSpace(entity.getPosition());
+				Vector3f pos = Camera.main.convertWorldToScreenSpace(entity.getPosition());
 				
 				if(pos.x > Application.getFullWidth() + 64 || pos.x < -64
 						|| pos.y > Application.getFullHeight() + 64|| pos.y < -64) {
 					continue;
-				}*/
+				}
 				
 				shader.setUniform("color", mesh.getMaterial().getColor());
 				
@@ -227,17 +221,6 @@ public final class MasterRenderer {
 				
 				shader.setUniform("model", entity.getTransform());
 				
-				//int buffer = ;
-			    //glGenBuffers(1, &buffer);
-			    //glBindBuffer(GL_ARRAY_BUFFER, buffer);
-			    //glBufferData(GL_ARRAY_BUFFER, amount * sizeof(glm::mat4), &modelMatrices[0], GL_STATIC_DRAW);
-				
-				//FloatBuffer matrix = FloatBuffer.allocate(4 * 4);
-				
-				//int buffer = GL15.glGenBuffers();
-				//GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, buffer);
-				//GL15.glBufferData(GL15.GL_ARRAY_BUFFER, entity.getTransform().getAll(), GL15.GL_STATIC_DRAW);
-				
 				if(GLFW.glfwGetCurrentContext() != Application.getWindow()) {
 					System.err.println("cannot share between contexts.. " + GLFW.glfwGetCurrentContext() + " - " + Application.getWindow());
 					
@@ -246,8 +229,6 @@ public final class MasterRenderer {
 				
 				GL11.glDrawElements(GL11.GL_TRIANGLES, mesh.getIndices().length, GL11.GL_UNSIGNED_INT, 0);
 			}
-			
-			//GL31.glDrawElementsInstanced(GL11.GL_TRIANGLES, mesh.getIndices().length, GL11.GL_UNSIGNED_INT, 0, batch.size());
 			
 			unBindMesh(mesh);
 			
@@ -258,7 +239,6 @@ public final class MasterRenderer {
 		if(Input.isKeyDown(KeyCode.L)) {
 			System.err.println("Took " + (Math.abs(System.currentTimeMillis() - start) + "ms to render " + amount + " entities"));
 		}
-		//System.err.println("rendered: " + amount + " entities");
 		
 		GL11.glDisable(GL11.GL_TEXTURE_2D);
 	}
