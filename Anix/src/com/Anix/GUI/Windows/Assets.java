@@ -74,10 +74,11 @@ public final class Assets {
 	private ImString folderName = new ImString("", 256);
 	
 	public void render() {
-		startY = Application.getHeight();
+		startY = Application.getHeight() + (core.getGUI().getAssetsMenuBar().getHeight() * 2);
+		height = 250 - (core.getGUI().getAssetsMenuBar().getHeight() * 2);
 		
-		ImGui.setNextWindowPos(startX, startY+25);
-		ImGui.setNextWindowSize(Application.getFullWidth(), height-50);
+		ImGui.setNextWindowPos(startX, startY);
+		ImGui.setNextWindowSize(Application.getFullWidth(), height);
 		
 		ImGui.begin("##Assets", GUI.defaultFlags | ImGuiWindowFlags.NoDecoration);
 		

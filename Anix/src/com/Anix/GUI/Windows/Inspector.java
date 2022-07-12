@@ -24,13 +24,13 @@ import imgui.flag.ImGuiDragDropFlags;
 import imgui.type.ImString;
 
 /**
- * TODOAdd, if field has /** in it, then,
- * on hover, it should show it as a tooltip.
- * pretty sure it's impossible ._.
- * 
- * Redo this entire class because,
- * It was made by an idiot old me aka
- * all the code sucks :D
+ * Add, if field has /** in it, then,<br>
+ * on hover, it should show it as a tooltip.<br>
+ * pretty sure it's impossible ._.<br>
+ * <br>
+ * Redo this entire class because,<br>
+ * It was made by an idiot old me aka<br>
+ * all the code sucks :D<br>
  */
 public final class Inspector {
 	private int startX = 0, startY = 25;
@@ -51,7 +51,7 @@ public final class Inspector {
 	
 	public void render() {
 		startX = Application.getFullWidth() - width;
-		height = Application.getFullHeight() - 250;//assets
+		height = Application.getHeight();
 		
 		ImGui.setNextWindowPos(startX, startY);
 		ImGui.setNextWindowSize(width, height);
@@ -61,6 +61,7 @@ public final class Inspector {
 		drawObjectInformation();
 		drawBehaviours();
 		
+		//TODO; Fix this.
 		if(ImGui.beginDragDropTarget()) {
 			Object o = ImGui.acceptDragDropPayload("Folder", ImGuiDragDropFlags.None);
 			

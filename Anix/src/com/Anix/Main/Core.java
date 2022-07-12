@@ -54,9 +54,9 @@ import imgui.flag.ImGuiConfigFlags;
  * <br>
  * Make parent support for a GameObject.<br>
  * <br>
- * TODO: Java file wouldn't load when first added inside a folder.<br>
+ * Java file wouldn't load when first added inside a folder.<br>
  * somehow fixed itself :D<br>
- * It is back????????<br>
+ * It is back???????? - Fixed, file had an extra '/'<br>
  * <br>
  * There is a weird outline in the Inspect object information texts:-<br>
  * Fixed: Reason, because it was rendering the text and then the box of a button.<br>
@@ -72,7 +72,8 @@ import imgui.flag.ImGuiConfigFlags;
  * Fix not being able to save Maps: Cannot find a (Map) Key deserializer for type [simple type, class Building].<br>
  * Used a different saving system :)<br>
  * <br>
- * TODO: Another memory leak -.-<br>
+ * Another memory leak<br>
+ * Wasn't a memory leak, but a lot of new instances being created from the UI so I used ImGui.<br>
  * <br>
  */
 public final class Core implements Runnable {

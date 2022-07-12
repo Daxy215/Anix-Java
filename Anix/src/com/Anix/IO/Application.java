@@ -380,7 +380,7 @@ public final class Application {
 	
 	public static int getHeight() {
 		if(ProjectSettings.isEditor) {
-			return getFullHeight() - (gui.getAssets().getHeight() - gui.getMenuBar().getHeight());
+			return getFullHeight() - (gui.getAssets().getHeight() + gui.getMenuBar().getHeight());
 		}
 		
 		return getFullHeight();

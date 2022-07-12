@@ -18,7 +18,7 @@ public class AssetsMenuBar {
 	private MenuType selectedMenu = MenuType.Assets;
 	
 	public void render() {
-		startY = Application.getHeight();
+		startY = Application.getHeight() + height;
 		width = Application.getFullWidth();
 		
 		ImGui.setNextWindowPos(startX, startY);
