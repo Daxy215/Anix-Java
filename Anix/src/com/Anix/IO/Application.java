@@ -131,9 +131,9 @@ public final class Application {
 		glOrtho(0, width, height, 0, 1, -1);
 		
 		glMatrixMode(GL_MODELVIEW);
-		glEnable(GL_ALPHA_TEST);
+		//glEnable(GL_ALPHA_TEST);
 		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		glAlphaFunc(GL_GREATER, 0.1f);
 		glEnable(GL_DEPTH_TEST);
 		

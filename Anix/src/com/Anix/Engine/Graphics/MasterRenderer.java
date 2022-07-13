@@ -12,7 +12,6 @@ import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
 
 import com.Anix.Behaviours.Camera;
-import com.Anix.Behaviours.LightSource;
 import com.Anix.IO.Application;
 import com.Anix.IO.Input;
 import com.Anix.IO.KeyCode;
@@ -33,7 +32,7 @@ public final class MasterRenderer {
 	private Shader shader;
 	
 	//private List<GameObject> entitiesToAdd = new ArrayList<>();
-	private List<GameObject> combinedObjects;
+	private List<GameObject> combinedObjects = new ArrayList<>();
 	private Map<Mesh, List<GameObject>> entities = new HashMap<Mesh, List<GameObject>>();
 	
 	public MasterRenderer(boolean testRender /*GUI gui*/) {
@@ -72,6 +71,11 @@ public final class MasterRenderer {
 	}
 	
 	public void render() {
+		if(Input.isKeyDown(KeyCode.F)) {
+			testRender = !testRender;
+			System.err.println("testing rendering: " + testRender);
+		}
+		
 		if(testRender) {
 			r2();
 		} else {
@@ -200,7 +204,7 @@ public final class MasterRenderer {
 					continue;
 				}
 								
-				if(MathD.distanceBetweenVector2(entity.getPosition().getXY(), Camera.main.gameObject.getPosition().getXY()) > 30 + Camera.main.gameObject.getPosition().z - 10)
+				if(MathD.distanceBetweenVector2(entity.getPosition().getXY(), Camera.main.gameObject.getPosition().getXY()) > 30 + Camera.main.gameObject.getPosition().z + 15)
 					continue;
 				
 				//Slow method.
@@ -251,6 +255,47 @@ public final class MasterRenderer {
 			return;
 		}
 		
+		GL11.glEnable(GL11.GL_TEXTURE_2D);
+		
+		if(Input.isKeyDown(KeyCode.L)) {
+			combinedObjects.clear();
+			
+			Object[] meshes = null;
+			
+			try {
+				meshes = entities.keySet().toArray();
+			} catch(Exception e) {
+				System.err.println("Error :( " + e.getMessage());
+				
+				return;
+			}
+			
+			for(int i = 0; i < meshes.length; i++) {
+				mesh = (Mesh)meshes[i];
+				
+				if(!mesh.hasBeenCreated) {
+					mesh.create();
+				}
+				
+				List<GameObject> batch = entities.get(mesh);
+				
+				if(batch == null) {
+					entities.remove(mesh);
+					
+					return;
+				}
+				
+				GameObject ojb = combineObjects(batch);
+				
+				if(ojb != null)
+					combinedObjects.add(ojb);
+			}
+			
+			System.err.println("amuot " + combinedObjects.size());
+		}
+		
+		int amount = 0;
+		
 		for(int l = 0; l < combinedObjects.size(); l++) {
 			GameObject entity = combinedObjects.get(l);
 			
@@ -273,92 +318,100 @@ public final class MasterRenderer {
 			
 			shader.bind();
 			
-			shader.setUniform("view", Matrix4f.view(Camera.main.gameObject.getPosition(), Camera.main.gameObject.getRotation()));
+			shader.setUniform("view", Camera.main.getViewMatrix());
 			shader.setUniform("projection", Application.getProjectionMatrix());
 			
-			if(LightSource.lights.size() > 0) {
+			prepareMesh(mesh);
+			
+			shader.setUniform("lightPosition", Camera.main.gameObject.getPosition());
+			
+			/*if(LightSource.lights.size() > 0) {
 				LightSource light = LightSource.lights.get(0);
 				
 				shader.setUniform("lightPosition", light.gameObject.getPosition());
 				shader.setUniform("lightColor", light.color);
 				shader.setUniform("strength", light.strength);
-			}
-			
-			prepareMesh(mesh);
+			}*/
 			
 			shader.setUniform("color", mesh.getMaterial().getColor());
-
+			
 			if(entity.getTransform() == null) {
 				System.err.println("[ERROR] Couldn't render a GameObject with the name of " + entity.getName());
-
+				
 				continue;
 			}
-
+			
 			shader.setUniform("model", entity.getTransform());
-
+			
 			GL11.glDrawElements(GL11.GL_TRIANGLES, mesh.getIndices().length, GL11.GL_UNSIGNED_INT, 0);
-
+			
 			unBindMesh(mesh);
-
+			
 			shader.unbind();
+			
+			amount++;
+		}
+		
+		if(Input.isKeyDown(KeyCode.K)) {
+			System.err.println("render " + amount);
 		}
 	}
-	
-	@SuppressWarnings("unused")
+		
 	private GameObject combineObjects(List<GameObject> batch) {
 		if(batch.isEmpty())
 			return null;
 		
-		GameObject e = batch.get(0);
+		List<Vertex> vertices = new ArrayList<Vertex>();
+		List<Integer> indices = new ArrayList<Integer>();
 		
-		int index = 0;
-		
-		while(e.getMesh() == null && index < batch.size()) {
-			e = batch.get(index);
-			
-			index++;
-		}
-		
-		GameObject entity = e.clone();
-		Mesh mesh = entity.getMesh().clone();
-		
-		if(mesh == null) {
-			return null;
-		}
-		
-		List<Vertex> vertices = new ArrayList<>();
-		List<Integer> indices = new ArrayList<>();
+		System.err.println("looping through: " + batch.size());
 		
 		for(int j = 0; j < batch.size(); j++) {
-			Vector3f pos = e.getPosition().copy();
+			Mesh mesh = batch.get(j).getMesh();
+			Vector3f pos = batch.get(j).getPosition();
+			
+			if(mesh == null)
+				return null;
 			
 			int vertsSize = mesh.getVertices().length;
-			int indcSize = mesh.getIndices().length;
 			
-			for(int l = 0; l < vertsSize || l < indcSize; l++) {
-				if(l < vertsSize) {
-					//Vertex v = new Vertex(
-					//		new Vector3f(pos.x + mesh.getVertices()[l].getPosition().x, pos.y + mesh.getVertices()[l].getPosition().y, mesh.getVertices()[l].getPosition().z),
-					//		mesh.getVertices()[l].getTextureCoord());
-					//if(e.getName().equals("Player"))
-					//	System.err.println("pos: " + v.getPosition() + " " + batch.size());
-					
-					//vertices.add(v);
-				}
+			for(int l = 0; l < vertsSize; l++) {
+				/*Vertex v = new Vertex(
+							new Vector3f(pos.x + mesh.getVertices()[l].getPosition().x, 
+									pos.y + mesh.getVertices()[l].getPosition().y, 
+									pos.z + mesh.getVertices()[l].getPosition().z),
+							mesh.getVertices()[l].getNormal(), //NORMALS.. TODO
+							mesh.getVertices()[l].getTextureCoord());*/
+				Vertex v = mesh.getVertices()[l].clone();
+				v.getPosition().add(pos);
 				
-				if(l < indcSize) {
-					indices.add(mesh.getIndices()[l]);
-				}
+				//if(batch.size() == 5) {
+				//	System.err.println("mesh: " + pos.toString() + " - " + mesh.getVertices()[l].getPosition().x + " " + mesh.getVertices()[l].getPosition().y);
+				//}
+				
+				//vertices.add(mesh.getVertices()[l]);
+				vertices.add(v);
 			}
 			
-			indices.set(indcSize - 2, 1);
-			indices.set(indcSize - 1, 2);
+			int tl = vertices.size() - 4 * 4;
+			
+			for(int i = 0; i < 4; i++) {
+				indices.add(tl + i * 4);
+				indices.add(tl + i * 4 + 1);
+				indices.add(tl + i * 4 + 2);
+				indices.add(tl + i * 4);
+				indices.add(tl + i * 4 + 2);
+				indices.add(tl + i * 4 + 3);
+			}
 		}
 		
-		mesh.set(vertices, indices);
-		entity.setMesh(mesh);
+		System.err.println("For " + batch.size() + " batches. Created a mesh with " + vertices.size() + " vertices and " + indices.size() + " indices");
 		
-		return entity;
+		Mesh mesh = new Mesh(batch.get(0).getMesh().getSprite());
+		mesh.set(vertices, indices);
+		mesh.create();
+		
+		return new GameObject("", new Vector3f(), new Vector3f(), new Vector3f(1), mesh, false);
 	}
 	
 	public void render(GameObject gameObject) {

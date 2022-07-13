@@ -21,13 +21,8 @@ public class Vertex implements Serializable, Cloneable {
 	
 	@Override
 	protected Vertex clone() {
-		try {
-			return (Vertex)super.clone();
-		} catch(CloneNotSupportedException e) {
-			e.printStackTrace();
-		}
-		
-		return null;
+		//return (Vertex)super.clone();
+		return new Vertex(position.copy(), normal.copy(), textureCoord.copy());
 	}
 	
 	public Vector3f getPosition() {

@@ -69,18 +69,18 @@ public class Matrix4f implements Serializable {
 		float sin = (float) Math.sin(Math.toRadians(angle));
 		float C = 1f - cos;
 		
-		set(0, 0, get(0, 0) * cos + axis.getX() * axis.getX() * C);
+		set(0, 0, get(0, 0) * cos + axis.getX() * axis.getX() * C);//
 		set(0, 1, get(0, 1) * axis.getX() * axis.getY() * C - axis.getZ() * sin);
 		set(0, 2, get(0, 2) * axis.getX() * axis.getZ() * C + axis.getY() * sin);
 		
 		//Inverted these.
-		set(0, 1, get(0, 1) * axis.getY() * axis.getX() * C + axis.getZ() * sin);
-		set(1, 1, get(1, 1) * cos + axis.getY() * axis.getY() * C);
-		set(2, 1, get(2, 1) * axis.getY() * axis.getZ() * C - axis.getX() * sin);
+		set(1, 0, get(1, 0) * axis.getY() * axis.getX() * C + axis.getZ() * sin);
+		set(1, 1, get(1, 1) * cos + axis.getY() * axis.getY() * C);//
+		set(1, 2, get(1, 2) * axis.getY() * axis.getZ() * C - axis.getX() * sin);
 		
 		set(2, 0, get(2, 0) * axis.getZ() * axis.getX() * C - axis.getY() * sin);
 		set(2, 1, get(2, 1) * axis.getZ() * axis.getY() * C + axis.getX() * sin);
-		set(2, 2, get(2, 2) * cos + axis.getZ() * axis.getZ() * C);
+		set(2, 2, get(2, 2) * cos + axis.getZ() * axis.getZ() * C);//
 	}
 	
 	public static Matrix4f scale(Vector3f scalar) {
@@ -89,7 +89,7 @@ public class Matrix4f implements Serializable {
 		result.set(0, 0, scalar.getX());
 		result.set(1, 1, scalar.getY());
 		result.set(2, 2, scalar.getZ());
-		result.set(3, 3, 1);
+		//result.set(3, 3, 1);
 		
 		return result;
 	}
@@ -117,9 +117,9 @@ public class Matrix4f implements Serializable {
 		translationMatrix.rotateLocal(rotation.getX(), new Vector3f(1, 0, 0));
 		translationMatrix.rotateLocal(rotation.getY(), new Vector3f(0, 1, 0));
 		translationMatrix.rotateLocal(rotation.getZ(), new Vector3f(0, 0, 1));
-		translationMatrix.scaleLocal(scale); //TODO: upon rotation, if scale isn't 1. If rotation was 90, then it'll be 1.
+		//translationMatrix.scaleLocal(scale); //TODO: upon rotation, if scale isn't 1. If rotation was 90, then it'll be 1.
 		
-		return translationMatrix;
+		return translationMatrix.multiply(Matrix4f.scale(scale));
 	}
 	
 	public static Matrix4f projection(float fov, float aspect, float near, float far) {
@@ -233,7 +233,7 @@ public class Matrix4f implements Serializable {
 		result = prime * result + Arrays.hashCode(elements);
 		return result;
 	}
-
+	
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)

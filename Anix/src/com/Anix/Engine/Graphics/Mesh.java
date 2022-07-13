@@ -198,7 +198,7 @@ public class Mesh implements Serializable, Cloneable {
 	@Override
 	protected Mesh clone()  {
 		try {
-		return (Mesh)super.clone();
+			return (Mesh)super.clone();
 		} catch(CloneNotSupportedException e) {
 			System.err.println("[ERORR] Cloning a mesh is not supported apparently..");
 			return null;

@@ -201,7 +201,12 @@ public final class Inspector {
 		for(int i = 0; i < behaviour.getFields().length; i++) {
 			Field f = behaviour.getFields()[i];
 			
-			drawField(f, behaviour);
+			try {
+				drawField(f, behaviour);
+			} catch (IllegalArgumentException | IllegalAccessException | NoSuchMethodException | SecurityException
+					| InvocationTargetException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 
@@ -211,7 +216,7 @@ public final class Inspector {
 	float[] fv = new float[3];
 	float[] cv = new float[3];
 	
-	private void drawField(Field f, Object object) throws IllegalArgumentException, IllegalAccessException {
+	private <T> void drawField(Field f, Object object) throws IllegalArgumentException, IllegalAccessException, NoSuchMethodException, SecurityException, InvocationTargetException {
 		Class<?> type = f.getType();
 		String typeName = type.getSimpleName();
 		
@@ -312,7 +317,21 @@ public final class Inspector {
 				
 				f.set(object, vec3);
 			}
-		}/* else if(type.getSimpleName().equalsIgnoreCase("color")) {
+		} else if(type.isEnum()) {
+			if(ImGui.beginCombo("#", f.get(object).toString())) {
+				Method value = type.getMethod("values");
+				Object[] values = (Object[]) value.invoke(null, null);
+				
+				for(int i = 0; i < values.length; i++) {
+					if(ImGui.selectable(values[i].toString())) {
+						f.set(object, values[i]);
+					}
+				}
+				
+				ImGui.endCombo();
+			}
+		}
+		/* else if(type.getSimpleName().equalsIgnoreCase("color")) {
 			System.err.println(object.getClass().getPackageName());
 			Color c = (Color)object;
 			cv[0] = c.r;
@@ -325,16 +344,19 @@ public final class Inspector {
 			
 			f.set(object, c);
 		} */else {
-			ImGui.newLine();
+			//ImGui.newLine();
 			
 			if(ImGui.treeNodeEx(type.getSimpleName())) {
 			//if(ImGui.collapsingHeader(type.getSimpleName())) {
 				
 				ImGui.treePop();
+				ImGui.popID();
 				
 				for(int i = 0; i < type.getFields().length; i++) {
 					if(Modifier.isStatic(type.getFields()[i].getModifiers()))
 						continue;
+					
+					counter++;
 					
 					try {
 						drawField(type.getFields()[i], type);
@@ -344,6 +366,10 @@ public final class Inspector {
 						//e.printStackTrace(System.err);
 					}
 				}
+				
+				counter++;
+				
+				return;
 			}
 		}
 		

@@ -36,7 +36,7 @@ public final class SceneViewer {
 		if(Editor.isPlaying() || true) {
 			Scene currentScene = SceneManager.getCurrentScene();
 			
-			if(UI.drawButton(Application.getStartX(), Application.getStartY(), Application.getWidth(), Application.getHeight())) {
+			if(UI.drawButton(Application.getStartX(), Application.getStartY(), Application.getWidth(), Application.getHeight()) && !Editor.isPlaying()) {
 				if(currentScene != null && Camera.main != null) {
 					if(ProjectSettings.projectType.equals(ProjectType.D2)) {
 						Camera.main.gameObject.getPosition().z -= Input.getScrollY();
