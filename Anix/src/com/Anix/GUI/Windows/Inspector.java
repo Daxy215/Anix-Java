@@ -13,6 +13,7 @@ import com.Anix.Engine.Editor;
 import com.Anix.GUI.GUI;
 import com.Anix.IO.Application;
 import com.Anix.IO.AutoCorrector;
+import com.Anix.Math.Color;
 import com.Anix.Math.Vector2f;
 import com.Anix.Math.Vector3f;
 import com.Anix.Objects.GameObject;
@@ -199,26 +200,44 @@ public final class Inspector {
 	
 	private void drawFields(Behaviour behaviour) throws IllegalArgumentException, IllegalAccessException {
 		for(int i = 0; i < behaviour.getFields().length; i++) {
-			Field f = behaviour.getFields()[i];
-			
 			try {
-				drawField(f, behaviour);
+				drawField(behaviour.getFields()[i], behaviour);
 			} catch (IllegalArgumentException | IllegalAccessException | NoSuchMethodException | SecurityException
 					| InvocationTargetException e) {
 				e.printStackTrace();
 			}
 		}
 	}
-
+	
+	private void drawFields(Object object) {
+		if(object == null)
+			return;
+		
+		for(int i = 0; i < object.getClass().getFields().length; i++) {
+			try {
+				if(Modifier.isStatic(object.getClass().getFields()[i].getModifiers()))
+					continue;
+				
+				drawField(object.getClass().getFields()[i], object);
+			} catch (IllegalArgumentException | IllegalAccessException | NoSuchMethodException | SecurityException
+					| InvocationTargetException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+	
 	//Fields variables
 	ImString sv = new ImString("", 256);
 	int[] iv = new int[1];
 	float[] fv = new float[3];
 	float[] cv = new float[3];
 	
-	private <T> void drawField(Field f, Object object) throws IllegalArgumentException, IllegalAccessException, NoSuchMethodException, SecurityException, InvocationTargetException {
+	private void drawField(Field f, Object object) throws IllegalArgumentException, IllegalAccessException, NoSuchMethodException, SecurityException, InvocationTargetException {
 		Class<?> type = f.getType();
 		String typeName = type.getSimpleName();
+		
+		if(Modifier.isFinal(type.getModifiers()))
+			return;
 		
 		Header header = f.getAnnotation(Header.class);
 		
@@ -282,12 +301,12 @@ public final class Inspector {
 				if(ImGui.checkbox("", bv)) {
 					f.set(object, !bv);
 				}
-
+				
 				break;
 			default:
 				System.err.println("couldn't find " + typeName);
 				ImGui.newLine();
-
+				
 				break;
 			}
 		} else if(type.getSimpleName().equalsIgnoreCase("string")) {
@@ -298,6 +317,8 @@ public final class Inspector {
 		} else if(type.getSimpleName().equalsIgnoreCase("gameobject")) {
 			if(((GameObject)f.get(object)) != null)
 				ImGui.text(((GameObject)f.get(object)).getName());
+			else
+				ImGui.text("null");
 		} else if(type.getSimpleName().equalsIgnoreCase("vector2f")) {
 			fv[0] = ((Vector2f)f.get(object)).x;
 			fv[1] = ((Vector2f)f.get(object)).y;
@@ -330,44 +351,31 @@ public final class Inspector {
 				
 				ImGui.endCombo();
 			}
-		}
-		/* else if(type.getSimpleName().equalsIgnoreCase("color")) {
-			System.err.println(object.getClass().getPackageName());
-			Color c = (Color)object;
-			cv[0] = c.r;
-			cv[1] = c.g;
-			cv[2] = c.b;
-			ImGui.colorEdit3("#", cv);
-			c.r = cv[0];
-			c.r = cv[1];
-			c.r = cv[2];
+		}else if(type.getSimpleName().equalsIgnoreCase("color")) {
+			Color c = (Color)f.get(object);
 			
-			f.set(object, c);
-		} */else {
+			if(c != null) {
+				cv[0] = c.r;
+				cv[1] = c.g;
+				cv[2] = c.b;
+				ImGui.colorEdit3("#", cv);
+				c.r = cv[0];
+				c.g = cv[1];
+				c.b = cv[2];
+				
+				f.set(object, c);
+			}
+		} else {
 			//ImGui.newLine();
 			
 			if(ImGui.treeNodeEx(type.getSimpleName())) {
 			//if(ImGui.collapsingHeader(type.getSimpleName())) {
-				
 				ImGui.treePop();
 				ImGui.popID();
 				
-				for(int i = 0; i < type.getFields().length; i++) {
-					if(Modifier.isStatic(type.getFields()[i].getModifiers()))
-						continue;
-					
-					counter++;
-					
-					try {
-						drawField(type.getFields()[i], type);
-					} catch(Exception e) {
-						//TODO: Can not get float field com.Anix.Math.Color.r on java.lang.Class
-						//System.err.println("fd " + type.getFields()[i].getType() + " - " + object.getClass());
-						//e.printStackTrace(System.err);
-					}
-				}
-				
 				counter++;
+				
+				drawFields(f.get(object));
 				
 				return;
 			}
