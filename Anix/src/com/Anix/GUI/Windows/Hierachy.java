@@ -65,7 +65,7 @@ public final class Hierachy {
 	            
 				if (ImGui.beginMenu("Light")) {
 					if (ImGui.menuItem("Directional Light")) {
-
+						
 					}
 
 					ImGui.endMenu();
@@ -135,7 +135,9 @@ public final class Hierachy {
 				}
 				
 				if(ImGui.button("Duplicate")) {
-					ImGui.text("doesn't work yet too lazy");
+					GameObject o = object.clone();
+					
+					SceneManager.getCurrentScene().addObject(o);
 				}
 				
 				ImGui.endPopup();
@@ -146,8 +148,9 @@ public final class Hierachy {
 			}
 			
 			if(ImGui.isItemHovered() && ImGui.isMouseDoubleClicked(0)) {
-				//TODO: Focus on object.
-				System.err.println("double clicked");
+				if(Camera.main != null) {
+					Camera.main.gameObject.setPosition(object.getPosition().x, object.getPosition().y);
+				}
 			}
 			
 			if(ImGui.isItemHovered() && ImGui.isMouseClicked(0)) {
@@ -187,11 +190,7 @@ public final class Hierachy {
 			if(object.hasChildren() && open) {
 				drawObjects(object.getChildren(), index + 1);
 				
-				try {
-					ImGui.treePop();
-				} catch(Exception e) {
-					System.err.println(object.getName() + " - " + e.getMessage());
-				}
+				ImGui.treePop();
 			}
 		}
 	}

@@ -3,10 +3,12 @@ package com.Anix.Objects;
 import java.io.CharArrayWriter;
 import java.io.PrintWriter;
 import java.io.Serializable;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import com.Anix.Annotation.ScriptAble;
 import com.Anix.Behaviours.Behaviour;
@@ -281,15 +283,37 @@ public class GameObject /*extends Entity*/ implements Cloneable, Serializable {
 	public GameObject clone() {
 		try {
 			GameObject clone = (GameObject)super.clone();
+			clone.position = position.copy();
+			clone.rotation = rotation.copy();
+			clone.scale = scale.copy();
 			
 			List<GameObject> children = new ArrayList<>();
 			
 			if(this.children == null)
 				this.children = new ArrayList<>();
 			
+			clone.setBehaviours(getBehaviours().stream().map(d -> {
+				try {
+					return d.getClass().getConstructor().newInstance();
+				} catch (InstantiationException | IllegalAccessException | IllegalArgumentException
+						| InvocationTargetException | NoSuchMethodException | SecurityException e) {
+					e.printStackTrace();
+				}
+				
+				return null;
+			}).collect(Collectors.toCollection(ArrayList::new)));
+			
 			for(int i = 0; i < behaviours.size() || i < this.children.size(); i++) {
-				if(clone.getBehaviours().size() > i)
+				if(clone.getBehaviours().size() > i) {
 					clone.getBehaviours().get(i).gameObject = clone;
+					
+					if(clone.getBehaviours().get(i).isEnabled)
+						clone.getBehaviours().get(i).awake();
+					
+					if(Editor.isPlaying()) {
+						clone.getBehaviours().get(i).start();
+					}
+				}
 				
 				if(this.children.size() > i)
 					children.add(this.children.get(i));
@@ -410,10 +434,10 @@ public class GameObject /*extends Entity*/ implements Cloneable, Serializable {
 		
 		if(behaviour.isEnabled) {
 			behaviour.awake();
-		}
-		
-		if(Editor.isPlaying()) {
-			behaviour.start();
+			
+			if(Editor.isPlaying()) {
+				behaviour.start();
+			}
 		}
 		
 		behaviours.add(behaviour);

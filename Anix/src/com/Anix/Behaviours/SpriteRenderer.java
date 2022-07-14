@@ -12,6 +12,7 @@ public class SpriteRenderer extends Behaviour {
 	
 	@Type(values = {"png", "jpg"})
 	public String spriteName = "Default.png";
+	private String value;
 	
 	public Material material = new Material();
 	
@@ -20,6 +21,8 @@ public class SpriteRenderer extends Behaviour {
 	
 	@Override
 	public void awake() {
+		value = spriteName;
+		
 		updateSprite();
 		
 		if(Core.getMasterRenderer() != null && Camera.main != null) {
@@ -33,6 +36,11 @@ public class SpriteRenderer extends Behaviour {
 	public void render() {
 		if(gameObject == null)
 			return;
+		
+		if(value != spriteName) {
+			value = spriteName;
+			updateSprite();
+		}
 		
 		if(gameObject.getMesh() != null && !gameObject.getMesh().getMaterial().equals(material))
 			gameObject.getMesh().setMaterial(material);

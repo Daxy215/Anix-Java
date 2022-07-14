@@ -8,5 +8,6 @@ public class BoxCollider2D extends Behaviour {
 	@Override
 	public void start() {
 		Collider2D.colliders.add(this);
+		System.err.println("starting");
 	}
 }

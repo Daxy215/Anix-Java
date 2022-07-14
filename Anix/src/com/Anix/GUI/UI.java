@@ -1366,7 +1366,7 @@ public final class UI {
 			
 			format = GL_RGBA;
 		}
-
+		
 		glTexImage2D(GL_TEXTURE_2D, 0, format, w, h, 0, format, GL_UNSIGNED_BYTE, image);
 		
 		ByteBuffer input_pixels = image;
@@ -1386,7 +1386,7 @@ public final class UI {
 							STBIR_FILTER_MITCHELL,
 							STBIR_COLORSPACE_SRGB
 					);
-
+			
 			if (mipmapLevel == 0) {
 				stbi_image_free(image);
 			} else {

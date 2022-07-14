@@ -21,11 +21,6 @@ import com.Anix.Math.Vector3f;
 import com.Anix.Objects.GameObject;
 
 public final class MasterRenderer {
-	//private float offsetX, offsetY;
-	//private int matrixSize;
-	
-	//private GUI gui;
-	
 	private boolean testRender;
 	
 	private Mesh mesh;
@@ -35,15 +30,12 @@ public final class MasterRenderer {
 	private List<GameObject> combinedObjects = new ArrayList<>();
 	private Map<Mesh, List<GameObject>> entities = new HashMap<Mesh, List<GameObject>>();
 	
-	public MasterRenderer(boolean testRender /*GUI gui*/) {
-		//this.gui = gui;
+	public MasterRenderer(boolean testRender) {
 		this.testRender = testRender;
 		
 		if(testRender) {
 			combinedObjects = new ArrayList<>();
 		}
-		
-		//matrixSize = (4 * 4);
 	}
 	
 	public void update() {
@@ -83,15 +75,6 @@ public final class MasterRenderer {
 		}
 	}
 	
-	/**
-	 * [LWJGL] OpenGL debug message
-	ID: 0x500
-	Source: API
-	Type: ERROR
-	Severity: HIGH
-	Message: GL_INVALID_ENUM error generated. Invalid target.
-	 *	Fixed :D
-	 */
 	private void r() {
 		if(Camera.main == null) {
 			return;
@@ -152,23 +135,6 @@ public final class MasterRenderer {
 			
 			prepareMesh(mesh);
 			
-			/*light.Color = vec3(1.0, 1.0, 1.0);
-		    light.AmbientIntensity = vec3(0.1, 0.1, 0.1);
-		    light.DiffuseIntensity = vec3(0.8, 0.8, 0.8);
-		    light.Position = vec3(20, 20, 20);*/
-			
-			shader.setUniform("lightPosition", Camera.main.gameObject.getPosition());
-			
-			//for(int k = 0; k < LightSource.lights.size(); k++) {
-			/*if(LightSource.lights.size() > 0) {
-				LightSource light = LightSource.lights.get(0);
-				
-				shader.setUniform("lightPosition", light.gameObject.getPosition());
-				shader.setUniform("lightColor", light.color);
-				shader.setUniform("strength", light.strength);
-			}*/
-			//}
-			
 			List<GameObject> batch = entities.get(mesh);
 			
 			if(batch == null) {
@@ -203,7 +169,7 @@ public final class MasterRenderer {
 				if(!entity.isEnabled()) {
 					continue;
 				}
-								
+				
 				if(MathD.distanceBetweenVector2(entity.getPosition().getXY(), Camera.main.gameObject.getPosition().getXY()) > 30 + Camera.main.gameObject.getPosition().z + 15)
 					continue;
 				
@@ -356,7 +322,7 @@ public final class MasterRenderer {
 			System.err.println("render " + amount);
 		}
 	}
-		
+	
 	private GameObject combineObjects(List<GameObject> batch) {
 		if(batch.isEmpty())
 			return null;
@@ -446,20 +412,6 @@ public final class MasterRenderer {
 		GL20.glEnableVertexAttribArray(1);
 		GL20.glEnableVertexAttribArray(2);
 		
-		/*GL20.glEnableVertexAttribArray(2);
-		GL20.glVertexAttribPointer(2, 4, GL11.GL_FLOAT, false, matrixSize, 0);
-		GL20.glEnableVertexAttribArray(3);
-		GL20.glVertexAttribPointer(3, 4, GL11.GL_FLOAT, false, matrixSize, (4));
-		GL20.glEnableVertexAttribArray(4);
-		GL20.glVertexAttribPointer(4, 4, GL11.GL_FLOAT, false, matrixSize, (2 * 4));
-		GL20.glEnableVertexAttribArray(5);
-		GL20.glVertexAttribPointer(5, 4, GL11.GL_FLOAT, false, matrixSize, (3 * 4));
-		
-		GL33.glVertexAttribDivisor(2, 1);
-		GL33.glVertexAttribDivisor(3, 1);
-		GL33.glVertexAttribDivisor(4, 1);
-		GL33.glVertexAttribDivisor(5, 1);*/
-		
 		GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, mesh.getIBO());
 		
 		if(mesh.getSprite().getTexture() == null) {
@@ -474,8 +426,6 @@ public final class MasterRenderer {
 		GL20.glDisableVertexAttribArray(0);
 		GL20.glDisableVertexAttribArray(1);
 		GL20.glDisableVertexAttribArray(2);
-		//GL20.glDisableVertexAttribArray(3);
-		//GL20.glDisableVertexAttribArray(4);
 		GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, 0);
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
 	}
@@ -498,8 +448,6 @@ public final class MasterRenderer {
 			newBatch.add(entity);
 			entities.put(mesh, newBatch);
 		}
-		
-		//meshes = entities.keySet().toArray();
 	}
 	
 	public void destroy() {

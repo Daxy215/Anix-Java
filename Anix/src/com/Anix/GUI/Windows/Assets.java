@@ -201,6 +201,7 @@ public final class Assets {
 	//Used for text calculation - A class variable to safe memory.
 	private ImVec2 vec2 = new ImVec2();
 	private ImString s = new ImString("", 187);
+	private float folderWidth = 64, folderHeight = 64;
 	
 	private void drawFolders(List<Folder> folders) {
 		int width = 90;
@@ -217,7 +218,7 @@ public final class Assets {
 			
 			//If folder was pressed - There is no use for it atm.
 			if(ImGui.imageButton(folder.getTexture().getId(), 
-					folder.getTexture().getWidth(), folder.getTexture().getHeight())) {}
+					folderWidth, folderHeight)) {}
 			
 	        if (ImGui.isItemHovered() && ImGui.isMouseDoubleClicked(0)) {
 	        	if(folder.isDirectory()) {
@@ -239,10 +240,10 @@ public final class Assets {
 			ImGui.calcTextSize(vec2, folder.getName());
 			
 			//Move to under of the folder, for it's name.
-			ImGui.setCursorPos(ImGui.getCursorPosX() - folder.getTexture().getWidth() - 20, ImGui.getCursorPosY() + folders.get(0).getTexture().getHeight() + 5);
-						
+			ImGui.setCursorPos(ImGui.getCursorPosX() - folderWidth - 20, ImGui.getCursorPosY() + folderHeight + 5);
+			
 			s.set(folder.getName());
-			ImGui.pushItemWidth(100);
+			ImGui.pushItemWidth(80);
 			
 			if(ImGui.inputText("##", s)) {
 				if(s.get().length() > 0) {

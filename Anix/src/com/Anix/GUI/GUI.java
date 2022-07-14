@@ -64,9 +64,9 @@ public final class GUI {
 	public void update() {
 		sceneViewer.update();
 		
-		if(ProjectSettings.isEditor) {
-			assetsStore.update();
-		}
+		//if(ProjectSettings.isEditor) {
+		//	assetsStore.update();
+		//}
 	}
 	
 	public void render() {

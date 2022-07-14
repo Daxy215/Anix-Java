@@ -22,6 +22,7 @@ import imgui.ImColor;
 import imgui.ImDrawList;
 import imgui.ImGui;
 import imgui.flag.ImGuiDragDropFlags;
+import imgui.type.ImBoolean;
 import imgui.type.ImString;
 
 /**
@@ -35,7 +36,7 @@ import imgui.type.ImString;
  */
 public final class Inspector {
 	private int startX = 0, startY = 25;
-	private int width = 250, height = 0;
+	private int width = 300, height = 0;
 	private int counter;
 	
 	private AutoCorrector autoCorrector;
@@ -43,7 +44,7 @@ public final class Inspector {
 	public Inspector() {
 		
 	}
-
+	
 	public void init() {
 		autoCorrector = new AutoCorrector();
 	}
@@ -112,16 +113,16 @@ public final class Inspector {
 		
 		counter = 0;
 	}
-
+	
 	//Info
 	ImString name = new ImString("", 256);
 	float[] pos = new float[3];
 	float[] rot = new float[3];
 	float[] scl = new float[3];
-
+	
 	private void drawObjectInformation() {
 		GameObject obj = Hierachy.selectedObject;
-
+		
 		if(obj == null)
 			return;
 		
@@ -133,7 +134,7 @@ public final class Inspector {
 		obj.setName(name.toString());
 		
 		//Position
-		ImGui.pushID("Position");
+		ImGui.pushID("Position" + obj.uuid);
 		
 		ImGui.text("Position: ");
 		ImGui.sameLine();
@@ -147,7 +148,7 @@ public final class Inspector {
 		ImGui.popID();
 		
 		//Rotation
-		ImGui.pushID("Rotation");
+		ImGui.pushID("Rotation" + obj.uuid);
 		
 		ImGui.text("Rotation: ");
 		ImGui.sameLine();
@@ -160,7 +161,7 @@ public final class Inspector {
 		ImGui.popID();
 		
 		//Scale
-		ImGui.pushID("Scale");
+		ImGui.pushID("Scale" + obj.uuid);
 		
 		ImGui.text("Scale:    ");
 		ImGui.sameLine();
@@ -182,6 +183,16 @@ public final class Inspector {
 		
 		for(int i = 0; i < Hierachy.selectedObject.getBehaviours().size(); i++) {
 			Behaviour behaviour = Hierachy.selectedObject.getBehaviours().get(i);
+			
+			//Checkbox to Enable/Disable Behaviour.
+			ImGui.pushID("jghijogijoerofcef "  + i + " - " + counter);
+			if(ImGui.checkbox("##", behaviour.isEnabled)) {
+				behaviour.isEnabled = !behaviour.isEnabled;
+			}
+			ImGui.popID();
+			
+			ImGui.sameLine();
+			
 			//TODO: Add flags - If behaviour has no fields. Don't show arrow.
 			if(ImGui.treeNodeEx(behaviour.getName())) {
 				try {
@@ -201,6 +212,9 @@ public final class Inspector {
 	private void drawFields(Behaviour behaviour) throws IllegalArgumentException, IllegalAccessException {
 		for(int i = 0; i < behaviour.getFields().length; i++) {
 			try {
+				if(Modifier.isStatic(behaviour.getFields()[i].getModifiers()) || Modifier.isFinal(behaviour.getFields()[i].getModifiers()))
+					return;
+				
 				drawField(behaviour.getFields()[i], behaviour);
 			} catch (IllegalArgumentException | IllegalAccessException | NoSuchMethodException | SecurityException
 					| InvocationTargetException e) {
@@ -215,7 +229,7 @@ public final class Inspector {
 		
 		for(int i = 0; i < object.getClass().getFields().length; i++) {
 			try {
-				if(Modifier.isStatic(object.getClass().getFields()[i].getModifiers()))
+				if(Modifier.isStatic(object.getClass().getFields()[i].getModifiers()) || Modifier.isFinal((object.getClass().getFields()[i].getModifiers())))
 					continue;
 				
 				drawField(object.getClass().getFields()[i], object);
@@ -235,9 +249,6 @@ public final class Inspector {
 	private void drawField(Field f, Object object) throws IllegalArgumentException, IllegalAccessException, NoSuchMethodException, SecurityException, InvocationTargetException {
 		Class<?> type = f.getType();
 		String typeName = type.getSimpleName();
-		
-		if(Modifier.isFinal(type.getModifiers()))
-			return;
 		
 		Header header = f.getAnnotation(Header.class);
 		
@@ -312,7 +323,7 @@ public final class Inspector {
 		} else if(type.getSimpleName().equalsIgnoreCase("string")) {
 			sv.set(f.get(object).toString());
 			
-			if(ImGui.inputText(typeName, sv))
+			if(ImGui.inputText("", sv))
 				f.set(object, sv.toString());
 		} else if(type.getSimpleName().equalsIgnoreCase("gameobject")) {
 			if(((GameObject)f.get(object)) != null)
@@ -358,7 +369,7 @@ public final class Inspector {
 				cv[0] = c.r;
 				cv[1] = c.g;
 				cv[2] = c.b;
-				ImGui.colorEdit3("#", cv);
+				ImGui.colorEdit3("##", cv);
 				c.r = cv[0];
 				c.g = cv[1];
 				c.b = cv[2];

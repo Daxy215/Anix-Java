@@ -62,6 +62,36 @@ public final class Collider2D extends BoxCollider2D {
 			}
 		}
 		
+		/*for(int i = 0; i < movers.size(); i++) {
+			for(int j = 0; j < movers.size(); j++) {
+				if(i == j)
+					continue;
+				
+				checkCollision(movers.get(i), movers.get(j));
+			}
+		}
+		
+		for(int i = 0; i < movers.size(); i++) {
+			for(int j = 0; j < solids.size(); j++) {
+				checkCollision(movers.get(i), solids.get(j));
+			}
+		}
+		
+		for(int i = 0; i < solids.size(); i++) {
+			for(int j = 0; j < solids.size(); j++) {
+				if(i == j)
+					continue;
+				
+				checkCollision(solids.get(i), solids.get(j));
+			}
+		}
+		
+		for(int i = 0; i < solids.size(); i++) {
+			for(int j = 0; j < movers.size(); j++) {
+				checkCollision(movers.get(j), solids.get(i));
+			}
+		}*/
+		
 		movers.clear();
 		solids.clear();
 	}

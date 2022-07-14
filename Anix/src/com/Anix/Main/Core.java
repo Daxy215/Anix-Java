@@ -325,11 +325,7 @@ public final class Core implements Runnable {
 			s.update();
 		
 		if(ProjectSettings.isEditor) {
-			/*try {
-				gui.update();
-			} catch (IllegalArgumentException | IllegalAccessException e) {
-				e.printStackTrace();
-			}*/
+			gui.update();
 			
 			for(int i = 0; i < Application.droppedFiles.size(); i++) {
 				String path = Application.droppedFiles.get(i);
@@ -436,9 +432,9 @@ public final class Core implements Runnable {
 		if(Application.isMinimized() || !ProjectSettings.isEditor /*|| !Application.isFocused()*/)
 			return;
 		
-		if(Input.isKeyDown(KeyCode.G)) {
+		/*if(Input.isKeyDown(KeyCode.G)) {
 			editor.togglePlay();
-		}
+		}*/
 		
 		/*if(Input.isKeyDown(KeyCode.W)) {
 			generateApkThroughAnt("C:\\Users\\smsmk\\OneDrive\\Eclipse\\DaxyEngine-UIMaker\\build.xml");
