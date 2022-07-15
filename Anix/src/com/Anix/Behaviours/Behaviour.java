@@ -3,6 +3,7 @@ package com.Anix.Behaviours;
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -205,9 +206,11 @@ public abstract class Behaviour extends Object implements Cloneable, Serializabl
 		for(int i = 0; i < getClass().getFields().length; i++) {
 			Field f = getClass().getFields()[i];
 			
-			if(f.getAnnotation(HideFromInspector.class) != null) {
+			if(f.getAnnotation(HideFromInspector.class) != null)
 				continue;
-			}
+			
+			if(Modifier.isFinal(f.getModifiers()) || Modifier.isStatic(f.getModifiers()))
+				continue;
 			
 			fields.add(f);
 		}

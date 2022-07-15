@@ -21,7 +21,9 @@ import com.Anix.Objects.GameObject;
 import imgui.ImColor;
 import imgui.ImDrawList;
 import imgui.ImGui;
+import imgui.flag.ImGuiCol;
 import imgui.flag.ImGuiDragDropFlags;
+import imgui.flag.ImGuiTreeNodeFlags;
 import imgui.type.ImBoolean;
 import imgui.type.ImString;
 
@@ -193,15 +195,36 @@ public final class Inspector {
 			
 			ImGui.sameLine();
 			
+			int flags = ImGuiTreeNodeFlags.OpenOnArrow;
+			flags |= ImGuiTreeNodeFlags.FramePadding;
+			
+			//if(selectedObject == object) {
+			//	flags |= ImGuiTreeNodeFlags.Selected;
+			//}
+			
+			if(behaviour.getFields().length == 0) {
+				flags |= ImGuiTreeNodeFlags.Leaf | ImGuiTreeNodeFlags.NoTreePushOnOpen;
+			}
+			
+			if(!behaviour.isEnabled) {
+				ImGui.pushStyleColor(ImGuiCol.Text, 0.5f, 0.5f, 0.5f, 0.4f);
+			}
+			
 			//TODO: Add flags - If behaviour has no fields. Don't show arrow.
-			if(ImGui.treeNodeEx(behaviour.getName())) {
+			if(ImGui.treeNodeEx(behaviour.getName(), flags)) {
 				try {
 					drawFields(behaviour);
 				} catch (IllegalArgumentException | IllegalAccessException e) {
 					e.printStackTrace();
 				}
 				
-				ImGui.treePop();
+				if(behaviour.getFields().length != 0) {
+					ImGui.treePop();
+				}
+			}
+			
+			if(!behaviour.isEnabled) {
+				ImGui.popStyleColor();
 			}
 			
 			ImGui.spacing();
@@ -212,9 +235,6 @@ public final class Inspector {
 	private void drawFields(Behaviour behaviour) throws IllegalArgumentException, IllegalAccessException {
 		for(int i = 0; i < behaviour.getFields().length; i++) {
 			try {
-				if(Modifier.isStatic(behaviour.getFields()[i].getModifiers()) || Modifier.isFinal(behaviour.getFields()[i].getModifiers()))
-					return;
-				
 				drawField(behaviour.getFields()[i], behaviour);
 			} catch (IllegalArgumentException | IllegalAccessException | NoSuchMethodException | SecurityException
 					| InvocationTargetException e) {

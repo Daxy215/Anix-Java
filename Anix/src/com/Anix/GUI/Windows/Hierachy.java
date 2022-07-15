@@ -43,6 +43,14 @@ public final class Hierachy {
 		ImGui.pushStyleVar(ImGuiStyleVar.ButtonTextAlign, 0, 0.5f);
 		
 		if(ImGui.getIO().getWantCaptureMouse() && ImGui.isWindowHovered()) {
+			if(ImGui.beginDragDropTarget()) {
+				Object o = ImGui.acceptDragDropPayload("Folder", ImGuiDragDropFlags.None);
+				
+				if(o != null) {
+					System.err.println("data: " + o);
+				}
+			}
+			
 			//TODO: Check if any of the gameObjects were hovered.
 			if(ImGui.isMouseClicked(1)) {
 				ImGui.openPopup("HierarchyOptions");
@@ -84,9 +92,9 @@ public final class Hierachy {
 	        
 			ImGui.endPopup();
 	    }
-
+		
 		Scene curScene =  SceneManager.getCurrentScene();
-
+		
 		if(curScene != null) {
 			drawObjects(curScene.getGameObjects(), 0);
 		}
@@ -96,7 +104,7 @@ public final class Hierachy {
 				selectedObject.destroy();
 			}
 		}
-
+		
 		ImGui.popStyleVar();
 		ImGui.end();
 	}
@@ -120,13 +128,61 @@ public final class Hierachy {
 				ImGui.pushStyleColor(ImGuiCol.Text, 0.5f, 0.5f, 0.5f, 0.4f);
 			}
 			
-			ImGui.pushID(object.uuid.toString());
 			boolean canDraw = object.getParent() != null && index == 0;
 			
-			boolean open = false;
+			if(!canDraw) {
+				String name = object.getName().isEmpty() ? "##" : object.getName();
+				
+				if(ImGui.treeNodeEx(name, flags)) {
+					//Single click - Select object
+					if(ImGui.isItemHovered() && ImGui.isMouseClicked(0)) {
+						System.err.println("clicked on " + object.getName());
+						selectedObject = object;
+					}
+					
+					//Double clicked - Focus
+					if(ImGui.isItemHovered() && ImGui.isMouseDoubleClicked(0)) {
+						if(Camera.main != null) {
+							Camera.main.gameObject.setPosition(object.getPosition().x, object.getPosition().y);
+						}
+					}
+					
+					if(object.hasChildren()) {
+						drawObjects(object.getChildren(), index + 1);
+						
+						ImGui.treePop();
+					}
+				}
+			}
 			
-			if(!canDraw)
-				open = ImGui.treeNodeEx(object.getName(), flags);
+			//Dragging and dropping handling.
+			if(ImGui.beginDragDropTarget()) {
+				Object o = ImGui.acceptDragDropPayload("GameObject", ImGuiDragDropFlags.None);
+				
+				if(o != null) {
+					System.err.println("Dragged " + draggedObject.getName() + " and dropped it ontop of " + object.getName());
+					draggedObject.setParent(object);
+				}
+				
+				ImGui.endDragDropTarget();
+			}
+			
+			int src_flags = ImGuiDragDropFlags.SourceNoDisableHover; // Keep the source displayed as hovered
+			src_flags |= ImGuiDragDropFlags.SourceNoHoldToOpenOthers; // Because our dragging is local, we disable the feature of opening foreign treenodes/tabs while dragging
+
+			if(ImGui.beginDragDropSource(src_flags)) {
+				ImGui.text(object.getName());
+				
+				ImGui.setDragDropPayload("GameObject", object.uuid);
+				draggedObject = object;
+				
+				System.err.println("dragging " + object.getName());
+				
+				ImGui.endDragDropSource();
+			}
+			//End dragging and dropping handling.
+			
+			ImGui.pushID(object.uuid.toString());
 			
 			//On right click basically
 			if(ImGui.beginPopupContextItem()) {
@@ -147,51 +203,13 @@ public final class Hierachy {
 				ImGui.popStyleColor();
 			}
 			
-			if(ImGui.isItemHovered() && ImGui.isMouseDoubleClicked(0)) {
-				if(Camera.main != null) {
-					Camera.main.gameObject.setPosition(object.getPosition().x, object.getPosition().y);
-				}
-			}
-			
-			if(ImGui.isItemHovered() && ImGui.isMouseClicked(0)) {
-				selectedObject = object;
-			}
-			
-			if(!canDraw && ImGui.beginDragDropTarget()) {
-				Object o = ImGui.acceptDragDropPayload("GameObject", ImGuiDragDropFlags.None);
-				
-				if(o != null) {
-					System.err.println("AOYOYOYOYOO " + (o == null));
-					
-					draggedObject.setParent(object);
-				}
-				
-				ImGui.endDragDropTarget();
-			}
-			
-			int src_flags = ImGuiDragDropFlags.SourceNoDisableHover; // Keep the source displayed as hovered
-			src_flags |= ImGuiDragDropFlags.SourceNoHoldToOpenOthers; // Because our dragging is local, we disable the feature of opening foreign treenodes/tabs while dragging
-			//src_flags |= ImGuiDragDropFlags.SourceNoPreviewTooltip; // Hide the tooltip
-			
-			if(!canDraw && ImGui.beginDragDropSource(src_flags)) {
-				//??
-				//if(!(src_flags & ImGuiDragDropFlags.SourceNoPreviewTooltip)) {
-				ImGui.text(object.getName());
-				//}
-				
-				ImGui.setDragDropPayload("GameObject", object.uuid);
-				draggedObject = object;
-				
-				ImGui.endDragDropSource();
-			}
-			
 			ImGui.popID();
 			
-			if(object.hasChildren() && open) {
-				drawObjects(object.getChildren(), index + 1);
+			/*if(canDraw && object.hasChildren() && open) {
+				//drawObjects(object.getChildren(), index + 1);
 				
 				ImGui.treePop();
-			}
+			}*/
 		}
 	}
 	

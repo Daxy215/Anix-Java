@@ -606,26 +606,14 @@ public class GameObject /*extends Entity*/ implements Cloneable, Serializable {
 	}
 	
 	public void setParent(GameObject parent) {
-		if(children == null) {
-			children = new ArrayList<>();
-		}
-		
-		if(this.parent != null && this.parent.children == null) {
-			this.parent.children = new ArrayList<>();
-		}
-		
-		if(parent != null && parent.children == null) {
-			parent.children = new ArrayList<>();
-		}
-		
-		if(this.parent != null) {
-			/*System.err.println("childire: " + children.size() + " - " + name);
-			for(int i = 0; i < children.size(); i++) {
-				children.get(i).setParent(parent);
-			}*/
+		if(hasParent() && this.parent != parent) {
+			if(this.parent.children == null)
+				this.parent.children = new ArrayList<>();
 			
 			this.parent.children.remove(this);
 		}
+		
+		this.parent = parent;
 		
 		if(parent != null) {
 			if(parent.shouldBeRemoved) {
@@ -636,8 +624,6 @@ public class GameObject /*extends Entity*/ implements Cloneable, Serializable {
 			
 			parent.addChild(this);
 		}
-		
-		this.parent = parent;
 		
 		/*if(parent != null && !parent.children.contains(this)) {
 			System.err.println("?? " + name);
@@ -661,8 +647,14 @@ public class GameObject /*extends Entity*/ implements Cloneable, Serializable {
 	}
 	
 	public void addChild(GameObject obj) {
+		if(this.children == null) {
+			this.children = new ArrayList<>();
+		}
+		
 		if(obj.hasParent() && obj.parent != this) {
 			obj.setParent(this);
+			
+			return;
 		}
 		
 		if(!children.contains(obj)) {

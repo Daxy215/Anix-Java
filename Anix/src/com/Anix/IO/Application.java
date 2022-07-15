@@ -33,6 +33,7 @@ import com.Anix.SceneManager.Scene;
 import com.Anix.SceneManager.SceneManager;
 
 import imgui.ImGui;
+import imgui.flag.ImGuiConfigFlags;
 import imgui.gl3.ImGuiImplGl3;
 import imgui.glfw.ImGuiImplGlfw;
 
@@ -77,7 +78,7 @@ public final class Application {
 			return;
 		}
 		
-		glslVersion = "#version 130";
+		glslVersion = "#version 150";
 	}
 	
 	public void create() {
@@ -124,6 +125,7 @@ public final class Application {
 		GLFW.glfwWindowHint(GLFW.GLFW_CONTEXT_VERSION_MAJOR, 0);
 		GLFW.glfwWindowHint(GLFW.GLFW_CONTEXT_VERSION_MINOR, 3);
 	    GLFW.glfwWindowHint(GLFW.GLFW_OPENGL_PROFILE, GLFW.GLFW_OPENGL_CORE_PROFILE);
+	    GLFW.glfwWindowHint(GLFW.GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
         
 		glMatrixMode(GL_PROJECTION);
 		glLoadIdentity();
@@ -145,8 +147,10 @@ public final class Application {
 		
 		ImGui.createContext();
 		
+		ImGui.getIO().addConfigFlags(ImGuiConfigFlags.ViewportsEnable);
+		
 		imGuiGlfw.init(window, true);
-		imGuiGl3.init(glslVersion);		
+		imGuiGl3.init(glslVersion);
 	}
 	
 	public void update() {
