@@ -1,6 +1,14 @@
 package com.Anix.IO;
 
-import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL11.GL_ALPHA_TEST;
+import static org.lwjgl.opengl.GL11.GL_DEPTH_TEST;
+import static org.lwjgl.opengl.GL11.GL_MODELVIEW;
+import static org.lwjgl.opengl.GL11.GL_PROJECTION;
+import static org.lwjgl.opengl.GL11.GL_TRUE;
+import static org.lwjgl.opengl.GL11.glEnable;
+import static org.lwjgl.opengl.GL11.glLoadIdentity;
+import static org.lwjgl.opengl.GL11.glMatrixMode;
+import static org.lwjgl.opengl.GL11.glOrtho;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -33,7 +41,6 @@ import com.Anix.SceneManager.Scene;
 import com.Anix.SceneManager.SceneManager;
 
 import imgui.ImGui;
-import imgui.flag.ImGuiConfigFlags;
 import imgui.gl3.ImGuiImplGl3;
 import imgui.glfw.ImGuiImplGlfw;
 
@@ -147,7 +154,9 @@ public final class Application {
 		
 		ImGui.createContext();
 		
-		ImGui.getIO().addConfigFlags(ImGuiConfigFlags.ViewportsEnable);
+		//TODO:
+		//ImGui.getIO().addConfigFlags(ImGuiConfigFlags.ViewportsEnable);
+		//ImGui.getIO().addConfigFlags(ImGuiConfigFlags.DockingEnable);
 		
 		imGuiGlfw.init(window, true);
 		imGuiGl3.init(glslVersion);
@@ -367,7 +376,7 @@ public final class Application {
 	}
 	
 	public static int getStartX() {
-		return gui.getHierachy().getStartX() + gui.getHierachy().getWidth();
+		return (int) (gui.getHierachy().getStartX() + gui.getHierachy().getWidth());
 	}
 	
 	public static int getStartY() {
@@ -376,7 +385,7 @@ public final class Application {
 	
 	public static int getWidth() {
 		if(ProjectSettings.isEditor) {
-			return getFullWidth() - (gui.getHierachy().getWidth() + gui.getInspector().getWidth());
+			return (int) (getFullWidth() - (gui.getHierachy().getWidth() + gui.getInspector().getWidth()));
 		}
 		
 		return getFullWidth();

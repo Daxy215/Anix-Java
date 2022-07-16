@@ -20,13 +20,14 @@ import imgui.flag.ImGuiStyleVar;
 import imgui.flag.ImGuiTreeNodeFlags;
 
 public final class Hierachy {
-	private final int startX = 0, startY = 25;
-	private int width = 250, height;
+	private final float startX = 0, startY = 25;
+	private float width = 250, height;
 	
 	public static GameObject selectedObject, draggedObject;
+	private GUI gui;
 	
-	public Hierachy() {
-		
+	public Hierachy(GUI gui) {
+		this.gui = gui;
 	}
 	
 	public void init() {
@@ -38,19 +39,12 @@ public final class Hierachy {
 		
 		ImGui.setNextWindowPos(startX, startY);
 		ImGui.setNextWindowSize(width, height);
+		ImGui.setNextWindowSizeConstraints(250/*Min width*/, -1.0f, Application.getFullWidth() - gui.getInspector().getWidth() - /*Distance between screens - Padding*/ 20, -1.0f);
 		
 		ImGui.begin("Hierarchy", GUI.defaultFlags);
 		ImGui.pushStyleVar(ImGuiStyleVar.ButtonTextAlign, 0, 0.5f);
 		
 		if(ImGui.getIO().getWantCaptureMouse() && ImGui.isWindowHovered()) {
-			if(ImGui.beginDragDropTarget()) {
-				Object o = ImGui.acceptDragDropPayload("Folder", ImGuiDragDropFlags.None);
-				
-				if(o != null) {
-					System.err.println("data: " + o);
-				}
-			}
-			
 			//TODO: Check if any of the gameObjects were hovered.
 			if(ImGui.isMouseClicked(1)) {
 				ImGui.openPopup("HierarchyOptions");
@@ -75,10 +69,10 @@ public final class Hierachy {
 					if (ImGui.menuItem("Directional Light")) {
 						
 					}
-
+					
 					ImGui.endMenu();
 				}
-
+				
 				ImGui.endMenu();
 			}
 	        
@@ -106,6 +100,9 @@ public final class Hierachy {
 		}
 		
 		ImGui.popStyleVar();
+		
+		width = ImGui.getWindowWidth();
+		
 		ImGui.end();
 	}
 
@@ -221,19 +218,19 @@ public final class Hierachy {
 		selectedObject = obj;
 	}
 
-	public int getStartX() {
+	public float getStartX() {
 		return startX;
 	}
 
-	public int getStartY() {
+	public float getStartY() {
 		return startY;
 	}
 
-	public int getWidth() {
+	public float getWidth() {
 		return width;
 	}
 
-	public int getHeight() {
+	public float getHeight() {
 		return height;
 	}
 }

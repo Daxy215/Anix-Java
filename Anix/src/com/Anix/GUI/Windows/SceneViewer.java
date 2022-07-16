@@ -18,6 +18,8 @@ import com.Anix.Objects.GameObject;
 import com.Anix.SceneManager.Scene;
 import com.Anix.SceneManager.SceneManager;
 
+import imgui.ImGui;
+
 public final class SceneViewer {
 	private GameObject selectedObject;
 	
@@ -32,6 +34,9 @@ public final class SceneViewer {
 	}
 	
 	public void update() {
+		if(ImGui.getIO().getWantCaptureMouse())
+			return;
+		
 		Scene currentScene = SceneManager.getCurrentScene();
 		
 		if(UI.drawButton(Application.getStartX(), Application.getStartY(), Application.getWidth(), Application.getHeight())/* && !Editor.isPlaying()*/) {

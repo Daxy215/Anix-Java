@@ -43,15 +43,15 @@ public final class GUI {
 		//window_flags |= ImGuiWindowFlags_NoTitleBar;
 		defaultFlags |= ImGuiWindowFlags.NoMove;
 		defaultFlags |= ImGuiWindowFlags.NoCollapse;
-		defaultFlags |= ImGuiWindowFlags.NoResize;
+		//defaultFlags |= ImGuiWindowFlags.NoResize;
 		//window_flags |= ImGuiWindowFlags_NoDecoration;
 	}
 	
 	public void init() {
 		menuBar = new MenuBar(core);
-		hierachy = new Hierachy();
+		hierachy = new Hierachy(this);
 		sceneViewer = new SceneViewer(core);
-		inspector = new Inspector();
+		inspector = new Inspector(this);
 		assetsMenuBar = new AssetsMenuBar();
 		assets = new Assets(core);
 		console = new Console(this);

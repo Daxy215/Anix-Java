@@ -63,13 +63,13 @@ import com.Anix.SceneManager.SceneManager;
 
 public final class Editor {
 	private boolean lastIsFocused, once;
-	//private boolean shouldUpdate;
+	
 	private static boolean isPlaying;
 	public static boolean canAddObjects = true;
 	public static boolean isRunningViaJar;
 	
 	private static String workSpaceDirectory = System.getProperty("user.dir");
-	private final String editorVersion = "2.1 beta";
+	private final String editorVersion = "2.5 beta";
 	
 	private static Path tempPath, texturesPath;
 	private Path classesPath;
@@ -120,13 +120,8 @@ public final class Editor {
 				if(type != null)
 					ProjectSettings.projectType = ProjectType.valueOf(type);
 				
-				/*if(p.getProperty("perviousSize") != null) {
-					String[] sizeData = p.getProperty("perviousSize").split(" ");
-					ProjectSettings.previousAppSize = new Vector2i(Integer.parseInt(sizeData[0]), Integer.parseInt(sizeData[1]));
-				}*/
-				
 				if(!editorVersion.equals(recordedVersion)) {
-					System.err.println("[ERROR] Editor version isn't the same as the projects editor version! This could case some issues!");
+					Console.LogWar("[Warning] Editor version isn't the same as the projects editor version! This could case some issues!");
 				}
 				
 				r.close();
@@ -138,8 +133,6 @@ public final class Editor {
 		} else {
 			ProjectSettings.load(new BufferedReader(new InputStreamReader(is)), false);
 		}
-		
-		//Core.application.setSize(ProjectSettings.previousAppSize);
 		
 		String fileSeparator = System.getProperty("file.separator");
 		
@@ -179,6 +172,7 @@ public final class Editor {
 			once = true;
 		}
 		
+		//TODO: Fix this system. Pretty broken. In fact make a whole new one.
 		for(int i = 0; i < linkedObjectsFolders.size(); i++) {
 			Folder folder = linkedObjectsFolders.get(i);
 			linkedObjectsFolders.remove(i);
@@ -233,19 +227,13 @@ public final class Editor {
 											continue;
 										}
 										
-											//Inspector.updateField(scriptableObjectFolder, scriptAbleObject, shader, scriptAbleObject.getClass().getFields()[j]);
-										
 										continue;
 									}
-
-									//Inspector.updateField(scriptableObjectFolder, scriptAbleObject, readObjectFromFile(getInputStream(folder.getAbsolutePath())), scriptAbleObject.getClass().getFields()[j]);
 									
 									continue;
 								}
 							}
-						}/* else {
-							System.err.println("#1163 this really shouldn't be possible ._.");
-						}*/
+						}
 					}
 				} catch (IOException e) {
 					e.printStackTrace();
@@ -302,7 +290,6 @@ public final class Editor {
 		//Was playing
 		if(!isPlaying) {
 			canAddObjects = false;
-			
 			
 			if(Core.getMasterRenderer() != null) {
 				Core.getMasterRenderer().destroy();
@@ -1205,6 +1192,12 @@ public final class Editor {
 			fullPath += seperator + folderName;
 		}
 		
+		if(!Assets.isValidPath(fullPath)) {
+			Console.LogErr("[ERROR] Invaild folder path. " + fullPath);
+			
+			return null;
+		}
+	
 		String[] absolutePath = fullPath.split("\\\\");
 		
 		String extension = "";

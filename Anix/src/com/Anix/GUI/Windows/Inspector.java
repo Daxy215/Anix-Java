@@ -24,7 +24,6 @@ import imgui.ImGui;
 import imgui.flag.ImGuiCol;
 import imgui.flag.ImGuiDragDropFlags;
 import imgui.flag.ImGuiTreeNodeFlags;
-import imgui.type.ImBoolean;
 import imgui.type.ImString;
 
 /**
@@ -37,14 +36,15 @@ import imgui.type.ImString;
  * all the code sucks :D<br>
  */
 public final class Inspector {
-	private int startX = 0, startY = 25;
-	private int width = 300, height = 0;
+	private float startX = 0, startY = 25;
+	private float width = 300, height = 0;
 	private int counter;
 	
 	private AutoCorrector autoCorrector;
+	private GUI gui;
 	
-	public Inspector() {
-		
+	public Inspector(GUI gui) {
+		this.gui = gui;
 	}
 	
 	public void init() {
@@ -59,6 +59,7 @@ public final class Inspector {
 		
 		ImGui.setNextWindowPos(startX, startY);
 		ImGui.setNextWindowSize(width, height);
+		ImGui.setNextWindowSizeConstraints(250/*Min width*/, -1.0f, Application.getFullWidth() - gui.getHierachy().getWidth() - /*Distance between screens - Padding*/ 20, -1.0f);
 		
 		ImGui.begin("Inspector", GUI.defaultFlags);
 		
@@ -110,6 +111,8 @@ public final class Inspector {
 			
 			ImGui.endPopup();
 	    }
+		
+		width = ImGui.getWindowWidth();
 		
 		ImGui.end();
 		
@@ -427,19 +430,19 @@ public final class Inspector {
 		};
 	}
 	
-	public int getStartX() {
+	public float getStartX() {
 		return startX;
 	}
 	
-	public int getStartY() {
+	public float getStartY() {
 		return startY;
 	}
 	
-	public int getWidth() {
+	public float getWidth() {
 		return width;
 	}
 	
-	public int getHeight() {
+	public float getHeight() {
 		return height;
 	}
 }

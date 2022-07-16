@@ -7,6 +7,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.nio.file.Files;
+import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -67,6 +68,8 @@ public final class Assets {
 		this.core = core;
 		
 		folders = new ArrayList<Folder>();
+		
+		height = 250 - (core.getGUI().getAssetsMenuBar().getHeight() * 2);
 	}
 	
 	private String popup = "";
@@ -75,10 +78,10 @@ public final class Assets {
 	
 	public void render() {
 		startY = Application.getHeight() + (core.getGUI().getAssetsMenuBar().getHeight() * 2);
-		height = 250 - (core.getGUI().getAssetsMenuBar().getHeight() * 2);
 		
 		ImGui.setNextWindowPos(startX, startY);
 		ImGui.setNextWindowSize(Application.getFullWidth(), height);
+		//ImGui.setNextWindowSizeConstraints(-1.0f, 250/*Min height*/, -1.0f, Application.getFullHeight() - core.getGUI().getMenuBar().getHeight() - /*Distance between screens - Padding*/ 20);
 		
 		ImGui.begin("##Assets", GUI.defaultFlags | ImGuiWindowFlags.NoDecoration);
 		
@@ -148,10 +151,10 @@ public final class Assets {
 		}
 		
 		if(ImGui.beginPopup(popup)) {
-			ImGui.text(popup + " name");
+			//ImGui.text(popup + " name");
 			
-			folderName.set(popup);
-			ImGui.inputText("##", folderName);
+			//folderName.set(popup);
+			ImGui.inputTextWithHint("##", popup + " name..", folderName);
 			
 			if(Input.isKeyDown(KeyCode.Return)) {
 				if(folderName.get().length() > 0) {
@@ -195,10 +198,12 @@ public final class Assets {
 			ImGui.endPopup();
 		}
 		
+		//height = (int) ImGui.getWindowHeight();
+		
 		ImGui.end();
 	}
 	
-	//Used for text calculation - A class variable to safe memory.
+	//Used for text calculation - A class variable to save memory.
 	private ImVec2 vec2 = new ImVec2();
 	private ImString s = new ImString("", 187);
 	private float folderWidth = 64, folderHeight = 64;
@@ -242,7 +247,10 @@ public final class Assets {
 			//Move to under of the folder, for it's name.
 			ImGui.setCursorPos(ImGui.getCursorPosX() - folderWidth - 20, ImGui.getCursorPosY() + folderHeight + 5);
 			
+			//Setting the text input name
 			s.set(folder.getName());
+			
+			//Text input size
 			ImGui.pushItemWidth(80);
 			
 			if(ImGui.inputText("##", s)) {
@@ -441,6 +449,16 @@ public final class Assets {
 	    temp.mkdir();
 
 	    return temp;
+	}
+	
+	public static boolean isValidPath(String path) {
+	    try {
+	        Paths.get(path);
+	    } catch (InvalidPathException | NullPointerException ex) {
+	        return false;
+	    }
+	    
+	    return true;
 	}
 	
 	public int getStartX() {

@@ -1,22 +1,32 @@
 package com.Anix.Math;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
 import com.Anix.Behaviours.Camera;
 
 public class MathD {
-	public static Object[] reverseArray(Object array[]) {
-		int arraySize = array.length;
-
-		Object[] b = new Object[arraySize]; 
-		int j = arraySize;
-		for (int i = 0; i < arraySize; i++) { 
-			b[j - 1] = array[i]; 
-			j = j - 1; 
+	@SuppressWarnings("unchecked")
+	public static <T> T[] reverse(T input[]) {
+		T[] reversed = (T[]) new Object[input.length];
+		
+		int j = input.length;
+		for (int i = 0; i < input.length; i++) { 
+			reversed[j - 1] = input[i];
+			j--;
 		}
-
-		return b;
+		
+		return reversed;
+	}
+	
+	
+	public static <T> List<T> reverse(List<T> input) {
+	    var reversed = new ArrayList<T>();
+	    for (int i = input.size() - 1; i >= 0; i--) {
+	        reversed.add(input.get(i));
+	    }
+	    return reversed;
 	}
 	
 	public static boolean isArrayEmpty(Object[] arr) {
