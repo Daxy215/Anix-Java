@@ -20,6 +20,7 @@ import imgui.flag.ImGuiStyleVar;
 import imgui.flag.ImGuiTreeNodeFlags;
 
 public final class Hierachy {
+	private int selectedObjectIndex;
 	private final float startX = 0, startY = 25;
 	private float width = 250, height;
 	
@@ -48,6 +49,18 @@ public final class Hierachy {
 			//TODO: Check if any of the gameObjects were hovered.
 			if(ImGui.isMouseClicked(1)) {
 				ImGui.openPopup("HierarchyOptions");
+			}
+			
+			if(Input.isKeyDown(KeyCode.UpArrow)) {
+				if(selectedObjectIndex != -1 && selectedObjectIndex - 1 >= 0) {
+					setSelectedObject(--selectedObjectIndex);
+				}
+			}
+			
+			if(Input.isKeyDown(KeyCode.DownArrow)) {
+				if(selectedObjectIndex != -1 && selectedObjectIndex + 1 < SceneManager.getCurrentScene().getGameObjects().size()) {
+					setSelectedObject(++selectedObjectIndex);
+				}
 			}
 		}
 		
@@ -105,7 +118,7 @@ public final class Hierachy {
 		
 		ImGui.end();
 	}
-
+	
 	private void drawObjects(List<GameObject> objects, int index) {
 		for(int i = 0; i < objects.size(); i++) {
 			GameObject object = objects.get(i);
@@ -133,8 +146,7 @@ public final class Hierachy {
 				if(ImGui.treeNodeEx(name, flags)) {
 					//Single click - Select object
 					if(ImGui.isItemHovered() && ImGui.isMouseClicked(0)) {
-						System.err.println("clicked on " + object.getName());
-						selectedObject = object;
+						setSelectedObject(object, i);
 					}
 					
 					//Double clicked - Focus
@@ -213,9 +225,41 @@ public final class Hierachy {
 	public GameObject getSelectedObject() {
 		return selectedObject;
 	}
-
+	
 	public void setSelectedObject(GameObject obj) {
+		if(obj == null) {
+			selectedObjectIndex = -1;
+			selectedObject = null;
+			
+			return;
+		}
+		
+		for(int i = 0; i < SceneManager.getCurrentScene().getGameObjects().size(); i++) {
+			if(SceneManager.getCurrentScene().getGameObjects().get(i).uuid == obj.uuid) {
+				selectedObjectIndex = i;
+				
+				break;
+			}
+			
+			selectedObjectIndex = -1;
+		}
+		
+		if(selectedObjectIndex == -1) {
+			Console.LogErr("[ERROR] Couldn't find the object being selected.");
+			
+			return;
+		}
+		
 		selectedObject = obj;
+	}
+	
+	public void setSelectedObject(GameObject obj, int index) {
+		selectedObjectIndex = index;
+		selectedObject = obj;
+	}
+	
+	public void setSelectedObject(int index) {
+		setSelectedObject(SceneManager.getCurrentScene().getGameObjects().get(index), index);
 	}
 
 	public float getStartX() {
