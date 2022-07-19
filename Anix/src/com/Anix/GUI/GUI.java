@@ -49,7 +49,7 @@ public final class GUI {
 	
 	public void init() {
 		menuBar = new MenuBar(core);
-		hierachy = new Hierachy(this);
+		hierachy = new Hierachy(core);
 		sceneViewer = new SceneViewer(core);
 		inspector = new Inspector(this);
 		assetsMenuBar = new AssetsMenuBar();

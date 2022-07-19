@@ -592,7 +592,6 @@ public final class Editor {
 			
 			if(lastSelectedUUID != null) {
 				core.getGUI().getHierachy().setSelectedObject(currentScene.getGameObjectByUUID(lastSelectedUUID));
-				core.setLastSelectedObject(core.getGUI().getHierachy().getSelectedObject());
 			}
 			
 			stream.close();

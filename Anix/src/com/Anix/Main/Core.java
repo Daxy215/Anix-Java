@@ -99,7 +99,6 @@ public final class Core implements Runnable {
 	private Editor editor = new Editor(this);
 	
 	private Object draggedObject;
-	private Object lastSelectedObject;
 	private Thread thread;
 	
 	private String[] args;
@@ -579,14 +578,6 @@ public final class Core implements Runnable {
 		}
 		
 		editor.addFolder(targetPath, null);
-	}
-	
-	public Object getLastSelectedObject() {
-		return lastSelectedObject;
-	}
-	
-	public void setLastSelectedObject(Object lastSelectedObject) {
-		this.lastSelectedObject = lastSelectedObject;
 	}
 	
 	public String getProjectName() {

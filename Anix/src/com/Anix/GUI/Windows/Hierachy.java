@@ -8,6 +8,7 @@ import com.Anix.GUI.GUI;
 import com.Anix.IO.Application;
 import com.Anix.IO.Input;
 import com.Anix.IO.KeyCode;
+import com.Anix.Main.Core;
 import com.Anix.Math.Vector3f;
 import com.Anix.Objects.GameObject;
 import com.Anix.SceneManager.Scene;
@@ -25,10 +26,10 @@ public final class Hierachy {
 	private float width = 250, height;
 	
 	public static GameObject selectedObject, draggedObject;
-	private GUI gui;
+	private Core core;
 	
-	public Hierachy(GUI gui) {
-		this.gui = gui;
+	public Hierachy(Core core) {
+		this.core = core;
 	}
 	
 	public void init() {
@@ -40,7 +41,7 @@ public final class Hierachy {
 		
 		ImGui.setNextWindowPos(startX, startY);
 		ImGui.setNextWindowSize(width, height);
-		ImGui.setNextWindowSizeConstraints(250/*Min width*/, -1.0f, Application.getFullWidth() - gui.getInspector().getWidth() - /*Distance between screens - Padding*/ 20, -1.0f);
+		ImGui.setNextWindowSizeConstraints(250/*Min width*/, -1.0f, Application.getFullWidth() - core.getGUI().getInspector().getWidth() - /*Distance between screens - Padding*/ 20, -1.0f);
 		
 		ImGui.begin("Hierarchy", GUI.defaultFlags);
 		ImGui.pushStyleVar(ImGuiStyleVar.ButtonTextAlign, 0, 0.5f);
@@ -144,11 +145,6 @@ public final class Hierachy {
 				String name = object.getName().isEmpty() ? "##" : object.getName();
 				
 				if(ImGui.treeNodeEx(name, flags)) {
-					//Single click - Select object
-					if(ImGui.isItemHovered() && ImGui.isMouseClicked(0)) {
-						setSelectedObject(object, i);
-					}
-					
 					//Double clicked - Focus
 					if(ImGui.isItemHovered() && ImGui.isMouseDoubleClicked(0)) {
 						if(Camera.main != null) {
@@ -161,6 +157,11 @@ public final class Hierachy {
 						
 						ImGui.treePop();
 					}
+				}
+				
+				//Single click - Select object
+				if(ImGui.isItemHovered() && ImGui.isMouseClicked(0)) {
+					setSelectedObject(object, i);
 				}
 			}
 			
@@ -184,8 +185,7 @@ public final class Hierachy {
 				
 				ImGui.setDragDropPayload("GameObject", object.uuid);
 				draggedObject = object;
-				
-				System.err.println("dragging " + object.getName());
+				core.setDraggedObject(object);
 				
 				ImGui.endDragDropSource();
 			}

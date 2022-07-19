@@ -11,6 +11,7 @@ import com.Anix.IO.ProjectSettings;
 import com.Anix.IO.ProjectSettings.ProjectType;
 import com.Anix.IO.Time;
 import com.Anix.Main.Core;
+import com.Anix.Math.Color;
 import com.Anix.Math.RayCast;
 import com.Anix.Math.Vector2f;
 import com.Anix.Math.Vector3f;
@@ -61,24 +62,29 @@ public final class SceneViewer {
 							if(obj.getBehaviour(SpriteRenderer.class) == null)
 								return;
 							
-							System.err.println("moving: " + obj.getName());
 							action.addData(obj);
 							action.addData(obj.getPosition().copy());
 							
 							selectedObject = obj;
 							
-							core.setLastSelectedObject(obj);
 							core.getGUI().getHierachy().setSelectedObject(obj);
 						} else {
-							core.setLastSelectedObject(null);
 							core.getGUI().getHierachy().setSelectedObject(null);
 						}
 					} else if(Input.isMouseButtonUp(KeyCode.Mouse0)) {
 						selectedObject = null;
 					}
 					
-					if(Input.isMouseButton(KeyCode.Mouse0) && selectedObject != null) {
-						selectedObject.setPosition(pos.x, pos.y);
+					if(selectedObject != null) {
+						Vector3f wPos = Camera.main.convertWorldToScreenSpace(selectedObject.getPosition());
+						
+						float s = (64 * selectedObject.getScale().x) * 0.5f;
+						
+						UI.drawline(wPos.x - s, wPos.y - s, -0.5f, wPos.x + s, wPos.y - s, 0.5f, Color.green, 5);
+						
+						if(Input.isMouseButton(KeyCode.Mouse0)) {
+							selectedObject.setPosition(pos.x, pos.y);
+						}
 					}
 				} else { //Free Camera :D
 					float x = (float)Math.sin(Math.toRadians(Camera.main.gameObject.getRotation().getY())) * 50 * Time.deltaTime;
@@ -88,7 +94,6 @@ public final class SceneViewer {
 						GameObject hit = RayCast.rayCast(10);
 						
 						if(hit != null) {
-							core.setLastSelectedObject(hit);
 							core.getGUI().getHierachy().setSelectedObject(hit);
 						}
 					}

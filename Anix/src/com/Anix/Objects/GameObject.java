@@ -42,9 +42,6 @@ public class GameObject /*extends Entity*/ implements Cloneable, Serializable {
 	
 	private GameObject parent;
 	
-	//TODO: Move this to the collider class.
-	public transient GameObject collisionObject;
-	
 	private transient List<GameObject> children = new ArrayList<GameObject>();
 	private List<Behaviour> behaviours = new ArrayList<Behaviour>();
 	
@@ -321,9 +318,6 @@ public class GameObject /*extends Entity*/ implements Cloneable, Serializable {
 			
 			clone.uuid = UUID.randomUUID();
 			clone.children = children;
-			
-			if(collisionObject != null)
-				clone.collisionObject = collisionObject.clone();
 			
 			return clone;
 		} catch(Exception e) {

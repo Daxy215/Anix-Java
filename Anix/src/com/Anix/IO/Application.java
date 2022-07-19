@@ -41,6 +41,7 @@ import com.Anix.SceneManager.Scene;
 import com.Anix.SceneManager.SceneManager;
 
 import imgui.ImGui;
+import imgui.flag.ImGuiConfigFlags;
 import imgui.gl3.ImGuiImplGl3;
 import imgui.glfw.ImGuiImplGlfw;
 
@@ -160,6 +161,8 @@ public final class Application {
 		
 		imGuiGlfw.init(window, true);
 		imGuiGl3.init(glslVersion);
+
+		ImGui.getIO().setConfigWindowsMoveFromTitleBarOnly(true);
 	}
 	
 	public void update() {

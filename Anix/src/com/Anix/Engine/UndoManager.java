@@ -56,8 +56,8 @@ public class UndoManager {
 				return;
 			
 			if(action.data.size() % action.size == 1) {
-				System.err.println("[ERROR] [Undo Manager] An incorruption has occurred.");
-			
+				System.err.println("[ERROR] [Undo Manager] A corruption has occurred. Data.size % Size == 1.");
+				
 				actions.remove(action);
 				
 				return;
