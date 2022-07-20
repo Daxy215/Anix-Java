@@ -161,8 +161,8 @@ public final class Application {
 		
 		imGuiGlfw.init(window, true);
 		imGuiGl3.init(glslVersion);
-
-		ImGui.getIO().setConfigWindowsMoveFromTitleBarOnly(true);
+		
+		//ImGui.getIO().setConfigWindowsMoveFromTitleBarOnly(true);
 	}
 	
 	public void update() {

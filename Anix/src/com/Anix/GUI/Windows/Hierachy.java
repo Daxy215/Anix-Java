@@ -5,6 +5,7 @@ import java.util.List;
 import com.Anix.Behaviours.Camera;
 import com.Anix.Behaviours.SpriteRenderer;
 import com.Anix.GUI.GUI;
+import com.Anix.GUI.Windows.Assets.Folder;
 import com.Anix.IO.Application;
 import com.Anix.IO.Input;
 import com.Anix.IO.KeyCode;
@@ -17,6 +18,7 @@ import com.Anix.SceneManager.SceneManager;
 import imgui.ImGui;
 import imgui.flag.ImGuiCol;
 import imgui.flag.ImGuiDragDropFlags;
+import imgui.flag.ImGuiHoveredFlags;
 import imgui.flag.ImGuiStyleVar;
 import imgui.flag.ImGuiTreeNodeFlags;
 
@@ -46,10 +48,16 @@ public final class Hierachy {
 		ImGui.begin("Hierarchy", GUI.defaultFlags);
 		ImGui.pushStyleVar(ImGuiStyleVar.ButtonTextAlign, 0, 0.5f);
 		
-		if(ImGui.getIO().getWantCaptureMouse() && ImGui.isWindowHovered()) {
+		if(ImGui.isWindowHovered(ImGuiHoveredFlags.AllowWhenBlockedByActiveItem)) {
 			//TODO: Check if any of the gameObjects were hovered.
 			if(ImGui.isMouseClicked(1)) {
 				ImGui.openPopup("HierarchyOptions");
+			}
+			
+			if(Input.isMouseButtonUp(KeyCode.Mouse0)) {
+				if(core.getDraggedObject() instanceof Folder) {
+					System.err.println("Dragged " + ((Folder)core.getDraggedObject()).getName());
+				}
 			}
 			
 			if(Input.isKeyDown(KeyCode.UpArrow)) {
@@ -145,13 +153,6 @@ public final class Hierachy {
 				String name = object.getName().isEmpty() ? "##" : object.getName();
 				
 				if(ImGui.treeNodeEx(name, flags)) {
-					//Double clicked - Focus
-					if(ImGui.isItemHovered() && ImGui.isMouseDoubleClicked(0)) {
-						if(Camera.main != null) {
-							Camera.main.gameObject.setPosition(object.getPosition().x, object.getPosition().y);
-						}
-					}
-					
 					if(object.hasChildren()) {
 						drawObjects(object.getChildren(), index + 1);
 						
@@ -162,6 +163,13 @@ public final class Hierachy {
 				//Single click - Select object
 				if(ImGui.isItemHovered() && ImGui.isMouseClicked(0)) {
 					setSelectedObject(object, i);
+				}
+			}
+			
+			//Double clicked - Focus
+			if(ImGui.isItemHovered() && ImGui.isMouseDoubleClicked(0)) {
+				if(Camera.main != null) {
+					Camera.main.gameObject.setPosition(object.getPosition().x, object.getPosition().y);
 				}
 			}
 			

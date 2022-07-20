@@ -272,6 +272,9 @@ public final class Assets {
 				
 				if(o != null) {
 					System.err.println("AOYOYOYOYOO " + (o.toString()));
+					if(core.getDraggedObject() instanceof Folder) {
+						core.setDraggedObject(null);
+					}
 				}
 				
 				ImGui.endDragDropTarget();
@@ -288,6 +291,7 @@ public final class Assets {
 				//}
 				
 				ImGui.setDragDropPayload("Folder", folder.getName());
+				core.setDraggedObject(folder);
 				
 				ImGui.endDragDropSource();
 			}
