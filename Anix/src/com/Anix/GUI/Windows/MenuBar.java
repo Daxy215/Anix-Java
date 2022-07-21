@@ -28,7 +28,6 @@ import imgui.ImGui;
 import imgui.flag.ImGuiStyleVar;
 
 public class MenuBar {
-	private final int startX = 0, startY = 0;	
 	private int width = 0, height = 25;
 	
 	private Core core;
@@ -38,13 +37,6 @@ public class MenuBar {
 	}
 	
 	public void render() {
-		//ImGui.setNextWindowPos(startX, startY);
-		//ImGui.setNextWindowSize(Application.getFullWidth(), height);
-		
-		//TODO: Doesn't work, fix it somehow.
-		//ImGui.pushStyleVar(ImGuiStyleVar.WindowRounding, 6.0f);
-		//ImGui.begin("MenuBar", GUI.defaultFlags | ImGuiWindowFlags.NoTitleBar);
-		
 		ImGui.pushStyleVar(ImGuiStyleVar.FramePadding, Application.getFullWidth(), 6);
 		if (ImGui.beginMainMenuBar()) {
 	        if (ImGui.beginMenu("File")) {
@@ -120,21 +112,18 @@ public class MenuBar {
 			ImGui.popStyleVar();
 	        
 	        //68 Button width - 88 idk :D
-			ImGui.dummy(Application.getFullWidth() * 0.5f - (88)/* - (68*0.5f)*/, 0);
+			ImGui.dummy(Application.getFullWidth() * 0.5f - (88*2) + (88*0.25f), 0);
 			
-	        if(ImGui.button("Toggle Play", 68, height)) {
-	        	core.getEditor().togglePlay();
+	        if(ImGui.button("Play", 68, height)) {
+	        	core.getEditor().setIsPlaying(true);
 	        }
 	        
-	        /*if(ImGui.button("Stop", 68, height)) {
-	        	
-	        }*/
+	        if(ImGui.button("Stop playing", 68, height)) {
+	        	core.getEditor().setIsPlaying(false);
+	        }
 	        
 	        ImGui.endMainMenuBar();
 	    }
-		
-		//ImGui.end();
-		//ImGui.popStyleVar();
 	}
 	
 	private void export(String path) throws IOException, URISyntaxException {
@@ -260,14 +249,6 @@ public class MenuBar {
 		is.close();
 		jos.flush();
 		jos.closeEntry();
-	}
-
-	public int getStartX() {
-		return startX;
-	}
-
-	public int getStartY() {
-		return startY;
 	}
 
 	public int getWidth() {

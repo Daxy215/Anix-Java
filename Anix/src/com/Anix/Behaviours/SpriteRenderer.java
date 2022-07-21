@@ -85,7 +85,7 @@ public class SpriteRenderer extends Behaviour {
 			return;
 		}
 		
-		Mesh mesh = null;		
+		Mesh mesh = null;
 		Sprite sprite = null;
 		
 		for(int i = 0; i < Core.getSprites().size(); i++) {

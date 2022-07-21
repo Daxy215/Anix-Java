@@ -5,11 +5,14 @@ import java.util.List;
 import com.Anix.Behaviours.Camera;
 import com.Anix.Behaviours.SpriteRenderer;
 import com.Anix.GUI.GUI;
+import com.Anix.GUI.Texture;
+import com.Anix.GUI.UI;
 import com.Anix.GUI.Windows.Assets.Folder;
 import com.Anix.IO.Application;
 import com.Anix.IO.Input;
 import com.Anix.IO.KeyCode;
 import com.Anix.Main.Core;
+import com.Anix.Math.Vector2f;
 import com.Anix.Math.Vector3f;
 import com.Anix.Objects.GameObject;
 import com.Anix.SceneManager.Scene;
@@ -56,7 +59,22 @@ public final class Hierachy {
 			
 			if(Input.isMouseButtonUp(KeyCode.Mouse0)) {
 				if(core.getDraggedObject() instanceof Folder) {
-					System.err.println("Dragged " + ((Folder)core.getDraggedObject()).getName());
+					Folder folder = (Folder)core.getDraggedObject();
+					
+					String extension = folder.getExtension();
+					
+					if(extension.equalsIgnoreCase("png") || extension.equalsIgnoreCase("jpg")) {
+						Texture t = UI.loadTexture(folder.getAbsolutePath());
+						Vector2f scale = UI.getScale(t.getWidth(), t.getHeight(), 0.75f);
+						SpriteRenderer sr = new SpriteRenderer();
+						
+						sr.spriteName = folder.getName();
+						
+						GameObject go = new GameObject(folder.getName().substring(0, extension.length() - 1), new Vector3f(), new Vector3f(), new Vector3f(scale.x, scale.y, 1));
+						go.addBehaviour(sr);
+					}
+					
+					core.setDraggedObject(null);
 				}
 			}
 			

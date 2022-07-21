@@ -11,7 +11,6 @@ import com.Anix.GUI.Windows.MenuBar;
 import com.Anix.GUI.Windows.SceneViewer;
 import com.Anix.IO.Input;
 import com.Anix.IO.KeyCode;
-import com.Anix.IO.ProjectSettings;
 import com.Anix.Main.Core;
 import com.Anix.Math.Color;
 import com.Anix.Math.Vector2f;

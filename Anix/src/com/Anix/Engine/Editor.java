@@ -111,7 +111,7 @@ public final class Editor {
 			try {
 				FileReader r = new FileReader(configFile);
 				Properties p = new Properties();
-
+				
 				p.load(r);
 				
 				String recordedVersion = p.getProperty("Version");
@@ -163,6 +163,8 @@ public final class Editor {
 			
 			if(!isPlaying) {
 				reLoad();
+				
+				System.err.println("reloaded: " + Core.getMasterRenderer().getEntities().size());
 			}
 		} else if(!lastIsFocused) {
 			if(!once) {
@@ -171,146 +173,6 @@ public final class Editor {
 			
 			once = true;
 		}
-		
-		//TODO: Fix this system. Pretty broken. In fact make a whole new one.
-		for(int i = 0; i < linkedObjectsFolders.size(); i++) {
-			Folder folder = linkedObjectsFolders.get(i);
-			linkedObjectsFolders.remove(i);
-			i--;
-			
-			File data = new File(Editor.getWorkSpaceDirectory() + "Data\\" + folder.getName().split("[.]")[0] + ".bin");
-			
-			if(data.exists()) {
-				DataInputStream dis = null;
-				
-				try {
-					dis = new DataInputStream(Editor.getInputStream(data.getAbsolutePath()));
-				} catch (FileNotFoundException e1) {
-					e1.printStackTrace();
-				}
-				
-				try {
-					if(dis.available() <= 0)
-						continue;
-					
-					int size = dis.readInt();
-					
-					for(int k = 0; k < size; k++) {
-						String[] datas = dis.readUTF().split(";");
-
-						if(datas[0].equals("Folder")) {
-							File scriptableObjectFolder = new File(datas[1]);
-							String fieldName = datas[3];
-							
-							if(!scriptableObjectFolder.exists()) {
-								System.err.println("folder been deleted? " + datas[1] + " IN " + datas[2]);
-								
-								continue;
-							}
-							
-							Object scriptAbleObject = readObjectFromFile(getInputStream(scriptableObjectFolder));
-							
-							if(scriptAbleObject == null) {
-								continue;
-							}
-
-							for(int j = 0; j < scriptAbleObject.getClass().getFields().length; j++) {
-								if(scriptAbleObject.getClass().getFields()[j].getName().equals(fieldName)) {
-									if(folder.getAbsolutePath().endsWith(".glsl")) {
-										String shaderName = folder.getName().split("[.]")[0];
-										
-										Shader shader = Shader.getShader(shaderName);
-
-										if(shader == null) {
-											System.err.println("[ERROR] [TSH] #575 Couldn't find a shader with the name of: " + shaderName);
-
-											continue;
-										}
-										
-										continue;
-									}
-									
-									continue;
-								}
-							}
-						}
-					}
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
-		}
-	}
-	
-	public void togglePlay() {
-		core.getGUI().getConsole().clear();
-		Application.setFOV(70);
-		Core.meshManager.clear();
-		
-		Application.setMouseState(false);
-		Application.setCursorIcon(null);
-		
-		//Started playing
-		if(!isPlaying) {
-			startedScene = SceneManager.getCurrentScene();
-			
-			for(int i = 0; i < SceneManager.getScenes().size(); i++) {
-				saveScene(SceneManager.getScenes().get(i));
-			}
-			
-			System.out.println("Started playing!");
-			
-			UI.popups.clear();
-			
-			for(int i = 0; i < SceneManager.getCurrentScene().getGameObjects().size(); i++) {
-				GameObject obj = SceneManager.getCurrentScene().getGameObjects().get(i);
-				
-				for(int j = 0; j < obj.getBehaviours().size(); j++) {
-					if(!obj.getBehaviours().get(j).isEnabled)
-						continue;
-					
-					try {
-						obj.getBehaviours().get(j).start();
-					} catch(Exception | Error e) {
-						CharArrayWriter cw = new CharArrayWriter();
-						PrintWriter w = new PrintWriter(cw);
-						e.printStackTrace(w);
-						w.close();
-						String trace = cw.toString();
-						
-						System.err.print("[ERROR] " + obj.getBehaviours().get(j).getName() + " at " + trace);
-						Console.LogErr("[ERROR] " + obj.getBehaviours().get(j).getName() + " at " + trace);
-					}
-				}
-			}
-		}
-		
-		isPlaying = !isPlaying;
-		
-		//Was playing
-		if(!isPlaying) {
-			canAddObjects = false;
-			
-			if(Core.getMasterRenderer() != null) {
-				Core.getMasterRenderer().destroy();
-				//Core.getMasterRenderer().getEntities().clear();
-			}
-			
-			if(SceneManager.getCurrentScene() != null) {
-				if(startedScene != null && !SceneManager.getCurrentScene().getName().equals(startedScene.getName()))
-					SceneManager.loadScene(startedScene.getName());
-			
-				SceneManager.getCurrentScene().destroy();
-			}
-						
-			reLoad();
-			
-			System.out.println("Stopped playing!");			
-		}
-		
-		canAddObjects = true;
-		
-		System.gc();
 	}
 	
 	public void saveScene(Scene currentScene) {
@@ -484,17 +346,13 @@ public final class Editor {
 	}
 	
 	public void load(Scene currentScene) {
-		/*if(isPlaying) {
-			System.err.println("[ERROR] Cannot load while playing.");
-			
-			return;
-		}*/
-		
 		if(currentScene == null) {
 			System.err.println("[ERROR] Cannot load a null scene!");
 			
 			return;
 		}
+		
+		System.out.println("Loading scene with the name of: " + currentScene.getName());
 		
 		try {
 			complier.compile();
@@ -502,9 +360,8 @@ public final class Editor {
 			e.printStackTrace();
 		}
 		
-		System.out.println("Loading scene with the name of: " + currentScene.getName());
-		
-		currentScene.getGameObjects().clear();
+		//currentScene.getGameObjects().clear();
+		currentScene.destroy();
 		
 		UUID lastSelectedUUID = core.getGUI().getHierachy().getSelectedObject() != null ? core.getGUI().getHierachy().getSelectedObject().uuid : null;
 		core.getGUI().getHierachy().setSelectedObject(null);
@@ -517,7 +374,7 @@ public final class Editor {
 		}
 		
 		if(is == null) {
-			System.err.println("[ERROR] [TSH] Couldn't locate a scene with the name of: " + currentScene.getFolder().getName());
+			System.err.println("[ERROR] [TSH] Couldn't locate a scene with the name of: " + currentScene.getFolder().getName() + ". Perhaps been deleted?");
 			
 			return;
 		}
@@ -581,6 +438,8 @@ public final class Editor {
 								if(go != null) {
 									GameObject nGo = GameObject.find(go.uuid);
 									f.set(beh, nGo);
+								} else {
+									f.set(beh, null);
 								}
 							} catch (IllegalArgumentException | IllegalAccessException e) {
 								e.printStackTrace();
@@ -625,7 +484,7 @@ public final class Editor {
 			if(obj.shouldBeRemoved) {
 				continue;
 			}
-						
+			
 			obj.updateTransform();
 			
 			if(!parentInfo.equals("null")) {
@@ -640,19 +499,19 @@ public final class Editor {
 				
 				behaviour.setGameObject(obj);
 				
-				if(behaviour.isEnabled) {
-					try {
-						behaviour.awake();
-					} catch(Exception | Error e) {
-						CharArrayWriter cw = new CharArrayWriter();
-						PrintWriter w = new PrintWriter(cw);
-						e.printStackTrace(w);
-						w.close();
-						String trace = cw.toString();
-						
-						System.err.println("[ERROR] " + obj.getBehaviours().get(j).getName() + " because " + trace);
-						Console.LogErr("[ERROR] " + obj.getBehaviours().get(j).getName() + " because " + trace);
-					}
+				if(!behaviour.isEnabled)
+					continue;
+				
+				try {
+					behaviour.awake();
+				} catch(Exception | Error e) {
+					CharArrayWriter cw = new CharArrayWriter();
+					PrintWriter w = new PrintWriter(cw);
+					e.printStackTrace(w);
+					w.close();
+					String trace = cw.toString();
+					
+					Console.LogErr("[ERROR] " + obj.getBehaviours().get(j).getName() + " because " + trace);
 				}
 				
 				if(isPlaying) {
@@ -665,7 +524,6 @@ public final class Editor {
 						w.close();
 						String trace = cw.toString();
 						
-						System.err.println("[ERROR] " + obj.getBehaviours().get(j).getName() + " because " + trace);
 						Console.LogErr("[ERROR] " + obj.getBehaviours().get(j).getName() + " because " + trace);
 					}
 				}
@@ -799,13 +657,14 @@ public final class Editor {
 		Core.meshManager.clear();
 		LightSource.lights.clear();
 		Core.getSprites().clear();
-		Core.getMasterRenderer().destroy();
+		//Core.getMasterRenderer().destroy();
+		Core.getMasterRenderer().getEntities().clear();
 		Application.setFOV(70);
 		Camera.main = null;
 		Shader.shaders.clear();
 		Application.setMouseState(false);
 		
-		canAddObjects = false;
+		//canAddObjects = true;
 		
 		System.out.println("Reloading the project..");
 		
@@ -836,7 +695,7 @@ public final class Editor {
 		}
 		
 		if(isPlaying) {
-			togglePlay();
+			setIsPlaying(false);
 		} else {
 			if(Core.getMasterRenderer() != null) {
 				Core.getMasterRenderer().getEntities().clear();
@@ -847,10 +706,10 @@ public final class Editor {
 			}
 		}
 		
-		canAddObjects = true;
+		//canAddObjects = false;
 		System.gc();
 		
-		System.out.println("Successfully re-loaded the project with " + SceneManager.getScenes().size() + " scenes!");
+		System.out.println("Successfully re-loaded the project with " + SceneManager.getScenes().size() + " scene(s)!");
 	}
 	
 	public void destroy() {
@@ -990,27 +849,9 @@ public final class Editor {
 			}
 		}
 		
-		/*if(behaviourName.equalsIgnoreCase("camera")) {
-			return new Camera();
-		} else if(behaviourName.equalsIgnoreCase("spriterenderer")) {
-			return new SpriteRenderer();
-		} else if(behaviourName.equalsIgnoreCase("boxcollider2d")) {
-			return new BoxCollider2D();
-		} else if(behaviourName.equalsIgnoreCase("physics2d")) {
-			return new Physics2D();
-		} else if(behaviourName.equalsIgnoreCase("audioplayer")) {
-			return new AudioPlayer();
-		} else if(behaviourName.equalsIgnoreCase("button")) {
-			return new Button();
-		} else if(behaviourName.equalsIgnoreCase("lightsource")) {
-			return new LightSource();
-		} else if(behaviourName.equalsIgnoreCase("meshrenderer")) {
-			return new MeshRenderer();*/
-		//} else {
-			System.err.println("[ERROR] #1291 Couldn't find a script with the name of " + behaviourName);
-			
-			return null;
-		//}
+		System.err.println("[ERROR] #1291 Couldn't find a script with the name of " + behaviourName);
+		
+		return null;
 	}
 	
 	public void loadProject() {
@@ -1148,12 +989,6 @@ public final class Editor {
 			return null;
 		}
 		
-		/*if(Files.exists(Paths.get(fullPath))) {
-			System.err.println("[ERROR] Cannot add a file with the path of(it already eixsts): " + fullPath);
-			
-			return null;
-		}*/
-		
 		Texture texture = null;
 		
 		if(!fullPath.contains("\\") && !fullPath.contains("/")) {//It's a normal folder.
@@ -1214,13 +1049,12 @@ public final class Editor {
 			texture = UI.loadTexture("resources/Icons/Folder.png");
 		}
 		
-		File file = new File(fullPath);
 		Folder folder = new Folder(fullPath, texture);
-		file.getParentFile().mkdirs();
+		folder.getParentFile().mkdirs();
 		//System.out.println("Adding a folder with the path of: " + fullPath + " inside " + (parent != null ? parent.getAbsolutePath() : "nothing"));
 		
 		//Create the file if it doesn't exists
-		if(!file.exists()) {
+		if(!folder.exists()) {
 			if(extension.length() <= 0) {
 				Path path = Paths.get(fullPath);
 				
@@ -1231,15 +1065,15 @@ public final class Editor {
 				}
 			} else {
 				try {
-					file.createNewFile();
+					folder.createNewFile();
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
 			}
 		}
 		
-		if(file.isDirectory()) {
-			File[] files = file.listFiles();
+		if(folder.isDirectory()) {
+			File[] files = folder.listFiles();
 			
 			if(files != null) {
 				Folder parentFolder = null;
@@ -1264,12 +1098,12 @@ public final class Editor {
 				createBytes(fullPath);
 			} else if(extension.equalsIgnoreCase("png") || extension.equalsIgnoreCase("jpg")) {
 				try {
-					Files.copy(file.toPath(), Paths.get(texturesPath + "\\" + file.getName().split("[.]")[0] + "." + extension), StandardCopyOption.REPLACE_EXISTING);
+					Files.copy(folder.toPath(), Paths.get(texturesPath + "\\" + folder.getName().split("[.]")[0] + "." + extension), StandardCopyOption.REPLACE_EXISTING);
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
 				
-				File f = new File(texturesPath + "\\" + file.getName().split("[.]")[0] + "." + extension);
+				File f = new File(texturesPath + "\\" + folder.getName().split("[.]")[0] + "." + extension);
 				
 				Sprite s = new Sprite(f.getName(), f.getAbsolutePath(), UI.loadTexture(f.getAbsolutePath()));
 				Core.getSprites().add(s);
@@ -1285,7 +1119,7 @@ public final class Editor {
 				
 				System.err.println("[DEBUG] Adding a shader with the name of " + sName);
 				
-				new Shader(sName, file.getAbsolutePath());
+				new Shader(sName, folder.getAbsolutePath());
 			}
 		}
 		
@@ -1315,6 +1149,75 @@ public final class Editor {
 	}
 	
 	public void setIsPlaying(boolean isPlaying) {
-		Editor.isPlaying = isPlaying;
+		if(Editor.isPlaying == isPlaying)
+			return;
+		
+		core.getGUI().getConsole().clear();
+		Application.setFOV(70);
+		Core.meshManager.clear();
+		
+		Application.setMouseState(false);
+		Application.setCursorIcon(null);
+		
+		//Started playing
+		if(!isPlaying) {
+			startedScene = SceneManager.getCurrentScene();
+			
+			for(int i = 0; i < SceneManager.getScenes().size(); i++) {
+				saveScene(SceneManager.getScenes().get(i));
+			}
+			
+			System.out.println("Started playing!");
+			
+			UI.popups.clear();
+			
+			for(int i = 0; i < SceneManager.getCurrentScene().getGameObjects().size(); i++) {
+				GameObject obj = SceneManager.getCurrentScene().getGameObjects().get(i);
+				
+				for(int j = 0; j < obj.getBehaviours().size(); j++) {
+					if(!obj.getBehaviours().get(j).isEnabled)
+						continue;
+					
+					try {
+						obj.getBehaviours().get(j).start();
+					} catch(Exception | Error e) {
+						CharArrayWriter cw = new CharArrayWriter();
+						PrintWriter w = new PrintWriter(cw);
+						e.printStackTrace(w);
+						w.close();
+						String trace = cw.toString();
+						
+						Console.LogErr("[ERROR] " + obj.getBehaviours().get(j).getName() + " at " + trace);
+					}
+				}
+			}
+		}
+		
+		Editor.isPlaying = !isPlaying;
+		
+		//Was playing
+		if(!isPlaying) {
+			canAddObjects = false;
+			
+			if(Core.getMasterRenderer() != null) {
+				Core.getMasterRenderer().destroy();
+				//Core.getMasterRenderer().getEntities().clear();
+			}
+			
+			if(SceneManager.getCurrentScene() != null) {
+				if(startedScene != null && !SceneManager.getCurrentScene().getName().equals(startedScene.getName()))
+					SceneManager.loadScene(startedScene.getName());
+				
+				SceneManager.getCurrentScene().destroy();
+			}
+			
+			reLoad();
+			
+			System.out.println("Stopped playing!");			
+		}
+		
+		canAddObjects = true;
+		
+		System.gc();
 	}
 }

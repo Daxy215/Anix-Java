@@ -80,7 +80,7 @@ final class Complier {
 		
 		if (!compilerTask.call()) {
 			for(Diagnostic<?> diagnostic : diagnostics.getDiagnostics()) {
-				System.err.format("[Error] on line %d in %s", diagnostic.getLineNumber(), diagnostic);
+				//System.err.format("[Error] on line %d in %s", diagnostic.getLineNumber(), diagnostic);
 				Console.LogErr("[Error] on line " + diagnostic.getLineNumber() + " in " + diagnostic + "\n");
 				
 				/*String path = diagnostic.getSource().toString().split("\\[")[1].split("\\]")[0];

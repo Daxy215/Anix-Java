@@ -51,6 +51,12 @@ public final class Assets {
 			this.parentFolder = parentFolder;
 		}
 		
+		public String getExtension() {
+			String name = getName();
+			
+			return name.substring(name.lastIndexOf(".") + 1);
+		}
+		
 		public Texture getTexture() {
 			return texture;
 		}

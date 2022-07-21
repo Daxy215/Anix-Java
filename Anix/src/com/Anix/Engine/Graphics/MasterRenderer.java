@@ -138,6 +138,7 @@ public final class MasterRenderer {
 			List<GameObject> batch = entities.get(mesh);
 			
 			if(batch == null) {
+				System.err.println("g");
 				entities.remove(mesh);
 				
 				return;
@@ -448,6 +449,8 @@ public final class MasterRenderer {
 			newBatch.add(entity);
 			entities.put(mesh, newBatch);
 		}
+		
+		System.err.println("added: " + entity.getName() + " - " + entity.shouldBeRemoved);
 	}
 	
 	public void destroy() {

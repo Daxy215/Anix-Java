@@ -57,8 +57,8 @@ public class SceneManager {
 		
 		scenes.add(scene);
 		
-		if(scenes.size() == 1)
-			loadScene(scene.getName());
+		//if(scenes.size() == 1)
+		//	loadScene(scene.getName());
 	}
 	
 	public static final Scene getCurrentScene() {

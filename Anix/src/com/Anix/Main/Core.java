@@ -179,7 +179,7 @@ public final class Core implements Runnable {
 		frameBuffer = new FrameBuffer(1920, 1080);
 		
 		if(!ProjectSettings.isEditor) {
-			editor.togglePlay();
+			editor.setIsPlaying(true);
 		}
 		
 		Input.init();
@@ -393,14 +393,11 @@ public final class Core implements Runnable {
 				
 				if(!obj.getBehaviours().isEmpty() && obj.isEnabled()) {
 					for(int j = 0; j < obj.getBehaviours().size(); j++) {
-						if(j == 0 && obj.getBehaviours().size() == 0)
-							return;
-						
 						Behaviour b = obj.getBehaviours().get(j);
 						
 						if(b == null) {
-							obj.getBehaviours().remove(i);
-							i--;
+							obj.getBehaviours().remove(j);
+							j--;
 							continue;
 						}
 						
@@ -469,14 +466,11 @@ public final class Core implements Runnable {
 				
 				if(!obj.getBehaviours().isEmpty() && obj.isEnabled()) {
 					for(int j = 0; j < obj.getBehaviours().size(); j++) {
-						if(j == 0 && obj.getBehaviours().size() == 0)
-							return;
-						
 						Behaviour b = obj.getBehaviours().get(j);
 						
 						if(b == null) {
-							obj.getBehaviours().remove(i);
-							i--;
+							obj.getBehaviours().remove(j);
+							j--;
 							continue;
 						}
 						

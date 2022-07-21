@@ -41,7 +41,6 @@ import com.Anix.SceneManager.Scene;
 import com.Anix.SceneManager.SceneManager;
 
 import imgui.ImGui;
-import imgui.flag.ImGuiConfigFlags;
 import imgui.gl3.ImGuiImplGl3;
 import imgui.glfw.ImGuiImplGlfw;
 
@@ -383,7 +382,7 @@ public final class Application {
 	}
 	
 	public static int getStartY() {
-		return gui.getMenuBar().getStartX() + gui.getMenuBar().getHeight();
+		return gui.getMenuBar().getHeight();
 	}
 	
 	public static int getWidth() {
