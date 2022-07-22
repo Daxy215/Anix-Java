@@ -19,6 +19,10 @@ import com.Anix.Math.MathD;
 import com.Anix.Math.Vector3f;
 import com.Anix.Objects.GameObject;
 
+/**
+ * TODO: Upon deleting an object from the scene, it doesn't delete it from rendering.
+ *
+ */
 public final class MasterRenderer {
 	private boolean testRender;
 	

@@ -355,7 +355,7 @@ public class MathD {
 						l.z*r.get(2, 0)+l.z*r.get(2, 1)+l.z*r.get(2, 2)+l.z*r.get(2, 3),
 						l.w*r.get(3, 0)+l.w*r.get(3, 1)+l.w*r.get(3, 2)+l.w*r.get(3, 3)
 						);
-
+		
 		return results;
 	}
 	
@@ -367,34 +367,43 @@ public class MathD {
 						l.x*r.get(2, 0)+l.y*r.get(2, 1)+l.z*r.get(2, 2)+l.w*r.get(2, 3),
 						l.x*r.get(3, 0)+l.y*r.get(3, 1)+l.z*r.get(3, 2)+l.w*r.get(3, 3)
 						);
-
+	
 		return results;
 	}*/
 	
 	public static Matrix4f view(Vector3f position, Vector3f rotation) {
-		Matrix4f view = new Matrix4f();
+		/*Matrix4f view = new Matrix4f();
 		
 		/*view = view.identity().rotate(rotation.getX(), 1, 0, 0).rotate(rotation.getY(), 0, 1, 0)
-		.rotate(rotation.getZ(), 0, 0, 1).translate(-position.x, -position.y, -position.z);*/
+		.rotate(rotation.getZ(), 0, 0, 1).translate(-position.x, -position.y, -position.z);*//*
 		
 		Matrix4f translationMatrix = new Matrix4f();
-		translationMatrix.translate(-position.x, -position.y, -position.z);
-		Matrix4f rotXMatrix = new Matrix4f(); rotXMatrix.rotate(rotation.getX(), 1, 0, 0);
-		Matrix4f rotYMatrix = new Matrix4f(); rotYMatrix.rotate(rotation.getY(), 0, 1, 0);
-		Matrix4f rotZMatrix = new Matrix4f(); rotZMatrix.rotate(rotation.getZ(), 0, 0, 1);
+		translationMatrix.translation(new org.joml.Vector3f(-position.x, -position.y, -position.z));
+		Matrix4f rotXMatrix = new Matrix4f(); rotXMatrix.rotate((float)Math.toRadians(rotation.getX()), 1, 0, 0);
+		Matrix4f rotYMatrix = new Matrix4f(); rotYMatrix.rotate((float)Math.toRadians(rotation.getY()), 0, 1, 0);
+		Matrix4f rotZMatrix = new Matrix4f(); rotZMatrix.rotate((float)Math.toRadians(rotation.getZ()), 0, 0, 1);
 		
 		//Matrix4f rotationMatrix = Matrix4f.multiply(rotYMatrix, Matrix4f.multiply(rotZMatrix, rotXMatrix));
 		Matrix4f rotationMatrix = rotXMatrix.mul(rotYMatrix).mul(rotZMatrix).mul(rotXMatrix);
 		
 		//return Matrix4f.multiply(translationMatrix, rotationMatrix);
 		
-		return view.mul(translationMatrix).mul(rotationMatrix);
+		return view.mul(translationMatrix).mul(rotationMatrix);*/
+		
+		Matrix4f m = new Matrix4f()
+			     .perspective((float) Math.toRadians(45.0f), 1.0f, 0.01f, 100.0f)
+			     .lookAt(0.0f, 0.0f, 10.0f,
+			             0.0f, 0.0f, 0.0f,
+			             0.0f, 1.0f, 0.0f);
+		
+		return m;
 	}
 	
 	public static Matrix4f transform(Vector3f position, Vector3f rotation, Vector3f scale) {
 		Matrix4f transform = new Matrix4f();
 		
-		transform = transform.translate(position.x, position.y, position.z).rotate(rotation.getX(), 1, 0, 0).rotate(rotation.getY(), 0, 1, 0)
+		transform.translation(new org.joml.Vector3f(position.x, position.y, position.z));
+		transform.rotate(rotation.getX(), 1, 0, 0).rotate(rotation.getY(), 0, 1, 0)
 		.rotate(rotation.getZ(), 0, 0, 1).scale(scale.x, scale.y, scale.z);
 		
 		return transform;

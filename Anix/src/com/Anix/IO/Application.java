@@ -174,7 +174,7 @@ public final class Application {
 			UI.drawString("No camera found!", width*0.5f, height*0.5f, -0.5f, 0.5f, 0.5f, Color.white);
 		}
 		
-		updateProjection();
+		//updateProjection();
 		
 		GL11.glClearColor(color.r, color.g, color.b, 1);
 		GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
@@ -345,13 +345,15 @@ public final class Application {
 			projectionType = Camera.main.projectionType;
 		
 		if(projectionType.equals(ProjectionType.projection)) {
-				projection = projection.perspective(fov, (float)width / (float)height, 1, -1);
+				projection.perspective(fov, (float)width / (float)height, -1, 1);
 		} else {
 			float rf = 7;
 			float tb = 4;
 			
-			projection = projection.ortho(-rf, rf, tb, -tb, -1000, 1000);
+			projection.ortho(-rf, rf, tb, -tb, -1000, 1000);
 		}
+		
+		System.err.println(projection);
 	}
 	
 	public void swapBuffers() {
