@@ -1,4 +1,4 @@
-package com.Anix.Math;
+/*package com.Anix.Math;
 
 import java.io.Serializable;
 import java.util.Arrays;
@@ -98,11 +98,6 @@ public class Matrix4f implements Serializable {
 		set(0, 0, get(0, 0) * scalar.getX());
 		set(1, 1, get(1, 1) * scalar.getY());
 		set(2, 2, get(2, 2) * scalar.getZ());
-		
-		/*set(0, 0, (get(0, 0) * scalar.x) + (get(1, 0) * scalar.y) + (get(2, 0) * scalar.z) + get(3, 0));
-		set(1, 1, (get(0, 1) * scalar.x) + (get(1, 1) * scalar.y) + (get(2, 1) * scalar.z) + get(3, 1));
-		set(2, 2, (get(0, 2) * scalar.x) + (get(1, 2) * scalar.y) + (get(2, 2) * scalar.z) + get(3, 2));
-		set(3, 3, 1);*/
 	}
 	
 	public static Matrix4f transform(Vector3f position, Vector3f rotation, Vector3f scale) {
@@ -152,27 +147,27 @@ public class Matrix4f implements Serializable {
 		return result;
 	}
 	
-	public static Vector3f multPointMatrix(Vector3f in, Matrix4f M) {
-		Vector3f out = new Vector3f();
-		
-	    //out = in * Mproj;
-	    out.x   = in.x * M.get(0, 0) + in.y * M.get(1, 0) + in.z * M.get(2, 0) + /* in.z = 1 */ M.get(3, 0);
-	    out.y   = in.x * M.get(0, 1) + in.y * M.get(1, 1) + in.z * M.get(2, 1) + /* in.z = 1 */ M.get(3, 1);
-	    out.z   = in.x * M.get(0, 2) + in.y * M.get(1, 2) + in.z * M.get(2, 2) + /* in.z = 1 */ M.get(3, 2);
-	    
-	    float w = in.x * M.get(0, 3) + in.y * M.get(1, 3) + in.z * M.get(2, 3) + /* in.z = 1 */ M.get(3, 3);
-	    
-	    // normalize if w is different than 1 (convert from homogeneous to Cartesian coordinates)
-	    if (w != 1) {
-	        out.x /= w;
-	        out.y /= w;
-	        out.z /= w;
-	    }
-	    
-	    return out;
-	}
+	//public static Vector3f multPointMatrix(Vector3f in, Matrix4f M) {
+///		Vector3f out = new Vector3f();
+///		
+	//    //out = in * Mproj;
+//	    out.x   = in.x * M.get(0, 0) + in.y * M.get(1, 0) + in.z * M.get(2, 0) + /* in.z = 1 */ //M.get(3, 0);
+//	    out.y   = in.x * M.get(0, 1) + in.y * M.get(1, 1) + in.z * M.get(2, 1) + /* in.z = 1 */ M.get(3, 1);
+//	    out.z   = in.x * M.get(0, 2) + in.y * M.get(1, 2) + in.z * M.get(2, 2) + /* in.z = 1 */ M.get(3, 2);
+//	    
+//	    float w = in.x * M.get(0, 3) + in.y * M.get(1, 3) + in.z * M.get(2, 3) + /* in.z = 1 */ M.get(3, 3);
+//	    
+	//    // normalize if w is different than 1 (convert from homogeneous to Cartesian coordinates)
+//	    if (w != 1) {
+//	        out.x /= w;
+	////        out.y /= w;
+//	        out.z /= w;
+//	    }
+//	    
+//	    return out;
+//	}
 	
-	public static Matrix4f view(Vector3f position, Vector3f rotation) {
+	/*public static Matrix4f view(Vector3f position, Vector3f rotation) {
 		Vector3f negative = new Vector3f(-position.x, -position.y, -position.z);
 		Matrix4f translationMatrix = Matrix4f.translate(negative);
 		Matrix4f rotXMatrix = Matrix4f.rotate(rotation.getX(), new Vector3f(1, 0, 0));
@@ -282,4 +277,4 @@ public class Matrix4f implements Serializable {
 	public float[] getAll() {
 		return elements;
 	}
-}
+}*/

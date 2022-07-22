@@ -16,6 +16,7 @@ import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.joml.Matrix4f;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWDropCallback;
 import org.lwjgl.glfw.GLFWErrorCallback;
@@ -36,7 +37,6 @@ import com.Anix.GUI.Windows.Console;
 import com.Anix.IO.WinRegistry.WRKey;
 import com.Anix.IO.WinRegistry.WRType;
 import com.Anix.Math.Color;
-import com.Anix.Math.Matrix4f;
 import com.Anix.SceneManager.Scene;
 import com.Anix.SceneManager.SceneManager;
 
@@ -56,7 +56,7 @@ public final class Application {
 	private int[] windowPosY = new int[1];
 	private String title;
 	
-	private static Matrix4f projection;
+	private static Matrix4f projection = new Matrix4f();
 	
 	private GLFWWindowSizeCallback sizeCallback;
 	private GLFWDropCallback OnDropCallBack;
@@ -345,12 +345,12 @@ public final class Application {
 			projectionType = Camera.main.projectionType;
 		
 		if(projectionType.equals(ProjectionType.projection)) {
-				projection = Matrix4f.projection(fov, (float)width / (float)height, 1, -1);
+				projection = projection.perspective(fov, (float)width / (float)height, 1, -1);
 		} else {
 			float rf = 7;
 			float tb = 4;
 			
-			projection = Matrix4f.orthographics(-rf, rf, tb, -tb, -1000, 1000);
+			projection = projection.ortho(-rf, rf, tb, -tb, -1000, 1000);
 		}
 	}
 	

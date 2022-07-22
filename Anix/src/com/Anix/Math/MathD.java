@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import org.joml.Matrix4f;
+
 import com.Anix.Behaviours.Camera;
 
 public class MathD {
@@ -233,15 +235,9 @@ public class MathD {
 		return abc / 6f;
 	}
 	
-	public static org.lwjglx.util.vector.Matrix4f convertMatrix(Matrix4f l) {
+	/*public static org.lwjglx.util.vector.Matrix4f convertMatrix(Matrix4f l) {
 		org.lwjglx.util.vector.Matrix4f m = new org.lwjglx.util.vector.Matrix4f();
 		
-		/*
-	 		m00 m10 m20 m30
-			m01 m11 m21 m31
-			m02 m12 m22 m32
-			m03 m13 m23 m33
-		 */
 		
 		m.m00 = l.get(0, 0); m.m10 = l.get(1, 0); m.m20 = l.get(2, 0); m.m30 = l.get(3, 0);
 		m.m01 = l.get(0, 1); m.m11 = l.get(1, 1); m.m21 = l.get(2, 1); m.m31 = l.get(3, 1);
@@ -254,12 +250,6 @@ public class MathD {
 	public static Matrix4f convertMatrix(org.lwjglx.util.vector.Matrix4f l) {
 		Matrix4f m = new Matrix4f();
 
-		/*
-	 		m00 m10 m20 m30
-			m01 m11 m21 m31
-			m02 m12 m22 m32
-			m03 m13 m23 m33
-		 */
 		
 		m.set(0, 0, l.m00); m.set(0, 1, l.m01); m.set(0, 2, l.m02); m.set(0, 3, l.m03);
 		m.set(1, 0, l.m10); m.set(1, 1, l.m11); m.set(1, 2, l.m12); m.set(1, 3, l.m13);
@@ -273,12 +263,6 @@ public class MathD {
 		Matrix4f rm = Matrix4f.identity();
 		org.lwjglx.util.vector.Matrix4f m = new org.lwjglx.util.vector.Matrix4f();
 		
-		/*
-		 	m00 m10 m20 m30
-			m01 m11 m21 m31
-			m02 m12 m22 m32
-			m03 m13 m23 m33
-		 */
 		
 		m.m00 = l.get(0, 0); m.m10 = l.get(1, 0); m.m20 = l.get(2, 0); m.m30 = l.get(3, 0);
 		m.m01 = l.get(0, 1); m.m11 = l.get(1, 1); m.m21 = l.get(2, 1); m.m31 = l.get(3, 1);
@@ -293,7 +277,7 @@ public class MathD {
 		rm.set(0, 3, m.m03); rm.set(1, 3, m.m13); rm.set(2, 3, m.m23); rm.set(3, 3, m.m33);
 		
 		return rm;
-	}
+	}*/
 	
 	public static int getRandomNumberBetweenI(int low, int high) {
 		Random r = new Random();
@@ -375,7 +359,7 @@ public class MathD {
 		return results;
 	}
 	
-	public static Vector4f mulRawMajorOrder(Vector4f l, Matrix4f r) {
+	/*public static Vector4f mulRawMajorOrder(Vector4f l, Matrix4f r) {
 		Vector4f results = new Vector4f
 				(
 						l.x*r.get(0, 0)+l.y*r.get(0, 1)+l.z*r.get(0, 2)+l.w*r.get(0, 3),
@@ -385,6 +369,35 @@ public class MathD {
 						);
 
 		return results;
+	}*/
+	
+	public static Matrix4f view(Vector3f position, Vector3f rotation) {
+		Matrix4f view = new Matrix4f();
+		
+		/*view = view.identity().rotate(rotation.getX(), 1, 0, 0).rotate(rotation.getY(), 0, 1, 0)
+		.rotate(rotation.getZ(), 0, 0, 1).translate(-position.x, -position.y, -position.z);*/
+		
+		Matrix4f translationMatrix = new Matrix4f();
+		translationMatrix.translate(-position.x, -position.y, -position.z);
+		Matrix4f rotXMatrix = new Matrix4f(); rotXMatrix.rotate(rotation.getX(), 1, 0, 0);
+		Matrix4f rotYMatrix = new Matrix4f(); rotYMatrix.rotate(rotation.getY(), 0, 1, 0);
+		Matrix4f rotZMatrix = new Matrix4f(); rotZMatrix.rotate(rotation.getZ(), 0, 0, 1);
+		
+		//Matrix4f rotationMatrix = Matrix4f.multiply(rotYMatrix, Matrix4f.multiply(rotZMatrix, rotXMatrix));
+		Matrix4f rotationMatrix = rotXMatrix.mul(rotYMatrix).mul(rotZMatrix).mul(rotXMatrix);
+		
+		//return Matrix4f.multiply(translationMatrix, rotationMatrix);
+		
+		return view.mul(translationMatrix).mul(rotationMatrix);
+	}
+	
+	public static Matrix4f transform(Vector3f position, Vector3f rotation, Vector3f scale) {
+		Matrix4f transform = new Matrix4f();
+		
+		transform = transform.translate(position.x, position.y, position.z).rotate(rotation.getX(), 1, 0, 0).rotate(rotation.getY(), 0, 1, 0)
+		.rotate(rotation.getZ(), 0, 0, 1).scale(scale.x, scale.y, scale.z);
+		
+		return transform;
 	}
 	
 	public static Vector3f div(Vector3f left, Vector3f right) {

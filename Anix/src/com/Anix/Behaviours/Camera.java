@@ -1,5 +1,7 @@
 package com.Anix.Behaviours;
 
+import org.joml.Matrix4f;
+
 import com.Anix.Annotation.HideFromInspector;
 import com.Anix.IO.Application;
 import com.Anix.IO.Input;
@@ -7,7 +9,6 @@ import com.Anix.IO.KeyCode;
 import com.Anix.IO.ProjectSettings;
 import com.Anix.Math.Color;
 import com.Anix.Math.MathD;
-import com.Anix.Math.Matrix4f;
 import com.Anix.Math.Vector2f;
 import com.Anix.Math.Vector3f;
 import com.Anix.Math.Vector4f;
@@ -53,7 +54,7 @@ public class Camera extends Behaviour {
 		rx = gameObject.getRotation().x;
 		ry = gameObject.getRotation().y;
 		rz = gameObject.getRotation().z;
-		viewMatrix = Matrix4f.view(Camera.main.gameObject.getPosition(), Camera.main.gameObject.getRotation());
+		viewMatrix = MathD.view(Camera.main.gameObject.getPosition(), Camera.main.gameObject.getRotation());
 	}
 	
 	@Override
@@ -65,7 +66,7 @@ public class Camera extends Behaviour {
 				rx != gameObject.getRotation().x ||
 				ry != gameObject.getRotation().y ||
 				rz != gameObject.getRotation().z) {
-			viewMatrix = Matrix4f.view(Camera.main.gameObject.getPosition(), Camera.main.gameObject.getRotation());
+			viewMatrix = MathD.view(Camera.main.gameObject.getPosition(), Camera.main.gameObject.getRotation());
 		}
 		
 		px = gameObject.getPosition().x;
@@ -129,36 +130,7 @@ public class Camera extends Behaviour {
 		
 		float width = Application.getWidth(), height = Application.getHeight();
 		
-		float cPosX = gameObject.getPosition().x;
-		float cPosY = gameObject.getPosition().y;
-		
-		Vector4f pos = new Vector4f((float)(mouseX / (width / 2.0f) - 1f), 1 - (float)(mosueY / (height / 2.0f)), 0, 1);
-		
-		gameObject.updateTransform();
-		Matrix4f model = gameObject.getTransform();
-		Matrix4f projection = Application.getProjectionMatrix();
-		
-		Matrix4f mvp = projection.multiply(viewMatrix).multiply(model);
-		mvp = MathD.invert(mvp);
-		
-		pos = MathD.mul(pos, mvp);
-		
-		pos.w = (1f + (Camera.main.projectionType.equals(ProjectionType.projection) ? + gameObject.getPosition().z : 0)) / pos.w;
-		pos.x *= pos.w;
-		pos.y *= pos.w;
-		pos.z *= pos.w;
-		
-		if(Camera.main.projectionType.equals(ProjectionType.orthographics)) {
-			cPosX = -cPosX;
-			cPosY = -cPosY;
-		}
-		
-		Vector2f rPos = new Vector2f(pos.x + -cPosX, pos.y + -cPosY);
-		
-		if(Camera.main.projectionType.equals(ProjectionType.projection))
-			return new Vector2f(-rPos.x, -rPos.y);
-		else
-			return new Vector2f(rPos.x, rPos.y);
+		return convertScreenToWorldSpace(mouseX, mosueY, width, height);
 	}
 	
 	public Vector2f convertScreenToWorldSpace(double x, double y) {
@@ -167,69 +139,14 @@ public class Camera extends Behaviour {
 		
 		float width = Application.getWidth(), height = Application.getHeight();
 		
-		Vector2f cPos = gameObject.getPosition().getXY();
-		
-		Vector4f pos = new Vector4f((float)(x / (width / 2.0f) - 1f), 1 - (float)(y / (height / 2.0f)), 0, 1);
-		
-		gameObject.updateTransform();
-		Matrix4f model = gameObject.getTransform();
-		Matrix4f projection = Application.getProjectionMatrix();
-		
-		Matrix4f mvp = projection.multiply(viewMatrix).multiply(model);
-		mvp = MathD.invert(mvp);
-		
-		pos = MathD.mul(pos, mvp);
-		
-		pos.w = (1f + (Camera.main.projectionType.equals(ProjectionType.projection) ? + gameObject.getPosition().z : 0)) / pos.w;
-		pos.x *= pos.w;
-		pos.y *= pos.w;
-		pos.z *= pos.w;
-		
-		if(Camera.main.projectionType.equals(ProjectionType.orthographics)) {
-			cPos.x = -cPos.x;
-			cPos.y = -cPos.y;
-		}
-		
-		Vector2f rPos = new Vector2f(pos.x + -cPos.x, -pos.y + -cPos.y);
-		
-		if(Camera.main.projectionType.equals(ProjectionType.projection))
-			return new Vector2f(-rPos.x, -rPos.y);
-		else
-			return new Vector2f(rPos.x, rPos.y);
+		return convertScreenToWorldSpace(x, y, width, height);
 	}
 	
 	public Vector2f convertScreenToWorldSpace(float width, float height) {
-		double mouseX = Input.getMouseX() - (ProjectSettings.isEditor ? Application.getStartX() : 0), mosueY = Input.getMouseY() - (ProjectSettings.isEditor ? Application.getStartY() : 0);
+		double x = Input.getMouseX() - (ProjectSettings.isEditor ? Application.getStartX() : 0),
+				y = Input.getMouseY() - (ProjectSettings.isEditor ? Application.getStartY() : 0);
 		
-		Vector2f cPos = gameObject.getPosition().getXY();
-		
-		Vector4f pos = new Vector4f((float)(mouseX / (width / 2.0f) - 1f), 1 - (float)(mosueY / (height / 2.0f)), 0, 1);
-		
-		gameObject.updateTransform();
-		Matrix4f model = gameObject.getTransform();
-		Matrix4f projection = Application.getProjectionMatrix();
-		
-		Matrix4f mvp = projection.multiply(viewMatrix).multiply(model);
-		mvp = MathD.invert(mvp);
-		
-		pos = MathD.mul(pos, mvp);
-		
-		pos.w = (1f + (Camera.main.projectionType.equals(ProjectionType.projection) ? + gameObject.getPosition().z : 0)) / pos.w;
-		pos.x *= pos.w;
-		pos.y *= pos.w;
-		pos.z *= pos.w;
-		
-		if(Camera.main.projectionType.equals(ProjectionType.orthographics)) {
-			cPos.x = -cPos.x;
-			cPos.y = -cPos.y;
-		}
-		
-		Vector2f rPos = new Vector2f(pos.x + -cPos.x, -pos.y + -cPos.y);
-		
-		if(Camera.main.projectionType.equals(ProjectionType.projection))
-			return new Vector2f(-rPos.x, -rPos.y);
-		else
-			return new Vector2f(rPos.x, rPos.y);
+		return convertScreenToWorldSpace(x, y, width, height);
 	}
 	
 	public Vector2f convertScreenToWorldSpace(double x, double y, float width, float height) {
@@ -241,13 +158,13 @@ public class Camera extends Behaviour {
 		Vector4f pos = new Vector4f((float)(x / (width / 2.0f) - 1f), 1 - (float)(y / (height / 2.0f)), 0, 1);
 		
 		gameObject.updateTransform();
-		Matrix4f model = Matrix4f.transform(gameObject.getPosition(), gameObject.getRotation(), new Vector3f(1, 1, 1));
+		Matrix4f model = new Matrix4f();
 		Matrix4f projection = Application.getProjectionMatrix();
 		
-		Matrix4f mvp = projection.multiply(viewMatrix).multiply(model);
-		mvp = MathD.invert(mvp);
+		//Matrix4f mvp = projection.multiply(viewMatrix).multiply(model);
+		Matrix4f mvp = projection.mul(viewMatrix).mul(model);
 		
-		pos = MathD.mul(pos, mvp);
+		//pos = mvp.mul(pos);
 		
 		pos.w = (1f + (Camera.main.projectionType.equals(ProjectionType.projection) ? + gameObject.getPosition().z : 0)) / pos.w;
 		pos.x *= pos.w;
@@ -268,33 +185,15 @@ public class Camera extends Behaviour {
 	}
 	
 	public Vector3f convertWorldToScreenSpace(Vector3f position) {
-		Matrix4f projection = Application.getProjectionMatrix();
-		
-		org.lwjglx.util.vector.Vector4f point4 = new org.lwjglx.util.vector.Vector4f(position.x, position.y, position.z, 1);
-		point4 = org.lwjglx.util.vector.Matrix4f.transform(MathD.convertMatrix(viewMatrix), point4, null);
-		point4 = org.lwjglx.util.vector.Matrix4f.transform(MathD.convertMatrix(projection), point4, null);
-		
-		//Vector3f point = new Vector3f(point4.x, -point4.y, -point4.z);
-		float pointx = point4.x;
-		float pointy = -point4.y;
-		float pointz = -point4.z;
-		
-		pointx /= point4.w;
-		pointy /= point4.w;
-		pointz /= point4.w;
-		
-		pointx = (pointx + 1) * (Application.getWidth() * 0.5f);
-		pointy = (pointy + 1) * (Application.getHeight() * 0.5f);
-		
-		return new Vector3f(pointx + (ProjectSettings.isEditor ? Application.getStartX() : 0), pointy + (ProjectSettings.isEditor ? Application.getStartY() : 0), pointz);
+		return convertWorldToScreenSpace(position, Application.getWidth(), Application.getHeight());
 	}
 	
-	public Vector3f convertWorldToScreenSpace(Vector3f position, Vector2f size) {
+	public Vector3f convertWorldToScreenSpace(Vector3f position, float width, float height) {
 		Matrix4f projection = Application.getProjectionMatrix();
 		
-		org.lwjglx.util.vector.Vector4f point4 = new org.lwjglx.util.vector.Vector4f(position.x, position.y, position.z, 1);
-		point4 = org.lwjglx.util.vector.Matrix4f.transform(MathD.convertMatrix(viewMatrix), point4, null);
-		point4 = org.lwjglx.util.vector.Matrix4f.transform(MathD.convertMatrix(projection), point4, null);
+		org.joml.Vector4f point4 = new org.joml.Vector4f(position.x, position.y, position.z, 1);
+		//point4 = org.lwjglx.util.vector.Matrix4f.transform(viewMatrix, point4, null);
+		point4 = projection.transform(point4);
 		
 		float pointx = point4.x;
 		float pointy = -point4.y;
@@ -304,10 +203,10 @@ public class Camera extends Behaviour {
 		pointy /= point4.w;
 		pointz /= point4.w;
 		
-		pointx = (pointx + 1) * (size.x * 0.5f);
-		pointy = (pointy + 1) * (size.y * 0.5f);
+		pointx = (pointx + 1) * (width * 0.5f);
+		pointy = (pointy + 1) * (height * 0.5f);
 		
-		return new Vector3f(pointx, pointy, pointz);
+		return new Vector3f(pointx + (ProjectSettings.isEditor ? Application.getStartX() : 0), pointy + (ProjectSettings.isEditor ? Application.getStartY() : 0), pointz);
 	}
 	
 	@Override
@@ -340,7 +239,7 @@ public class Camera extends Behaviour {
 	
 	public Matrix4f getViewMatrix() {
 		if(viewMatrix == null) {
-			viewMatrix = Matrix4f.view(Camera.main.gameObject.getPosition(), Camera.main.gameObject.getRotation());
+			viewMatrix = MathD.view(Camera.main.gameObject.getPosition(), Camera.main.gameObject.getRotation());
 		}
 		
 		return viewMatrix;

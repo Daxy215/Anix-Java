@@ -16,7 +16,6 @@ import com.Anix.IO.Application;
 import com.Anix.IO.Input;
 import com.Anix.IO.KeyCode;
 import com.Anix.Math.MathD;
-import com.Anix.Math.Matrix4f;
 import com.Anix.Math.Vector3f;
 import com.Anix.Objects.GameObject;
 
@@ -381,7 +380,7 @@ public final class MasterRenderer {
 		return new GameObject("", new Vector3f(), new Vector3f(), new Vector3f(1), mesh, false);
 	}
 	
-	public void render(GameObject gameObject) {
+	/*public void render(GameObject gameObject) {
 		if(gameObject.shouldBeRemoved || !gameObject.isEnabled() || gameObject.getMesh() == null) {
 			return;
 		}
@@ -392,7 +391,7 @@ public final class MasterRenderer {
 		
 		shader.bind();
 		
-		shader.setUniform("view", Matrix4f.view(Camera.main.gameObject.getPosition(), Camera.main.gameObject.getRotation()));
+		shader.setUniform("view", Camera.main.getViewMatrix());
 		shader.setUniform("projection", Application.getProjectionMatrix());
 		
 		prepareMesh(mesh);
@@ -405,7 +404,7 @@ public final class MasterRenderer {
 		
 		unBindMesh(mesh);
 		shader.unbind();
-	}
+	}*/
 	
 	private void prepareMesh(Mesh mesh) {
 		GL30.glBindVertexArray(mesh.getVAO());
