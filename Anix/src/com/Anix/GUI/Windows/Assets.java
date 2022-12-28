@@ -21,6 +21,7 @@ import com.Anix.IO.Application;
 import com.Anix.IO.Input;
 import com.Anix.IO.KeyCode;
 import com.Anix.Main.Core;
+import com.Anix.SceneManager.SceneManager;
 
 import imgui.ImGui;
 import imgui.ImVec2;
@@ -243,6 +244,9 @@ public final class Assets {
 								e.printStackTrace();
 							}
 		        		}
+	        		} else {
+	        			//It's a scene, open it.
+	        			SceneManager.loadScene(folder.getName().split("\\.")[0]);
 	        		}
 	        	}
 	        }

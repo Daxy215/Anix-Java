@@ -1,6 +1,6 @@
-/*package com.Anix.Net;
+package com.Anix.Net;
 
-import java.io.IOException;
+/*import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
@@ -13,12 +13,12 @@ import com.Anix.Behaviours.Behaviour;
 import com.Anix.IO.Application;
 import com.Anix.Main.Core;
 import com.Anix.Math.Vector3f;
-import com.Anix.Net.Packets.Packet00Login;
+import com.Anix.Net.Packets.Packet00Login;*/
 
 //TODO: Add unAddable(to a gameobject) attontation thingy.??
 //Completely forgot what that is lol
-public final class Client extends Behaviour implements Runnable {
-	private static final long serialVersionUID = 0L;
+public final class Client /*extends Behaviour implements Runnable*/ {
+	/*private static final long serialVersionUID = 0L;
 	
 	private int port;
 	
@@ -136,5 +136,5 @@ public final class Client extends Behaviour implements Runnable {
 
 	public Consumer<ServerPlayer> getOnLeave() {
 		return onLeave;
-	}
-}*/
+	}*/
+}

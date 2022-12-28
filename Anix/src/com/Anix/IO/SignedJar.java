@@ -1,4 +1,4 @@
-//package com.Anix.IO;
+package com.Anix.IO;
 //
 //import java.io.ByteArrayOutputStream;
 //import java.io.IOException;
@@ -47,7 +47,7 @@
 // *      href="http://docs.oracle.com/javase/7/docs/technotes/guides/jar/jar.html#Signed_JAR_File">JAR
 // *      format specification</a>
 // */
-//public final class SignedJar {
+public final class SignedJar {
 //
 //    private static final String DIG_ALG = "SHA1";
 //    private static final String SIG_ALG = "SHA1withRSA";
@@ -347,4 +347,4 @@
 //    private static String toBase64String(byte[] data) {
 //        return new String(Base64.encode(data));
 //    }
-//}
+}

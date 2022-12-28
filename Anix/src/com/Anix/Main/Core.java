@@ -428,9 +428,9 @@ public final class Core implements Runnable {
 		if(Application.isMinimized() || !ProjectSettings.isEditor /*|| !Application.isFocused()*/)
 			return;
 		
-		/*if(Input.isKeyDown(KeyCode.G)) {
-			editor.togglePlay();
-		}*/
+		if(Input.isKeyDown(KeyCode.G)) {
+			editor.setIsPlaying(!Editor.isPlaying());
+		}
 		
 		/*if(Input.isKeyDown(KeyCode.W)) {
 			generateApkThroughAnt("C:\\Users\\smsmk\\OneDrive\\Eclipse\\DaxyEngine-UIMaker\\build.xml");

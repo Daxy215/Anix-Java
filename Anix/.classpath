@@ -7,6 +7,6 @@
 			<attribute name="module" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/Lib-PC"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/Anix"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

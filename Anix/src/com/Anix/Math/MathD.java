@@ -39,14 +39,15 @@ public class MathD {
 		return true;
 	}
 	
-	public static Object[] covertArrayToList(List<Object> array) {
+	@SuppressWarnings("unchecked")
+	public static <T> T[] covertArrayToList(List<T> array) {
 		Object[] obj = new Object[array.size()];
 		
 		for(int i = 0; i < obj.length; i++) {
 			obj[i] = array.get(i);
 		}
 		
-		return obj;
+		return (T[]) obj;
 	}
 	
 	public static float fract(float value) {
