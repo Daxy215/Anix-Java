@@ -98,8 +98,8 @@ public final class Editor {
 			File[] projects = getProjects();
 			core.setProjectName("Projects\\" + projects[index].getName());
 		} else {
-            ProjectSettings.projectType = ProjectType.D3;
-			core.setProjectName("Projects\\my project");
+            ProjectSettings.projectType = ProjectType.D2;
+			core.setProjectName("Projects\\Dino Lands"); //my project
 		}
 		
 		workSpaceDirectory += "\\" + core.getProjectName() + "\\";
@@ -108,6 +108,11 @@ public final class Editor {
 		
 		if(is == null) {
 			File configFile = new File(workSpaceDirectory + "config.properties");
+			
+			if(!configFile.exists()) {
+				//New Project
+				core.getEditor().addFolder("Sample Scene.scene", null);
+			}
 			
 			try {
 				FileReader r = new FileReader(configFile);

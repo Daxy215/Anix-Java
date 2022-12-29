@@ -124,7 +124,6 @@ public final class Assets {
 				
 				popup = "Script";
 				openNewPopup = true;
-				
 			}
 			
 			if (ImGui.menuItem("New Material")) {
@@ -281,6 +280,7 @@ public final class Assets {
 				Object o = ImGui.acceptDragDropPayload("Folder", ImGuiDragDropFlags.None);
 				
 				if(o != null) {
+					//TODO: Add the dragged folder onto the hovered folder.
 					System.err.println("AOYOYOYOYOO " + (o.toString()));
 					if(core.getDraggedObject() instanceof Folder) {
 						core.setDraggedObject(null);
