@@ -12,7 +12,6 @@ public class MathD {
 		T[] reversed = (T[]) new Object[input.length];
 		
 		int j = input.length;
-		
 		for (int i = 0; i < input.length; i++) { 
 			reversed[j - 1] = input[i];
 			j--;
@@ -21,13 +20,12 @@ public class MathD {
 		return reversed;
 	}
 	
+	
 	public static <T> List<T> reverse(List<T> input) {
 	    var reversed = new ArrayList<T>();
-	    
 	    for (int i = input.size() - 1; i >= 0; i--) {
 	        reversed.add(input.get(i));
 	    }
-	    
 	    return reversed;
 	}
 	
@@ -41,9 +39,8 @@ public class MathD {
 		return true;
 	}
 	
-	@SuppressWarnings("unchecked")
-	public static <T> T[] covertArrayToList(List<T> array) {
-		T[] obj = (T[]) new Object[array.size()];
+	public static Object[] covertArrayToList(List<Object> array) {
+		Object[] obj = new Object[array.size()];
 		
 		for(int i = 0; i < obj.length; i++) {
 			obj[i] = array.get(i);
@@ -170,7 +167,7 @@ public class MathD {
 			x = lowerlimit;
 		if (x > upperlimit)
 			x = upperlimit;
-		
+
 		return x;
 	}
 	

@@ -132,11 +132,9 @@ public class Mesh implements Serializable, Cloneable {
 			textureData[i * 2 + 0] = vertices[i].getTextureCoord().getX();
 			textureData[i * 2 + 1] = vertices[i].getTextureCoord().getY();
 			
-			if(vertices[i].getNormal() != null) {
-				normalData[i * 3]     = vertices[i].getNormal().getX();
-				normalData[i * 3 + 1] = vertices[i].getNormal().getY();
-				normalData[i * 3 + 2] = vertices[i].getNormal().getZ();
-			}
+			normalData[i * 3]     = vertices[i].getNormal().getX();
+			normalData[i * 3 + 1] = vertices[i].getNormal().getY();
+			normalData[i * 3 + 2] = vertices[i].getNormal().getZ();
 		}
 		
 		positionBuffer.put(positionData);

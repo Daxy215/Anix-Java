@@ -21,7 +21,6 @@ import com.Anix.IO.Application;
 import com.Anix.IO.Input;
 import com.Anix.IO.KeyCode;
 import com.Anix.Main.Core;
-import com.Anix.SceneManager.SceneManager;
 
 import imgui.ImGui;
 import imgui.ImVec2;
@@ -124,6 +123,7 @@ public final class Assets {
 				
 				popup = "Script";
 				openNewPopup = true;
+				
 			}
 			
 			if (ImGui.menuItem("New Material")) {
@@ -243,9 +243,6 @@ public final class Assets {
 								e.printStackTrace();
 							}
 		        		}
-	        		} else {
-	        			//It's a scene, open it.
-	        			SceneManager.loadScene(folder.getName().split("\\.")[0]);
 	        		}
 	        	}
 	        }
@@ -280,7 +277,6 @@ public final class Assets {
 				Object o = ImGui.acceptDragDropPayload("Folder", ImGuiDragDropFlags.None);
 				
 				if(o != null) {
-					//TODO: Add the dragged folder onto the hovered folder.
 					System.err.println("AOYOYOYOYOO " + (o.toString()));
 					if(core.getDraggedObject() instanceof Folder) {
 						core.setDraggedObject(null);

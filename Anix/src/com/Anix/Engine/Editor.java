@@ -13,7 +13,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.NotSerializableException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.ObjectStreamClass;
@@ -98,8 +97,8 @@ public final class Editor {
 			File[] projects = getProjects();
 			core.setProjectName("Projects\\" + projects[index].getName());
 		} else {
-            ProjectSettings.projectType = ProjectType.D2;
-			core.setProjectName("Projects\\Dino Lands"); //my project
+            ProjectSettings.projectType = ProjectType.D3;
+			core.setProjectName("Projects\\Dino Lands");
 		}
 		
 		workSpaceDirectory += "\\" + core.getProjectName() + "\\";
@@ -108,11 +107,6 @@ public final class Editor {
 		
 		if(is == null) {
 			File configFile = new File(workSpaceDirectory + "config.properties");
-			
-			if(!configFile.exists()) {
-				//New Project
-				core.getEditor().addFolder("Sample Scene.scene", null);
-			}
 			
 			try {
 				FileReader r = new FileReader(configFile);
@@ -169,6 +163,8 @@ public final class Editor {
 			
 			if(!isPlaying) {
 				reLoad();
+				
+				System.err.println("reloaded: " + Core.getMasterRenderer().getEntities().size());
 			}
 		} else if(!lastIsFocused) {
 			if(!once) {
@@ -193,9 +189,9 @@ public final class Editor {
 		if(currentScene.getGameObjects().size() <= 0) {
 			return;
 		}
-		
+
 		System.out.println("Saving.. " + currentScene.getName());
-		
+
 		File file = new File(currentScene.getFolder().getAbsolutePath());
 		
 		if(ProjectSettings.isEditor) {
@@ -226,7 +222,7 @@ public final class Editor {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
+
 		System.out.println("Succesfully saved " + currentScene.getName());
 	}
 	
@@ -289,9 +285,6 @@ public final class Editor {
 	    	} catch(NotActiveException e) {
 	    		System.err.println("Not active.. #376");
 	    	}*/
-	    } catch(NotSerializableException e) {
-	    	System.err.println("Object not serializable: " + data.toString());
-	    	return;
 	    } catch(IOException e) {
 	        e.printStackTrace();
 	    }
@@ -305,15 +298,15 @@ public final class Editor {
 		if(SceneManager.getCurrentScene() == null) {
 			return;
 		}
-		
+
 		String fullPath = System.getProperty("user.dir");
 		String fileSeparator = System.getProperty("file.separator");
-		
+
 		File fff = new File(fullPath + fileSeparator + core.getProjectName() + fileSeparator + "Data" + fileSeparator + "Data.bin");
-		
+
 		if(ProjectSettings.isEditor) {
 			fff.getParentFile().mkdirs();
-			
+
 			if(!fff.exists()) {
 				try {
 					fff.createNewFile();
@@ -322,13 +315,13 @@ public final class Editor {
 				}
 			}
 		}
-		
+
 		try {
 			FileOutputStream fos = new FileOutputStream(fff, false);
 			DataOutputStream dos = new DataOutputStream(fos);
-			
+
 			dos.writeUTF("Last Scene:" + SceneManager.getCurrentScene().getName());
-			
+
 			dos.flush();
 			dos.close();
 			fos.close();
@@ -340,14 +333,14 @@ public final class Editor {
 	public void saveProject() {
 		if(Editor.isPlaying) {
 			System.err.println("[ERROR] Cannot save during gameplay!");
-			
+
 			return;
 		}
-		
+
 		for(int i = 0; i < SceneManager.getScenes().size(); i++) {
 			saveScene(SceneManager.getScenes().get(i));
 		}
-		
+
 		saveScene();
 		saveConfig(new File(workSpaceDirectory + "config.properties"));
 	}
@@ -1178,30 +1171,27 @@ public final class Editor {
 			
 			UI.popups.clear();
 			
-			Scene scene = SceneManager.getCurrentScene();
-			
-			if(scene != null)
-				for(int i = 0; i < scene.getGameObjects().size(); i++) {
-					GameObject obj = SceneManager.getCurrentScene().getGameObjects().get(i);
+			for(int i = 0; i < SceneManager.getCurrentScene().getGameObjects().size(); i++) {
+				GameObject obj = SceneManager.getCurrentScene().getGameObjects().get(i);
+				
+				for(int j = 0; j < obj.getBehaviours().size(); j++) {
+					if(!obj.getBehaviours().get(j).isEnabled)
+						continue;
 					
-					for(int j = 0; j < obj.getBehaviours().size(); j++) {
-						if(!obj.getBehaviours().get(j).isEnabled)
-							continue;
+					try {
+						obj.getBehaviours().get(j).start();
+					} catch(Exception | Error e) {
+						CharArrayWriter cw = new CharArrayWriter();
+						PrintWriter w = new PrintWriter(cw);
+						e.printStackTrace(w);
+						w.close();
+						String trace = cw.toString();
 						
-						try {
-							obj.getBehaviours().get(j).start();
-						} catch(Exception | Error e) {
-							CharArrayWriter cw = new CharArrayWriter();
-							PrintWriter w = new PrintWriter(cw);
-							e.printStackTrace(w);
-							w.close();
-							String trace = cw.toString();
-							
-							Console.LogErr("[ERROR] " + obj.getBehaviours().get(j).getName() + " at " + trace);
-						}
+						Console.LogErr("[ERROR] " + obj.getBehaviours().get(j).getName() + " at " + trace);
 					}
 				}
 			}
+		}
 		
 		Editor.isPlaying = isPlaying;
 		

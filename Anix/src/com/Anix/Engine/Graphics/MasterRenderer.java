@@ -15,6 +15,7 @@ import com.Anix.Behaviours.Camera;
 import com.Anix.IO.Application;
 import com.Anix.IO.Input;
 import com.Anix.IO.KeyCode;
+import com.Anix.Math.MathD;
 import com.Anix.Math.Matrix4f;
 import com.Anix.Math.Vector3f;
 import com.Anix.Objects.GameObject;
@@ -170,17 +171,16 @@ public final class MasterRenderer {
 					continue;
 				}
 				
-				//TODO: Should only happen if it was 2D.
-				/*if(MathD.distanceBetweenVector2(entity.getPosition().getXY(), Camera.main.gameObject.getPosition().getXY()) > 30 + Camera.main.gameObject.getPosition().z + 15)
+				if(MathD.distanceBetweenVector2(entity.getPosition().getXY(), Camera.main.gameObject.getPosition().getXY()) > 30 + Camera.main.gameObject.getPosition().z + 15)
 					continue;
 				
 				//Slow method.
-				/ector3f pos = Camera.main.convertWorldToScreenSpace(entity.getPosition());
+				Vector3f pos = Camera.main.convertWorldToScreenSpace(entity.getPosition());
 				
 				if(pos.x > Application.getFullWidth() + 64 || pos.x < -64
 						|| pos.y > Application.getFullHeight() + 64|| pos.y < -64) {
 					continue;
-				}*/
+				}
 				
 				shader.setUniform("color", mesh.getMaterial().getColor());
 				
@@ -450,7 +450,7 @@ public final class MasterRenderer {
 			entities.put(mesh, newBatch);
 		}
 		
-		//System.err.println("added: " + entity.getName() + " - " + entity.shouldBeRemoved);
+		System.err.println("added: " + entity.getName() + " - " + entity.shouldBeRemoved);
 	}
 	
 	public void destroy() {
