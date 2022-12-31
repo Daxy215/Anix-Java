@@ -21,6 +21,7 @@ import com.Anix.IO.Application;
 import com.Anix.IO.Input;
 import com.Anix.IO.KeyCode;
 import com.Anix.Main.Core;
+import com.Anix.SceneManager.SceneManager;
 
 import imgui.ImGui;
 import imgui.ImVec2;
@@ -223,6 +224,10 @@ public final class Assets {
 		for(int i = 0; i < folders.size(); i++) {
 			Folder folder = folders.get(i);
 			
+			if(folder.getExtension().equalsIgnoreCase("class")
+					|| folder.getExtension().equalsIgnoreCase("project"))
+				continue;
+			
 			ImGui.setColumnWidth(ImGui.getColumnIndex(), width);
 			
 			ImGui.pushID(s.get());
@@ -243,6 +248,8 @@ public final class Assets {
 								e.printStackTrace();
 							}
 		        		}
+	        		} else {
+	        			SceneManager.loadScene(folder.getName().split("\\.")[0]);
 	        		}
 	        	}
 	        }

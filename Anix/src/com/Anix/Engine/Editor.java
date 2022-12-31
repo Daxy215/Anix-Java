@@ -79,7 +79,7 @@ public final class Editor {
 	
 	private Core core;
 	
-	//TODO: 'spritesToLoad' will array will keep on being
+	//TODO: 'spritesToLoad' array will keep on being
 	//added to, so find a way to make it so that it'll
 	//only use it when the engine first starts.
 	//private List<String> spritesToLoad = new ArrayList<String>();
@@ -127,6 +127,7 @@ public final class Editor {
 				r.close();
 			} catch(FileNotFoundException e) {
 				saveConfig(configFile);
+				e.printStackTrace();
 			} catch(IOException e) {
 				e.printStackTrace();
 			}
@@ -140,8 +141,8 @@ public final class Editor {
 		texturesPath = Assets.createTempDirectory("Anix\\Textures").toPath();
 		
 		if(ProjectSettings.isEditor) {
-			complier.setClassesDir(new File(System.getProperty("user.dir") + fileSeparator + core.getProjectName() + fileSeparator + "Data" + fileSeparator + "bin"));
-			complier.setSourceDir(new File(System.getProperty("user.dir") + fileSeparator + core.getProjectName() + fileSeparator + "Assets"));
+			complier.setClassesDir(new File(Editor.getWorkSpaceDirectory() + "Data" + fileSeparator + "bin"));
+			complier.setSourceDir(new File(Editor.getWorkSpaceDirectory() + "Assets"));
 		} else {
 			classesPath = Assets.createTempDirectory("Anix\\Classes").toPath();
 			
@@ -208,21 +209,13 @@ public final class Editor {
 		
 		try {
 			FileOutputStream fos = new FileOutputStream(file, false);
-			/*dos.writeInt(currentScene.getGameObjects().size());
-			for(int i = 0; i < currentScene.getGameObjects().size(); i++) {
-				writeGameObject(currentScene.getGameObjects().get(i), dos, fos);
-			}*/
 			
 			saveGameObjects(currentScene, fos);
 			
-			//dos.flush();
-			//fos.flush();
-			//dos.close();
-			//fos.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-
+		
 		System.out.println("Succesfully saved " + currentScene.getName());
 	}
 	
@@ -246,30 +239,7 @@ public final class Editor {
 	}
 	
 	public void writeGameObject(GameObject obj, ObjectOutputStream stream) throws IOException {
-		//stream.writeUTF((obj.hasParent() ? obj.getParent().uuid.toString() : "null"));
-		
 		writeObjectToFile(obj, stream);
-		/*dos.writeUTF(obj.getName() + ";" + obj.uuid +
-				"<" + obj.getPosition().x + ";" + obj.getPosition().y + ";" + obj.getPosition().z + ">" +
-				"<" + obj.getRotation().x + ";" + obj.getRotation().y + ";" + obj.getRotation().z + ">" +
-				"<" + obj.getScale().x    + ";" + obj.getScale().y    + ";" + obj.getScale().z    + ">" +
-				"<" + (obj.hasParent() ? obj.getParent().uuid : "null") + ">");
-
-		Collection<Behaviour> data = new LinkedBlockingQueue<Behaviour>();
-
-		for(int j = 0; j < obj.getBehaviours().size(); j++) {
-			try {
-				data.add(obj.getBehaviours().get(j));
-			} catch(StackOverflowError e) {
-				System.err.println("g " + e.getMessage());
-			}
-		}
-
-		try {
-			dos.writeUTF(ju.marshallIntoString(data));
-		} catch(Exception | StackOverflowError e) {
-			System.err.println("F?????????????? " + e.getMessage());
-		}*/
 	}
 	
 	public static void writeObjectToFile(Object data, ObjectOutputStream stream) {
@@ -279,12 +249,6 @@ public final class Editor {
 	        if(data instanceof GameObject) {
 	    		stream.writeUTF((((GameObject)data).hasParent() ? ((GameObject)data).getParent().uuid.toString() : "null"));
 	    	}
-	        
-	      /*  try {
-	    		stream.defaultWriteObject();
-	    	} catch(NotActiveException e) {
-	    		System.err.println("Not active.. #376");
-	    	}*/
 	    } catch(IOException e) {
 	        e.printStackTrace();
 	    }
@@ -299,11 +263,10 @@ public final class Editor {
 			return;
 		}
 
-		String fullPath = System.getProperty("user.dir");
 		String fileSeparator = System.getProperty("file.separator");
-
-		File fff = new File(fullPath + fileSeparator + core.getProjectName() + fileSeparator + "Data" + fileSeparator + "Data.bin");
-
+		
+		File fff = new File(Editor.getWorkSpaceDirectory() + "Data" + fileSeparator + "Data.bin");
+		
 		if(ProjectSettings.isEditor) {
 			fff.getParentFile().mkdirs();
 
@@ -444,6 +407,8 @@ public final class Editor {
 							} catch (IllegalArgumentException | IllegalAccessException e) {
 								e.printStackTrace();
 							}
+						} else {
+							System.err.println("[ERROR] [TSH] Couldn't find a type of: " + typeName);
 						}
 					}
 				}
@@ -558,21 +523,6 @@ public final class Editor {
 			
 			if(s == null)
 				s = Editor.class.getResourceAsStream(path);
-			
-			//Problem: File content will be nothing.
-			/*if(s == null) {
-				File file = new File(path);
-				Path newPath;
-				
-				if(!Files.isDirectory(Paths.get(path))) {
-					newPath = Assets.createTempFile(tempPath + "\\" + file.getName()).toPath();
-					System.err.println("created new file: " + newPath.toString());
-				} else {
-					newPath = Paths.get(path);
-				}
-				
-				s = Editor.class.getResourceAsStream(newPath.toString());
-			}*/
 			
 			return s;
 		}
