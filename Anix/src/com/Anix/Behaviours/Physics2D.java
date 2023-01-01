@@ -121,14 +121,26 @@ public class Physics2D extends Behaviour {
 		this.velocity = velocity;
 	}
 	
+	public void addVelocity(Vector2f value) {
+		addVelocity(value.x, value.y);
+	}
+	
 	public void addVelocity(float x, float y) {
 		velocity.x += x;
 		velocity.y += y;
 	}
 	
+	public void setForce(Vector2f value) {
+		setForce(value.x, value.y);
+	}
+	
 	public void setForce(float x, float y) {
 		force.x = x;
 		force.y = y;
+	}
+	
+	public void addForce(Vector2f value) {
+		addForce(value.x, value.y);
 	}
 	
 	public void addForce(float x, float y) {

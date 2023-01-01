@@ -3,6 +3,7 @@ import com.Anix.Behaviours.Physics2D;
 import com.Anix.GUI.Windows.Console;
 import com.Anix.IO.Time;
 import com.Anix.Math.MathD;
+import com.Anix.Math.Vector2f;
 
 public class Dino extends StatsSystem {
 	/*
@@ -18,6 +19,8 @@ public class Dino extends StatsSystem {
 	
 	private float timer;
 	
+	private Vector2f idleMovement;
+	
 	public Dino() {
 		super();
 	}
@@ -25,27 +28,22 @@ public class Dino extends StatsSystem {
 	@Override
 	public void start() {
 		currentState = State.Idle;
-		System.err.println("Sstate: " + currentState);
 	}
 	
 	@Override
 	public void update() {
-		System.err.println("Updating");
-		
 		switch(currentState) {
 		case Idle:
 			timer -= Time.deltaTime;
 			
-			System.err.println("timer: " + timer);
-			
 			if(timer <= 0) {
-				Console.Log("Should move");
+				idleMovement = new Vector2f(MathD.getRandomNumberBetweenF(-1, 1) * Time.deltaTime * speed, MathD.getRandomNumberBetweenF(-1, 1));
 				
-				((Physics2D)gameObject.getBehaviour(Physics2D.class)).addForce(MathD.getRandomNumberBetweenF(-1, 1), MathD.getRandomNumberBetweenF(-1, 1));
+				((Physics2D)gameObject.getBehaviour(Physics2D.class)).addForce(idleMovement);
 				
-				timer = 2;
+				timer = MathD.getRandomNumberBetweenF(2, 8);
 			}
-			
+						
 			break;
 		case Chasing:
 			

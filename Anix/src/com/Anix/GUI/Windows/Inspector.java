@@ -373,6 +373,12 @@ public final class Inspector {
 				f.set(object, vec3);
 			}
 		} else if(type.isEnum()) {
+			if(f.get(object) == null) {
+				ImGui.popID();
+				counter++;
+				return;
+			}
+
 			if(ImGui.beginCombo("#", f.get(object).toString())) {
 				Method value = type.getMethod("values");
 				Object[] values = (Object[]) value.invoke(null, null);

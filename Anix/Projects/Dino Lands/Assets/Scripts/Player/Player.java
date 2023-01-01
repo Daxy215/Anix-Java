@@ -1,6 +1,7 @@
 package Scripts.Player;
 
 import com.Anix.Behaviours.Behaviour;
+import com.Anix.Behaviours.Camera;
 import com.Anix.Math.MathD;
 
 public class Player extends Behaviour {
@@ -20,8 +21,8 @@ public class Player extends Behaviour {
 	
 	@Override
 	public void update() {
-		System.err.println("player?");
-		
 		health = MathD.clamp(health, 0, 100);
+		
+		Camera.main.followObject2D(gameObject, 0.05f);
 	}
 }
