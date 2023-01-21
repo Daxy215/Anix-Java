@@ -5,6 +5,9 @@ import java.nio.FloatBuffer;
 
 import com.Anix.Objects.GameObject;
 
+//https://github.com/SilverTiger/lwjgl3-tutorial/blob/master/src/silvertiger/tutorial/lwjgl/graphic/ShaderProgram.java
+//https://github.com/RGreenlees/Java-OpenGL-Math-Library/blob/89ce7803e139311e0c00ffaf67439a3eb2cd69ee/src/com/joml/matrix/Matrix4f.java#L319 - Invert method
+
 public class Matrix4f implements Serializable {
 	private static final long serialVersionUID = 8084349867192902726L;
 	
