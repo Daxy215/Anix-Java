@@ -41,8 +41,6 @@ public class Dino extends StatsSystem {
 				
 				((Physics2D)gameObject.getBehaviour(Physics2D.class)).addForce(idleMovement);
 				
-				System.err.println("shall move");
-				
 				timer = MathD.getRandomNumberBetweenF(2, 8);
 			}
 			

@@ -26,9 +26,6 @@ public class PhysicsEngine {
 			
 			b.gameObject.addPosition(b.velocity.x*Time.getDeltaTime(), b.velocity.y*Time.getDeltaTime(), 0);
 			
-			//b.velocity.x = roundOffTo2DecPlaces(b.velocity.x);
-			//b.velocity.y = roundOffTo2DecPlaces(b.velocity.y);
-			
 			if(b.velocity.x > 0.0000000f) {
 				b.velocity.x -= b.friction * Time.getDeltaTime();
 			} else if(b.velocity.x < 0.0000000f) {

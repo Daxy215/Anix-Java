@@ -22,7 +22,7 @@ import com.Anix.Engine.Editor;
 import com.Anix.Main.Core;
 
 public class ResourceLoader {
-	//TODO: In this UI, use tihs instead.
+	//TODO: In this UI, use this instead.
 	public static ByteBuffer loadImageToByteBuffer(String file) {
 		ByteBuffer imageBuffer;
 		
