@@ -8,11 +8,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Serializable;
+import java.nio.FloatBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
+import org.lwjgl.system.MemoryStack;
 
 import com.Anix.Engine.Utils.FileUtils;
 import com.Anix.GUI.Windows.Console;
@@ -355,7 +357,9 @@ public class Shader implements Serializable {
 	}
 	
 	public int setUniform(String name, Matrix4f value) {
-		if(getUniformLocation(name) == -1) {
+		int location = getUniformLocation(name);
+		
+		if(location == -1) {
 			return -1;
 		}
 		
@@ -364,7 +368,13 @@ public class Shader implements Serializable {
 		//if(curProgram != programID)
 		//	GL20.glUseProgram(programID);
 		
-		GL20.glUniformMatrix4fv(getUniformLocation(name), true, value.getAll());
+		try (MemoryStack stack = MemoryStack.stackPush()) {
+            FloatBuffer buffer = stack.mallocFloat(4 * 4);
+            value.toBuffer(buffer);
+            GL20.glUniformMatrix4fv(getUniformLocation(name), false, buffer);
+        }
+		
+		//GL20.glUniformMatrix4fv(getUniformLocation(name), true, value.getAll());
 		//GL20.glUseProgram(curProgram);
 		
 		return 0;

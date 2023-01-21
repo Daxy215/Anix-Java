@@ -29,6 +29,9 @@ public class Chunk {
 		for(int xx = 0; xx < World.chunkSizeX+2; xx++) {
 			for(int yy = 0; yy < World.chunkSizeY; yy++) {
 				for(int zz = 0; zz < World.chunkSizeZ+2; zz++) {
+					if(blocks == null)
+						return;
+					
 					blocks[xx][yy][zz] = GetBlockType(xx+x-1, yy+y, zz+z-1);
 				}
 			}

@@ -134,14 +134,15 @@ public class Camera extends Behaviour {
 		
 		Vector4f pos = new Vector4f((float)(mouseX / (width / 2.0f) - 1f), 1 - (float)(mosueY / (height / 2.0f)), 0, 1);
 		
-		gameObject.updateTransform();
+		//TODO: Remove this?
+		//gameObject.updateTransform();
 		Matrix4f model = gameObject.getTransform();
 		Matrix4f projection = Application.getProjectionMatrix();
 		
 		Matrix4f mvp = projection.multiply(viewMatrix).multiply(model);
-		mvp = MathD.invert(mvp);
+		mvp.invert();
 		
-		pos = MathD.mul(pos, mvp);
+		pos = mvp.multiply(pos);
 		
 		pos.w = (1f + (Camera.main.projectionType.equals(ProjectionType.projection) ? + gameObject.getPosition().z : 0)) / pos.w;
 		pos.x *= pos.w;
@@ -171,14 +172,14 @@ public class Camera extends Behaviour {
 		
 		Vector4f pos = new Vector4f((float)(x / (width / 2.0f) - 1f), 1 - (float)(y / (height / 2.0f)), 0, 1);
 		
-		gameObject.updateTransform();
+		//gameObject.updateTransform();
 		Matrix4f model = gameObject.getTransform();
 		Matrix4f projection = Application.getProjectionMatrix();
 		
 		Matrix4f mvp = projection.multiply(viewMatrix).multiply(model);
-		mvp = MathD.invert(mvp);
+		mvp.invert();
 		
-		pos = MathD.mul(pos, mvp);
+		pos = mvp.multiply(pos);
 		
 		pos.w = (1f + (Camera.main.projectionType.equals(ProjectionType.projection) ? + gameObject.getPosition().z : 0)) / pos.w;
 		pos.x *= pos.w;
@@ -205,14 +206,14 @@ public class Camera extends Behaviour {
 		
 		Vector4f pos = new Vector4f((float)(mouseX / (width / 2.0f) - 1f), 1 - (float)(mosueY / (height / 2.0f)), 0, 1);
 		
-		gameObject.updateTransform();
+		//gameObject.updateTransform();
 		Matrix4f model = gameObject.getTransform();
 		Matrix4f projection = Application.getProjectionMatrix();
 		
 		Matrix4f mvp = projection.multiply(viewMatrix).multiply(model);
-		mvp = MathD.invert(mvp);
+		mvp.invert();
 		
-		pos = MathD.mul(pos, mvp);
+		pos = mvp.multiply(pos);
 		
 		pos.w = (1f + (Camera.main.projectionType.equals(ProjectionType.projection) ? + gameObject.getPosition().z : 0)) / pos.w;
 		pos.x *= pos.w;
@@ -240,14 +241,14 @@ public class Camera extends Behaviour {
 		
 		Vector4f pos = new Vector4f((float)(x / (width / 2.0f) - 1f), 1 - (float)(y / (height / 2.0f)), 0, 1);
 		
-		gameObject.updateTransform();
-		Matrix4f model = Matrix4f.transform(gameObject.getPosition(), gameObject.getRotation(), new Vector3f(1, 1, 1));
+		//gameObject.updateTransform();
+		Matrix4f model = Matrix4f.transform(gameObject);
 		Matrix4f projection = Application.getProjectionMatrix();
 		
 		Matrix4f mvp = projection.multiply(viewMatrix).multiply(model);
-		mvp = MathD.invert(mvp);
+		mvp.invert();
 		
-		pos = MathD.mul(pos, mvp);
+		pos = mvp.multiply(pos);
 		
 		pos.w = (1f + (Camera.main.projectionType.equals(ProjectionType.projection) ? + gameObject.getPosition().z : 0)) / pos.w;
 		pos.x *= pos.w;
@@ -268,7 +269,7 @@ public class Camera extends Behaviour {
 	}
 	
 	public Vector3f convertWorldToScreenSpace(Vector3f position) {
-		Matrix4f projection = Application.getProjectionMatrix();
+		/*Matrix4f projection = Application.getProjectionMatrix();
 		
 		org.lwjglx.util.vector.Vector4f point4 = new org.lwjglx.util.vector.Vector4f(position.x, position.y, position.z, 1);
 		point4 = org.lwjglx.util.vector.Matrix4f.transform(MathD.convertMatrix(viewMatrix), point4, null);
@@ -286,11 +287,12 @@ public class Camera extends Behaviour {
 		pointx = (pointx + 1) * (Application.getWidth() * 0.5f);
 		pointy = (pointy + 1) * (Application.getHeight() * 0.5f);
 		
-		return new Vector3f(pointx + (ProjectSettings.isEditor ? Application.getStartX() : 0), pointy + (ProjectSettings.isEditor ? Application.getStartY() : 0), pointz);
+		return new Vector3f(pointx + (ProjectSettings.isEditor ? Application.getStartX() : 0), pointy + (ProjectSettings.isEditor ? Application.getStartY() : 0), pointz);*/
+		return null;
 	}
 	
 	public Vector3f convertWorldToScreenSpace(Vector3f position, Vector2f size) {
-		Matrix4f projection = Application.getProjectionMatrix();
+		/*Matrix4f projection = Application.getProjectionMatrix();
 		
 		org.lwjglx.util.vector.Vector4f point4 = new org.lwjglx.util.vector.Vector4f(position.x, position.y, position.z, 1);
 		point4 = org.lwjglx.util.vector.Matrix4f.transform(MathD.convertMatrix(viewMatrix), point4, null);
@@ -307,7 +309,8 @@ public class Camera extends Behaviour {
 		pointx = (pointx + 1) * (size.x * 0.5f);
 		pointy = (pointy + 1) * (size.y * 0.5f);
 		
-		return new Vector3f(pointx, pointy, pointz);
+		return new Vector3f(pointx, pointy, pointz);*/
+		return null;
 	}
 	
 	@Override

@@ -97,8 +97,8 @@ public final class Editor {
 			File[] projects = getProjects();
 			core.setProjectName("Projects\\" + projects[index].getName());
 		} else {
-            ProjectSettings.projectType = ProjectType.D3;
-			core.setProjectName("Projects\\my project");
+            ProjectSettings.projectType = ProjectType.D2;
+			core.setProjectName("Projects\\Dino Lands");
 		}
 		
 		workSpaceDirectory += "\\" + core.getProjectName() + "\\";
@@ -422,12 +422,14 @@ public final class Editor {
 			is.close();
 		} catch (IOException e) {
 			e.printStackTrace();
+		} catch (ClassNotFoundException e1) {
+			e1.printStackTrace();
 		}
 		
 		System.out.println("Scene successfully loaded!");
 	}
 	
-	public void loadGameObjects(Scene currentScene, ObjectInputStream stream) throws IOException {
+	public void loadGameObjects(Scene currentScene, ObjectInputStream stream) throws IOException, ClassNotFoundException {
 		int size = stream.readInt();
 		
 		for(int i = 0; i < size; i++) {
@@ -1121,26 +1123,29 @@ public final class Editor {
 			
 			UI.popups.clear();
 			
-			for(int i = 0; i < SceneManager.getCurrentScene().getGameObjects().size(); i++) {
-				GameObject obj = SceneManager.getCurrentScene().getGameObjects().get(i);
-				
-				for(int j = 0; j < obj.getBehaviours().size(); j++) {
-					if(!obj.getBehaviours().get(j).isEnabled)
-						continue;
+			Scene scene = SceneManager.getCurrentScene();
+			
+			if(scene != null)
+				for(int i = 0; i < scene.getGameObjects().size(); i++) {
+					GameObject obj = scene.getGameObjects().get(i);
 					
-					try {
-						obj.getBehaviours().get(j).start();
-					} catch(Exception | Error e) {
-						CharArrayWriter cw = new CharArrayWriter();
-						PrintWriter w = new PrintWriter(cw);
-						e.printStackTrace(w);
-						w.close();
-						String trace = cw.toString();
+					for(int j = 0; j < obj.getBehaviours().size(); j++) {
+						if(!obj.getBehaviours().get(j).isEnabled)
+							continue;
 						
-						Console.LogErr("[ERROR] " + obj.getBehaviours().get(j).getName() + " at " + trace);
+						try {
+							obj.getBehaviours().get(j).start();
+						} catch(Exception | Error e) {
+							CharArrayWriter cw = new CharArrayWriter();
+							PrintWriter w = new PrintWriter(cw);
+							e.printStackTrace(w);
+							w.close();
+							String trace = cw.toString();
+							
+							Console.LogErr("[ERROR] " + obj.getBehaviours().get(j).getName() + " at " + trace);
+						}
 					}
 				}
-			}
 		}
 		
 		Editor.isPlaying = isPlaying;

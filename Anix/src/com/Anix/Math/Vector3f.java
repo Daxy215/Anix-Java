@@ -72,6 +72,14 @@ public class Vector3f implements Serializable {
 		return this;
 	}
 	
+    public float lengthSquared() {
+        return x * x + y * y + z * z;
+    }
+    
+    public float length() {
+        return (float) Math.sqrt(lengthSquared());
+    }
+	
 	public static Vector3f add(Vector3f vector1, Vector3f vector2) {
 		return new Vector3f(vector1.getX() + vector2.getX(), vector1.getY() + vector2.getY(), vector1.getZ() + vector2.getZ());
 	}

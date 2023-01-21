@@ -203,6 +203,19 @@ public abstract class Behaviour extends Object implements Cloneable, Serializabl
 	public Field[] getFields() {
 		List<Field> fields = new ArrayList<Field>();
 		
+		if(getClass().getSuperclass() != null)
+			for(int i = 0; i < getClass().getSuperclass().getDeclaredFields().length; i++) {
+				Field f = getClass().getSuperclass().getDeclaredFields()[i];
+				
+				if(f.getAnnotation(HideFromInspector.class) != null)
+					continue;
+				
+				if(Modifier.isProtected(f.getModifiers()) || Modifier.isFinal(f.getModifiers()) || Modifier.isStatic(f.getModifiers()))
+					continue;
+				
+				fields.add(f);
+			}
+		
 		for(int i = 0; i < getClass().getFields().length; i++) {
 			Field f = getClass().getFields()[i];
 			

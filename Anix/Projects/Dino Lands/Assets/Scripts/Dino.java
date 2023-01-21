@@ -1,10 +1,10 @@
-
 import com.Anix.Behaviours.Physics2D;
 import com.Anix.GUI.Windows.Console;
 import com.Anix.IO.Time;
 import com.Anix.Math.MathD;
 import com.Anix.Math.Vector2f;
 
+//@Require(Physics2D.class)
 public class Dino extends StatsSystem {
 	/*
 	* Please ignore this tyvm :)
@@ -37,13 +37,15 @@ public class Dino extends StatsSystem {
 			timer -= Time.deltaTime;
 			
 			if(timer <= 0) {
-				idleMovement = new Vector2f(MathD.getRandomNumberBetweenF(-1, 1) * Time.deltaTime * speed, MathD.getRandomNumberBetweenF(-1, 1));
+				idleMovement = new Vector2f(MathD.getRandomNumberBetweenF(-50, 50) * Time.deltaTime * speed, MathD.getRandomNumberBetweenF(-50, 50));
 				
 				((Physics2D)gameObject.getBehaviour(Physics2D.class)).addForce(idleMovement);
 				
+				System.err.println("shall move");
+				
 				timer = MathD.getRandomNumberBetweenF(2, 8);
 			}
-						
+			
 			break;
 		case Chasing:
 			

@@ -49,7 +49,7 @@ public class GameObject /*extends Entity*/ implements Cloneable, Serializable {
 	public GameObject() {
 		uuid = UUID.randomUUID();
 		
-		this.transform = Matrix4f.transform(getPosition(), getRotation(), getScale());
+		this.transform = Matrix4f.transform(this);
 	}
 	
 	public GameObject(String name) {
@@ -69,7 +69,7 @@ public class GameObject /*extends Entity*/ implements Cloneable, Serializable {
 		
 		scene.addObject(this);
 		
-		this.transform = Matrix4f.transform(getPosition(), getRotation(), getScale());
+		this.transform = Matrix4f.transform(this);
 	}
 	
 	public GameObject(String name, Vector3f position, Vector3f rotation, Vector3f scale) {
@@ -90,7 +90,7 @@ public class GameObject /*extends Entity*/ implements Cloneable, Serializable {
 		
 		scene.addObject(this);
 		
-		this.transform = Matrix4f.transform(getPosition(), getRotation(), getScale());
+		this.transform = Matrix4f.transform(this);
 	}
 	
 	public GameObject(String name, Vector3f position, Vector3f rotation, Vector3f scale, GameObject parent) {
@@ -112,7 +112,7 @@ public class GameObject /*extends Entity*/ implements Cloneable, Serializable {
 		
 		scene.addObject(this);
 		
-		this.transform = Matrix4f.transform(getPosition(), getRotation(), getScale());
+		this.transform = Matrix4f.transform(this);
 	}
 	
 	public GameObject(String name, Vector3f position, Vector3f rotation, Vector3f scale, boolean addToScene) {
@@ -142,7 +142,7 @@ public class GameObject /*extends Entity*/ implements Cloneable, Serializable {
 			}
 		}
 		
-		this.transform = Matrix4f.transform(getPosition(), getRotation(), getScale());
+		this.transform = Matrix4f.transform(this);
 	}
 	
 	public GameObject(Vector3f position, Vector3f rotation, Vector3f scale, Mesh mesh) {
@@ -164,7 +164,7 @@ public class GameObject /*extends Entity*/ implements Cloneable, Serializable {
 		
 		scene.addObject(this);
 		
-		this.transform = Matrix4f.transform(getPosition(), getRotation(), getScale());
+		this.transform = Matrix4f.transform(this);
 	}
 	
 	public GameObject(Vector3f position, Vector3f rotation, Vector3f scale, GameObject parent) {
@@ -186,7 +186,7 @@ public class GameObject /*extends Entity*/ implements Cloneable, Serializable {
 		
 		scene.addObject(this);
 		
-		this.transform = Matrix4f.transform(getPosition(), getRotation(), getScale());
+		this.transform = Matrix4f.transform(this);
 	}
 	
 	public GameObject(String name, Vector3f position, Vector3f rotation, Vector3f scale, Mesh mesh) {
@@ -208,7 +208,7 @@ public class GameObject /*extends Entity*/ implements Cloneable, Serializable {
 		
 		scene.addObject(this);
 		
-		this.transform = Matrix4f.transform(getPosition(), getRotation(), getScale());
+		this.transform = Matrix4f.transform(this);
 	}
 
 	public GameObject(String name, Vector3f position, Vector3f rotation, Vector3f scale, Mesh mesh, boolean addToScene) {
@@ -231,7 +231,7 @@ public class GameObject /*extends Entity*/ implements Cloneable, Serializable {
 			scene.addObject(this);
 		}
 		
-		this.transform = Matrix4f.transform(getPosition(), getRotation(), getScale());
+		this.transform = Matrix4f.transform(this);
 	}
 	
 	public GameObject(String name, Vector3f position, Vector3f rotation, Vector3f scale, Mesh mesh, GameObject parent) {
@@ -254,7 +254,7 @@ public class GameObject /*extends Entity*/ implements Cloneable, Serializable {
 		
 		scene.addObject(this);
 		
-		this.transform = Matrix4f.transform(getPosition(), getRotation(), getScale());
+		this.transform = Matrix4f.transform(this);
 	}
 	
 	public static GameObject find(String name) {
@@ -674,6 +674,6 @@ public class GameObject /*extends Entity*/ implements Cloneable, Serializable {
 	}
 
 	public void updateTransform() {
-		transform = Matrix4f.transform(getPosition(), getRotation(), getScale());
+		transform = Matrix4f.transform(this);
 	}
 }

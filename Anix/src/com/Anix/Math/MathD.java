@@ -239,15 +239,8 @@ public class MathD {
 		return abc / 6f;
 	}
 	
-	public static org.lwjglx.util.vector.Matrix4f convertMatrix(Matrix4f l) {
+	/*public static org.lwjglx.util.vector.Matrix4f convertMatrix(Matrix4f l) {
 		org.lwjglx.util.vector.Matrix4f m = new org.lwjglx.util.vector.Matrix4f();
-		
-		/*
-	 		m00 m10 m20 m30
-			m01 m11 m21 m31
-			m02 m12 m22 m32
-			m03 m13 m23 m33
-		 */
 		
 		m.m00 = l.get(0, 0); m.m10 = l.get(1, 0); m.m20 = l.get(2, 0); m.m30 = l.get(3, 0);
 		m.m01 = l.get(0, 1); m.m11 = l.get(1, 1); m.m21 = l.get(2, 1); m.m31 = l.get(3, 1);
@@ -260,12 +253,6 @@ public class MathD {
 	public static Matrix4f convertMatrix(org.lwjglx.util.vector.Matrix4f l) {
 		Matrix4f m = new Matrix4f();
 
-		/*
-	 		m00 m10 m20 m30
-			m01 m11 m21 m31
-			m02 m12 m22 m32
-			m03 m13 m23 m33
-		 */
 		
 		m.set(0, 0, l.m00); m.set(0, 1, l.m01); m.set(0, 2, l.m02); m.set(0, 3, l.m03);
 		m.set(1, 0, l.m10); m.set(1, 1, l.m11); m.set(1, 2, l.m12); m.set(1, 3, l.m13);
@@ -279,12 +266,6 @@ public class MathD {
 		Matrix4f rm = Matrix4f.identity();
 		org.lwjglx.util.vector.Matrix4f m = new org.lwjglx.util.vector.Matrix4f();
 		
-		/*
-		 	m00 m10 m20 m30
-			m01 m11 m21 m31
-			m02 m12 m22 m32
-			m03 m13 m23 m33
-		 */
 		
 		m.m00 = l.get(0, 0); m.m10 = l.get(1, 0); m.m20 = l.get(2, 0); m.m30 = l.get(3, 0);
 		m.m01 = l.get(0, 1); m.m11 = l.get(1, 1); m.m21 = l.get(2, 1); m.m31 = l.get(3, 1);
@@ -299,7 +280,7 @@ public class MathD {
 		rm.set(0, 3, m.m03); rm.set(1, 3, m.m13); rm.set(2, 3, m.m23); rm.set(3, 3, m.m33);
 		
 		return rm;
-	}
+	}*/
 	
 	public static int getRandomNumberBetweenI(int low, int high) {
 		Random r = new Random();
@@ -369,7 +350,7 @@ public class MathD {
 		return new Vector3f(left.x * right, left.y * right, left.z * right);
 	}
 	
-	public static Vector4f mul(Vector4f l, Matrix4f r) {
+	/*public static Vector4f mul(Vector4f l, Matrix4f r) {
 		Vector4f results = new Vector4f
 				(
 						l.x*r.get(0, 0)+l.x*r.get(0, 1)+l.x*r.get(0, 2)+l.x*r.get(0, 3),
@@ -391,7 +372,7 @@ public class MathD {
 						);
 
 		return results;
-	}
+	}*/
 	
 	public static Vector3f div(Vector3f left, Vector3f right) {
 		return new Vector3f(left.x / right.x, left.y / right.y, left.z / right.z);

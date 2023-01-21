@@ -11,60 +11,60 @@ public class StatsSystem extends Behaviour {
 	private static final long serialVersionUID = 1L;	
 	
 	@Header("Status")
-    protected int level = 1;
-    protected int curLevel;
+    public int level = 1;
+    public int curLevel;
     
-    protected float xp = 0;
-    protected float curXp;
+    public float xp = 0;
+    public float curXp;
     
-    protected float xpTillLevelUp = 150;
-    protected float curXpTillLevelUp;
+    public float xpTillLevelUp = 150;
+    public float curXpTillLevelUp;
     
-    protected float health = 5;
-    protected float curHealth = 100; //Acts as a percentage, 100%, means the dino has 5 HP, 50% 2.5 HP and 200% has 10 HP.
+    public float health = 5;
+    public float curHealth = 100; //Acts as a percentage, 100%, means the dino has 5 HP, 50% 2.5 HP and 200% has 10 HP.
     
-    protected float stamina = 50;
-    protected float curStamina = 100;
+    public float stamina = 50;
+    public float curStamina = 100;
 
-    protected float speed = 2;
-    protected float curSpeed = 100;
+    public float speed = 2;
+    public float curSpeed = 100;
     
-    protected float weight = 100;
-    protected float curWeight = 100;
+    public float weight = 100;
+    public float curWeight = 100;
 
-    protected float temperature = 100;
-    protected float curTemperature = 100;
+    public float temperature = 100;
+    public float curTemperature = 100;
 
-    protected float fortitude = 100;
-    protected float curFortitude = 100;
+    public float fortitude = 100;
+    public float curFortitude = 100;
 
-    protected float food = 100;
-    protected float curFood = 100;
+    public float food = 100;
+    public float curFood = 100;
 
-    protected float thirst = 100;
-    protected float curThirst = 100;
+    public float thirst = 100;
+    public float curThirst = 100;
 
-    protected float oxygen = 10;
-    protected float curOxygen = 100;
+    public float oxygen = 10;
+    public float curOxygen = 100;
 
-    protected float attackDamage = 5;
-    protected float curAttackDamage = 100;
+    public float attackDamage = 5;
+    public float curAttackDamage = 100;
 
-    protected float torpidity = 50;
-    protected float curTorpidity = 100;
+    public float torpidity = 50;
+    public float curTorpidity = 100;
 
     @Header("Leveling Mulitplayers")
-    protected float healthMul         = 0.1f;
-    protected float staminaMul         = 0.1f;
-    protected float speedMul          = 0.1f;
-    protected float weightMul         = 0.1f;
-    protected float temperatureMul  = 0.1f;
-    protected float fortitudeMul    = 0.1f;
-    protected float foodMul           = 0.1f;
-    protected float thirstMul         = 0.1f;
-    protected float oxygenMul         = 0.1f;
-    protected float attackMul         = 0.1f;
-    protected float torpidityMul     = 0.1f;
+    public float healthMul         = 0.1f;
+    public float staminaMul         = 0.1f;
+    public float speedMul          = 0.1f;
+    public float weightMul         = 0.1f;
+    public float temperatureMul  = 0.1f;
+    public float fortitudeMul    = 0.1f;
+    public float foodMul           = 0.1f;
+    public float thirstMul         = 0.1f;
+    public float oxygenMul         = 0.1f;
+    public float attackMul         = 0.1f;
+    public float torpidityMul     = 0.1f;
     
     public StatsSystem() {
     	super();
@@ -75,27 +75,34 @@ public class StatsSystem extends Behaviour {
     	System.err.println("What about this?");
     }
     
-    protected float levelUpStats(String statsName, float amount) {
-    	Field f = StatsSystem.class.getField(statsName);
-    	
-    	if(f == null) {
-    		System.err.println("[IN-GAME:ERROR] Couldn't find a field with the name of: " + statsName);
-    		
-    		return -1;
-    	}
-    	
-    	f.set(this, f.getFloat(this) + amount);
+    public float levelUpStats(String statsName, float amount) {
+    	Field f;
+		try {
+			f = StatsSystem.class.getField(statsName);
+			
+			if(f == null) {
+	    		System.err.println("[IN-GAME:ERROR] Couldn't find a field with the name of: " + statsName);
+	    		
+	    		return -1;
+	    	}
+	    	
+	    	f.set(this, f.getFloat(this) + amount);
+		} catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException e) {
+			e.printStackTrace();
+		}
+		
+		return -1;
     }
     
-    protected float getHealth() {
+    public float getHealth() {
     	return getPercentageAmount(health, curHealth);
     }
     
-    protected float getStamina() {
+    public float getStamina() {
     	return getPercentageAmount(stamina, curStamina);
     }
     
-    protected float getSpeed() {
+    public float getSpeed() {
     	return getPercentageAmount(speed, curSpeed);
     }
     
@@ -131,7 +138,7 @@ public class StatsSystem extends Behaviour {
     	return getPercentageAmount(torpidity, curTorpidity);
     }
     
-    protected float getPercentageAmount(float value, float percentage) {
+    public float getPercentageAmount(float value, float percentage) {
     	return (percentage * value) / 100;
     }
 }

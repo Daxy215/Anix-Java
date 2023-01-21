@@ -345,12 +345,12 @@ public final class Application {
 			projectionType = Camera.main.projectionType;
 		
 		if(projectionType.equals(ProjectionType.projection)) {
-				projection = Matrix4f.projection(fov, (float)width / (float)height, 1, -1);
+				projection = Matrix4f.perspective(fov, (float)width / (float)height, 1, -1);
 		} else {
 			float rf = 7;
 			float tb = 4;
 			
-			projection = Matrix4f.orthographics(-rf, rf, tb, -tb, -1000, 1000);
+			projection = Matrix4f.orthographic(-rf, rf, tb, -tb, -1000, 1000);
 		}
 	}
 	

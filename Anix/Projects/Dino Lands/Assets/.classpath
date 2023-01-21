@@ -7,6 +7,6 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/Anix"/>
-	<classpathentry kind="lib" path="C:/Users/smsmk/Desktop/GameEngine/Anix.jar"/>
+	<classpathentry kind="lib" path="C:/Users/smsmk/Desktop/Game Engine/Anix.jar" sourcepath="/Anix"/>
 	<classpathentry kind="output" path=""/>
 </classpath>

@@ -16,6 +16,7 @@ import org.lwjgl.glfw.GLFW;
 import com.Anix.Behaviours.Behaviour;
 import com.Anix.Behaviours.Collider2D;
 import com.Anix.Engine.Editor;
+import com.Anix.Engine.PhysicsEngine;
 import com.Anix.Engine.UndoManager;
 import com.Anix.Engine.Graphics.MasterRenderer;
 import com.Anix.Engine.Graphics.Material;
@@ -226,7 +227,7 @@ public final class Core implements Runnable {
 				update();
 				input();
 				
-				//PhysicsEngine.update();
+				PhysicsEngine.update();
 				
 				if(frameTime >= 1.0) {
 					frameTime = 0;
