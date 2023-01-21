@@ -7,7 +7,18 @@ out vec4 outColor;
 uniform vec3 color;
 uniform sampler2D tex;
 
+bool isEmpty(sampler2D sampler) {
+  return texelFetch(sampler, ivec2(0, 0), 0) == vec4(0, 0, 0, 0);
+}
+
 void main() {
-	vec4 texture = vec4(texture(tex, passTextureCoord).rgb * color.xyz, 1.0);
-	outColor =  texture;
+  vec4 texColor;
+  
+  if(isEmpty(tex)) {
+    texColor = vec4(color, 1.0);
+  } else {
+    texColor = mix(vec4(color, 1.0), texture(tex, passTextureCoord), 0.5);
+  }
+  
+  outColor = texColor;
 }

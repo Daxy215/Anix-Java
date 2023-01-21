@@ -42,7 +42,8 @@ public class Mesh implements Serializable, Cloneable {
 	}
 	
 	public Mesh(Sprite sprite) {
-		this.path = sprite.getPath();
+		if(sprite != null)
+			this.path = sprite.getPath();
 		this.sprite = sprite;
 		
 		if(ProjectSettings.projectType.equals(ProjectType.D2)) {
@@ -57,7 +58,9 @@ public class Mesh implements Serializable, Cloneable {
 	}
 	
 	public Mesh(Sprite sprite, Material material) {
-		this.path = sprite.getPath();
+		if(sprite != null)
+			this.path = sprite.getPath();
+		
 		this.sprite = sprite;
 		
 		if(ProjectSettings.projectType.equals(ProjectType.D2)) {
@@ -72,7 +75,9 @@ public class Mesh implements Serializable, Cloneable {
 	}
 	
 	public Mesh(Sprite sprite, Vertex[] vertices, int[] indices) {
-		this.path = sprite.getPath();
+		if(sprite != null)
+			this.path = sprite.getPath();
+		
 		this.sprite = sprite;
 		this.vertices = vertices;
 		this.indices = indices;
@@ -80,7 +85,8 @@ public class Mesh implements Serializable, Cloneable {
 	}
 	
 	public Mesh(Sprite sprite, Vertex[] vertices, int[] indices, Material material) {
-		this.path = sprite.getPath();
+		if(sprite != null)
+			this.path = sprite.getPath();
 		this.sprite = sprite;
 		this.vertices = vertices;
 		this.indices = indices;
@@ -169,7 +175,7 @@ public class Mesh implements Serializable, Cloneable {
 	
 	public void createTexture() {
 		try {
-			if(sprite.getTexture() == null) {
+			if(sprite != null && sprite.getTexture() == null) {
 				sprite.setTexture(UI.loadTexture(path));
 			}
 		} catch(Exception e) {
@@ -219,6 +225,9 @@ public class Mesh implements Serializable, Cloneable {
 		GL15.glDeleteBuffers(tbo);
 		
 		GL30.glDeleteVertexArrays(vao);
+		
+		vertices = null;
+	    indices = null;
 		
 		if(sprite != null)
 			sprite.destroy();

@@ -27,9 +27,11 @@ public class Vector2f implements Serializable {
 		this.y = y;
 	}
 	
-	public void mul(Vector2f other) {
+	public Vector2f mul(Vector2f other) {
 		this.x = x * other.x;
 		this.y = y * other.y;
+		
+		return this;
 	}
 	
 	public Vector2f mul(float value) {
@@ -44,18 +46,40 @@ public class Vector2f implements Serializable {
 		this.y -= value;
 	}
 	
+	public double dot(Vector2f other) {
+		return x * other.x + y * other.y;
+	}
+	
+	public double magnitude() {
+		return Math.sqrt(x * x + y * y);
+	}
+	
+	public Vector2f normalize() {
+		float mag = (float) magnitude();
+		
+		if(mag == 0) {
+			return new Vector2f(0, 0);
+		}
+		
+		return new Vector2f(x / mag, y / mag);
+	}
+	
 	public static Vector2f add(Vector2f vector1, Vector2f vector2) {
 		return new Vector2f(vector1.getX() + vector2.getX(), vector1.getY() + vector2.getY());
 	}
 	
-	public void add(float x, float y) {
+	public Vector2f add(float x, float y) {
 		this.x += x;
 		this.y += y;
+		
+		return this;
 	}
 	
-	public void add(Vector2f other) {
+	public Vector2f add(Vector2f other) {
 		x += other.x;
 		y += other.y;
+		
+		return this;
 	}
 	
 	public static Vector2f sub(Vector2f vector1, Vector2f vector2) {

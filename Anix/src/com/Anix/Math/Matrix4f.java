@@ -275,9 +275,9 @@ public class Matrix4f implements Serializable {
 		elements[y * SIZE + x] = value;
 	}
 	
-	public void add(int x, int y, float value) {
+	/*public void add(int x, int y, float value) {
 		elements[y * SIZE + x] += value;
-	}
+	}*/
 	
 	public float[] getAll() {
 		return elements;

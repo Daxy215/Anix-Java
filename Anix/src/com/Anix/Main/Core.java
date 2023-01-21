@@ -226,6 +226,8 @@ public final class Core implements Runnable {
 				update();
 				input();
 				
+				//PhysicsEngine.update();
+				
 				if(frameTime >= 1.0) {
 					frameTime = 0;
 					fps = frames;

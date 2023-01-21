@@ -18,6 +18,7 @@ import com.Anix.Engine.Graphics.Mesh;
 import com.Anix.GUI.Windows.Console;
 import com.Anix.Main.Core;
 import com.Anix.Math.Matrix4f;
+import com.Anix.Math.Vector2f;
 import com.Anix.Math.Vector3f;
 import com.Anix.SceneManager.Scene;
 import com.Anix.SceneManager.SceneManager;
@@ -522,6 +523,10 @@ public class GameObject /*extends Entity*/ implements Cloneable, Serializable {
 		position.z += z;
 		
 		updateTransformation();
+	}
+	
+	public void addPosition(Vector2f value) {
+		addPosition(value.x, value.y);
 	}
 	
 	public void addPosition(float x, float y) {

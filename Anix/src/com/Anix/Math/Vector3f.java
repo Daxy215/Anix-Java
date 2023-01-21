@@ -124,6 +124,10 @@ public class Vector3f implements Serializable {
 		return new Vector3f(vector1.getX() * vector2.getX(), vector1.getY() * vector2.getY(), vector1.getZ() * vector2.getZ());
 	}
 	
+	public static Vector3f multiply(Vector2f vector1, float vector2) {
+		return new Vector3f(vector1.getX() * vector2, vector1.getY() * vector2, 0);
+	}
+	
 	public static Vector3f multiply(Vector3f vector1, float vector2) {
 		return new Vector3f(vector1.getX() * vector2, vector1.getY() * vector2, vector1.getZ() * vector2);
 	}

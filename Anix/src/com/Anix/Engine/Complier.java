@@ -64,6 +64,17 @@ final class Complier {
 			}
 		}
 		
+		Editor.importedClasses.clear();
+		
+		Editor.importedClasses.add(new AudioPlayer());
+		Editor.importedClasses.add(new BoxCollider2D());
+		Editor.importedClasses.add(new Button());
+		Editor.importedClasses.add(new Camera());
+		Editor.importedClasses.add(new LightSource());
+		Editor.importedClasses.add(new MeshRenderer());
+		Editor.importedClasses.add(new Physics2D());
+		Editor.importedClasses.add(new SpriteRenderer());
+		
 		JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
 		DiagnosticCollector<JavaFileObject> diagnostics = new DiagnosticCollector<JavaFileObject>();
 		StandardJavaFileManager fileManager = compiler.getStandardFileManager(diagnostics, Locale.getDefault(), null);
@@ -99,17 +110,6 @@ final class Complier {
 			
 			return;
 		}
-		
-		Editor.importedClasses.clear();
-		
-		Editor.importedClasses.add(new AudioPlayer());
-		Editor.importedClasses.add(new BoxCollider2D());
-		Editor.importedClasses.add(new Button());
-		Editor.importedClasses.add(new Camera());
-		Editor.importedClasses.add(new LightSource());
-		Editor.importedClasses.add(new MeshRenderer());
-		Editor.importedClasses.add(new Physics2D());
-		Editor.importedClasses.add(new SpriteRenderer());
 		
 		classLoader = URLClassLoader.newInstance(new URL[]{classesDir.toURI().toURL()});
 		Thread.currentThread().setContextClassLoader(classLoader);

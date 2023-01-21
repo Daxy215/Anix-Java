@@ -15,7 +15,6 @@ import com.Anix.Behaviours.Camera;
 import com.Anix.IO.Application;
 import com.Anix.IO.Input;
 import com.Anix.IO.KeyCode;
-import com.Anix.Math.MathD;
 import com.Anix.Math.Matrix4f;
 import com.Anix.Math.Vector3f;
 import com.Anix.Objects.GameObject;
@@ -36,6 +35,8 @@ public final class MasterRenderer {
 		if(testRender) {
 			combinedObjects = new ArrayList<>();
 		}
+		
+		//testShader = UI.loadTexture("/textures/AmbientOcclusionMap.png").getId();
 	}
 	
 	public void update() {
@@ -107,13 +108,13 @@ public final class MasterRenderer {
 				continue;
 			}
 			
-			if(mesh.vertices.length == 0) {
+			if(mesh.hasBeenDestoried) {
 				entities.remove(mesh);
 				
 				continue;
 			}
 			
-			if(mesh.hasBeenDestoried) {
+			if(mesh.vertices.length == 0) {
 				entities.remove(mesh);
 				
 				continue;
@@ -130,8 +131,24 @@ public final class MasterRenderer {
 			
 			shader.bind();
 			
+			//mvp = Matrix4f.multiply(Application.getProjectionMatrix(), camera.main.getViewMatrix());
+			
 			shader.setUniform("view", Camera.main.getViewMatrix());
 			shader.setUniform("projection", Application.getProjectionMatrix());
+			shader.setUniform("color", mesh.getMaterial().getColor());
+			
+			// Bind textures
+			/*glActiveTexture(GL_TEXTURE0);
+			glBindTexture(GL_TEXTURE_2D, diffuseTexId);
+			glActiveTexture(GL_TEXTURE1);
+			glBindTexture(GL_TEXTURE_2D, specularTexId);
+
+			// Set texture uniforms
+			GLint diffuseTexUniform = glGetUniformLocation(shaderProgram, "diffuseTex");
+			glUniform1i(diffuseTexUniform, 0); // Binds texture to texture unit 0
+			GLint specularTexUniform = glGetUniformLocation(shaderProgram, "specularTex");
+			glUniform1i(specularTexUniform, 1); // Binds texture to texture unit 1
+			*/
 			
 			prepareMesh(mesh);
 			
@@ -171,18 +188,17 @@ public final class MasterRenderer {
 					continue;
 				}
 				
-				if(MathD.distanceBetweenVector2(entity.getPosition().getXY(), Camera.main.gameObject.getPosition().getXY()) > 30 + Camera.main.gameObject.getPosition().z + 15)
+				/*if(MathD.distanceBetweenVector2(entity.getPosition().getXY(), Camera.main.gameObject.getPosition().getXY()) > 30 + Camera.main.gameObject.getPosition().z + 15)
 					continue;
+				*/
 				
 				//Slow method.
-				Vector3f pos = Camera.main.convertWorldToScreenSpace(entity.getPosition());
+				/*Vector3f pos = Camera.main.convertWorldToScreenSpace(entity.getPosition());
 				
-				if(pos.x > Application.getFullWidth() + 64 || pos.x < -64
-						|| pos.y > Application.getFullHeight() + 64|| pos.y < -64) {
+				if(pos.x > Application.getFullWidth() + 128 || pos.x < -128
+						|| pos.y > Application.getFullHeight() + 128|| pos.y < -128) {
 					continue;
-				}
-				
-				shader.setUniform("color", mesh.getMaterial().getColor());
+				}*/
 				
 				if(entity.getTransform() == null) {
 					System.err.println("[ERROR] Couldn't render a GameObject with the name of " + entity.getName());
@@ -290,7 +306,7 @@ public final class MasterRenderer {
 			
 			prepareMesh(mesh);
 			
-			shader.setUniform("lightPosition", Camera.main.gameObject.getPosition());
+			//shader.setUniform("lightPosition", Camera.main.gameObject.getPosition());
 			
 			/*if(LightSource.lights.size() > 0) {
 				LightSource light = LightSource.lights.get(0);
@@ -415,11 +431,12 @@ public final class MasterRenderer {
 		
 		GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, mesh.getIBO());
 		
-		if(mesh.getSprite().getTexture() == null) {
-			mesh.createTexture();
+		if(mesh.getSprite() != null) {
+			if(mesh.getSprite().getTexture() == null)
+				mesh.createTexture();
+			
+			GL11.glBindTexture(GL11.GL_TEXTURE_2D, mesh.getSprite().getTexture().getTextureID());
 		}
-		
-		GL11.glBindTexture(GL11.GL_TEXTURE_2D, mesh.getSprite().getTexture().getTextureID());
 	}
 	
 	private void unBindMesh(Mesh mesh) {

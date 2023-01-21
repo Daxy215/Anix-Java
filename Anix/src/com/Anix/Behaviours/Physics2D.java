@@ -1,34 +1,47 @@
 package com.Anix.Behaviours;
 
 import com.Anix.Behaviours.Collider2D.Collision;
+import com.Anix.Engine.PhysicsEngine;
 import com.Anix.IO.Time;
 import com.Anix.Math.Vector2f;
+import com.Anix.Math.Vector3f;
 import com.Anix.Objects.GameObject;
 
 public class Physics2D extends Behaviour {
 	private static final long serialVersionUID = -2911730552588220134L;
 	
-	private transient float currentGravity;
+	//private transient float currentGravity;
 	
 	public float friction = 1f;
 	public float gravity = -9.807f;
-	public float mass = 0.25f;
+	public double mass = 0.25f;
 	
 	public boolean useGravity = true;
 	private boolean isGrounded;
 	
 	public Vector2f velocity = new Vector2f();
 	public Vector2f force = new Vector2f();
-	private transient GameObject collidedObject;
+	public Vector2f acceleration = new Vector2f();
+	
+	//private transient GameObject collidedObject;
+	
+	@Override
+	public void awake() {
+		PhysicsEngine.addBody(this);
+	}
 	
 	@Override
 	public void start() {
-		currentGravity = gravity;
+		//currentGravity = gravity;
 	}
 	
 	@Override
 	public void update() {
-		if(velocity == null) {
+		gameObject.addPosition(Vector2f.multiply(velocity, Time.deltaTime)
+				.add(Vector2f.multiply(acceleration, 0.5f * Time.deltaTime * Time.deltaTime)));
+		velocity.add(Vector2f.multiply(acceleration, Time.deltaTime));
+		
+		/*if(velocity == null) {
 			return;
 		}
 		
@@ -79,12 +92,30 @@ public class Physics2D extends Behaviour {
 		
 		if(isGrounded && velocity.y < 0) {
 			velocity.y = 0;
-		}
+		}*/
+	}
+	
+	public Vector2f computeForce(Physics2D other) {
+		double G = 6.67e-11;  // gravitational constant
+		Vector2f r = Vector2f.sub(other.gameObject.getPosition().getXY(), gameObject.getPosition().getXY());
+		double r2 = r.dot(r);
+		double f = G * mass * other.mass / r2;
+		return r.normalize().mul((float)f);
+	}
+	
+	@Override
+ 	public void onRemove() {
+		PhysicsEngine.removeBody(this);
+	}
+	
+	@Override
+	public void onDestroy() {
+		PhysicsEngine.removeBody(this);
 	}
 	
 	@Override
 	public void onCollisionEnter(Collision collision) {
-		if(collision.getDirection() == 0) {
+		/*if(collision.getDirection() == 0) {
 			force.y = 0;
 			
 			if(velocity.y > 0)
@@ -95,28 +126,28 @@ public class Physics2D extends Behaviour {
 			isGrounded = true;
 			
 			collidedObject = collision.other;
-		}
+		}*/
 	}
 	
 	@Override
 	public void onCollisionExit(GameObject other) {
-		if(collidedObject != null) {
+		/*if(collidedObject != null) {
 			if(collidedObject.equals(other)) {
 				collidedObject = null;
 				isGrounded = false;
 			}
-		}
+		}*/
 	}
 	
 	public boolean isGrounded() {
 		return isGrounded;
 	}
-
+	
 	public void setVelocity(float x, float y) {
 		velocity.x = x;
 		velocity.y = y;
 	}
-
+	
 	public void setVelocity(Vector2f velocity) {
 		this.velocity = velocity;
 	}
@@ -147,7 +178,23 @@ public class Physics2D extends Behaviour {
 		force.add(x, y);
 	}
 	
-	private float roundOffTo2DecPlaces(float val) {
-	    return Float.parseFloat(String.format("%.2f", val));
+	public Vector2f getAcceleration() {
+		return acceleration;
 	}
+
+	public void setAcceleration(Vector2f acceleration) {
+		this.acceleration = acceleration;
+	}
+	
+	public void addAcceleration(Vector2f value) {
+		addAcceleration(value.x, value.y);
+	}
+	
+	public void addAcceleration(float x, float y) {
+		acceleration.add(x, y);
+	}
+
+	/*private float roundOffTo2DecPlaces(float val) {
+	    return Float.parseFloat(String.format("%.2f", val));
+	}*/
 }

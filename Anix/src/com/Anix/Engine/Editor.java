@@ -83,7 +83,7 @@ public final class Editor {
 	//added to, so find a way to make it so that it'll
 	//only use it when the engine first starts.
 	//private List<String> spritesToLoad = new ArrayList<String>();
-	private List<Folder> linkedObjectsFolders = new ArrayList<Folder>();
+	//private List<Folder> linkedObjectsFolders = new ArrayList<Folder>();
 	private static List<String> parentsToLoad = new ArrayList<String>();
 	public static List<Behaviour> importedClasses = new ArrayList<Behaviour>();
 	
@@ -98,7 +98,7 @@ public final class Editor {
 			core.setProjectName("Projects\\" + projects[index].getName());
 		} else {
             ProjectSettings.projectType = ProjectType.D3;
-			core.setProjectName("Projects\\Dino Lands");
+			core.setProjectName("Projects\\my project");
 		}
 		
 		workSpaceDirectory += "\\" + core.getProjectName() + "\\";
@@ -1081,7 +1081,7 @@ public final class Editor {
 		}
 		
 		//Update linked objects
-		linkedObjectsFolders.add(folder);
+		//linkedObjectsFolders.add(folder);
 		
 		return folder;
 	}
