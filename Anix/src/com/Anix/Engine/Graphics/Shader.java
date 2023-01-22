@@ -207,8 +207,8 @@ public class Shader implements Serializable {
 
 	public int setUniform(String name, int value) {
 		if(getUniformLocation(name) == -1) {
+			System.err.println("Error: Couldn't find a uniform with the name of " + name);
 			return -1;
-			//System.err.println("Error: Couldn't find a uniform with the name of " + name);
 		}
 		
 		/*int curProgram = GL11.glGetInteger(GL20.GL_CURRENT_PROGRAM);

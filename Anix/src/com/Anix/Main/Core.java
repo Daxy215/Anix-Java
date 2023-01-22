@@ -192,7 +192,7 @@ public final class Core implements Runnable {
 	public void run() {
 		application = new Application(gui, 1280, 720, "Anix " + editor.getVersion());
 		application.create();
-		masterRenderer = new MasterRenderer(false);
+		masterRenderer = new MasterRenderer(this, false);
 		
 		ImGui.styleColorsDark();
 		redDarkTheme();
@@ -218,7 +218,7 @@ public final class Core implements Runnable {
 				
 				Time.process();
 				
-				frameBuffer.bindReflectionFrameBuffer();
+				frameBuffer.bindRefractionFrameBuffer();
 				application.update();
 				frameBuffer.unbindCurrentFrameBuffer();
 				application.update();
@@ -262,7 +262,7 @@ public final class Core implements Runnable {
 				application.imGuiGlfw.newFrame();
 				ImGui.newFrame();
 				
-				frameBuffer.bindReflectionFrameBuffer();
+				frameBuffer.bindRefractionFrameBuffer();
 				
 				render();
 				renderBehaviours();

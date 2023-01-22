@@ -141,9 +141,9 @@ public final class Application {
 		
 		glMatrixMode(GL_MODELVIEW);
 		glEnable(GL_ALPHA_TEST);
-		//glEnable(GL_BLEND);
-	    //glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-		//glAlphaFunc(GL_GREATER, 0.1f);
+		glEnable(GL11.GL_BLEND);
+	    GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+		GL11.glAlphaFunc(GL11.GL_GREATER, 0.1f);
 		glEnable(GL_DEPTH_TEST);
 		
 		createCallbacks();

@@ -15,26 +15,29 @@ import com.Anix.Behaviours.Camera;
 import com.Anix.IO.Application;
 import com.Anix.IO.Input;
 import com.Anix.IO.KeyCode;
+import com.Anix.Main.Core;
 import com.Anix.Math.Matrix4f;
-import com.Anix.Math.Vector3f;
 import com.Anix.Objects.GameObject;
 
 public final class MasterRenderer {
-	private boolean testRender;
+	//private boolean testRender;
+	
+	private Core core;
 	
 	private Mesh mesh;
 	private Shader shader;
 	
 	//private List<GameObject> entitiesToAdd = new ArrayList<>();
-	private List<GameObject> combinedObjects = new ArrayList<>();
+	//private List<GameObject> combinedObjects = new ArrayList<>();
 	private Map<Mesh, List<GameObject>> entities = new HashMap<Mesh, List<GameObject>>();
 	
-	public MasterRenderer(boolean testRender) {
-		this.testRender = testRender;
+	public MasterRenderer(Core core, boolean testRender) {
+		this.core = core;
+		//this.testRender = testRender;
 		
-		if(testRender) {
-			combinedObjects = new ArrayList<>();
-		}
+		//if(testRender) {
+		//	combinedObjects = new ArrayList<>();
+		//}
 		
 		//testShader = UI.loadTexture("/textures/AmbientOcclusionMap.png").getId();
 	}
@@ -64,16 +67,16 @@ public final class MasterRenderer {
 	}
 	
 	public void render() {
-		if(Input.isKeyDown(KeyCode.F)) {
-			testRender = !testRender;
-			System.err.println("testing rendering: " + testRender);
-		}
+		//if(Input.isKeyDown(KeyCode.F)) {
+		//	testRender = !testRender;
+		//	System.err.println("testing rendering: " + testRender);
+		//}
 		
-		if(testRender) {
-			r2();
-		} else {
+		//if(testRender) {
+		//	r2();
+		//} else {
 			r();
-		}
+		//}
 	}
 	
 	private void r() {
@@ -136,6 +139,8 @@ public final class MasterRenderer {
 			shader.setUniform("view", Camera.main.getViewMatrix());
 			shader.setUniform("projection", Application.getProjectionMatrix());
 			shader.setUniform("color", mesh.getMaterial().getColor());
+			
+			shader.setUniform("screenTexture", core.getFrameBuffer().getRefractionTexture());
 			
 			// Bind textures
 			/*glActiveTexture(GL_TEXTURE0);
@@ -233,7 +238,7 @@ public final class MasterRenderer {
 	/**
 	 * Test rendering :)
 	 */
-	private void r2() {
+	/*private void r2() {
 		if(Camera.main == null) {
 			return;
 		}
@@ -316,7 +321,7 @@ public final class MasterRenderer {
 				shader.setUniform("strength", light.strength);
 			}*/
 			
-			shader.setUniform("color", mesh.getMaterial().getColor());
+			/*shader.setUniform("color", mesh.getMaterial().getColor());
 			
 			if(entity.getTransform() == null) {
 				System.err.println("[ERROR] Couldn't render a GameObject with the name of " + entity.getName());
@@ -338,9 +343,9 @@ public final class MasterRenderer {
 		if(Input.isKeyDown(KeyCode.K)) {
 			System.err.println("render " + amount);
 		}
-	}
+	}*/
 	
-	private GameObject combineObjects(List<GameObject> batch) {
+	/*private GameObject combineObjects(List<GameObject> batch) {
 		if(batch.isEmpty())
 			return null;
 		
@@ -365,7 +370,7 @@ public final class MasterRenderer {
 									pos.z + mesh.getVertices()[l].getPosition().z),
 							mesh.getVertices()[l].getNormal(), //NORMALS.. TODO
 							mesh.getVertices()[l].getTextureCoord());*/
-				Vertex v = mesh.getVertices()[l].clone();
+				/*Vertex v = mesh.getVertices()[l].clone();
 				v.getPosition().add(pos);
 				
 				//if(batch.size() == 5) {
@@ -395,7 +400,7 @@ public final class MasterRenderer {
 		mesh.create();
 		
 		return new GameObject("", new Vector3f(), new Vector3f(), new Vector3f(1), mesh, false);
-	}
+	}*/
 	
 	public void render(GameObject gameObject) {
 		if(gameObject.shouldBeRemoved || !gameObject.isEnabled() || gameObject.getMesh() == null) {
@@ -431,7 +436,7 @@ public final class MasterRenderer {
 		
 		GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, mesh.getIBO());
 		
-		if(mesh.getSprite() != null) {
+		if(mesh.getSprite() != null && mesh.getSprite().getTexture() != null) {
 			if(mesh.getSprite().getTexture() == null)
 				mesh.createTexture();
 			

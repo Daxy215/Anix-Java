@@ -1277,7 +1277,7 @@ public final class UI {
 				    				
 				    				imageBuffer = ResourceLoader.ioResourceToByteBuffer(temp, 8 * 1024);
 				    			} catch(Exception x) {
-				    				x.printStackTrace();
+				    				//x.printStackTrace();
 				    				imageBuffer = null;
 				    			}
 				    		}
