@@ -150,6 +150,9 @@ public final class Hierachy {
 		for(int i = 0; i < objects.size(); i++) {
 			GameObject object = objects.get(i);
 			
+			if(object.uuid == null)
+				continue;
+			
 			int flags = ImGuiTreeNodeFlags.OpenOnArrow;
 			flags |= ImGuiTreeNodeFlags.FramePadding;
 			
@@ -161,8 +164,11 @@ public final class Hierachy {
 				flags |= ImGuiTreeNodeFlags.Leaf | ImGuiTreeNodeFlags.NoTreePushOnOpen;
 			}
 			
+			boolean didIt = false;
+			
 			if(!object.isEnabled()) {
 				ImGui.pushStyleColor(ImGuiCol.Text, 0.5f, 0.5f, 0.5f, 0.4f);
+				didIt = true;
 			}
 			
 			boolean canDraw = object.getParent() != null && index == 0;
@@ -234,7 +240,7 @@ public final class Hierachy {
 				ImGui.endPopup();
 			}
 			
-			if(!object.isEnabled()) {
+			if(didIt) {
 				ImGui.popStyleColor();
 			}
 			

@@ -170,6 +170,7 @@ public class Mesh implements Serializable, Cloneable {
 		
 		createTexture();
 		
+		hasBeenDestoried = false;
 		hasBeenCreated = true;
 	}
 	
@@ -218,6 +219,7 @@ public class Mesh implements Serializable, Cloneable {
 			return;
 		}
 		
+		hasBeenCreated = false;
 		hasBeenDestoried = true;
 		
 		GL15.glDeleteBuffers(pbo);
@@ -244,7 +246,7 @@ public class Mesh implements Serializable, Cloneable {
 	public void setVertices(Vertex[] vertices) {
 		this.vertices = vertices;
 		
-		updateMesh();
+		//updateMesh();
 	}
 	
 	public int[] getIndices() {
@@ -254,32 +256,30 @@ public class Mesh implements Serializable, Cloneable {
 	public void setIndices(int[] indices) {
 		this.indices = indices;
 		
-		updateMesh();
+		//updateMesh();
 	}
 	
 	public void set(List<Vertex> vertices, List<Integer> indices) {
 		Vertex[] verts = new Vertex[vertices.size()];
 		int[] indc = new int[indices.size()];
 		
-		for(int i = 0; i < verts.length || i < indc.length; i++) {
-			if(i < verts.length)
-				verts[i] = vertices.get(i);
-			
-			if(i < indc.length)
-				indc[i] = indices.get(i);
-		}
+		for(int i = 0; i < verts.length; i++)
+			verts[i] = vertices.get(i);
+		
+		for(int i = 0; i < indc.length; i++)
+			indc[i] = indices.get(i);
 		
 		this.vertices = verts;
 		this.indices = indc;
 		
-		updateMesh();
+		//updateMesh();
 	}
 	
 	public void set(Vertex[] vertices, int[] indices) {
 		this.vertices = vertices;
 		this.indices = indices;
 		
-		updateMesh();
+		//updateMesh();
 	}
 	
 	public Material getMaterial() {
@@ -336,6 +336,14 @@ public class Mesh implements Serializable, Cloneable {
 
 	public int getIBO() {
 		return ibo;
+	}
+	
+	public boolean hasBeenDestoried() {
+		return hasBeenDestoried;
+	}
+	
+	public void setHasBeenDestroied(boolean value) {
+		this.hasBeenDestoried = value;
 	}
 	
 	public boolean hasBeenCreated() {

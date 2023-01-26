@@ -130,22 +130,22 @@ public class SQLManager implements Serializable {
 		}
 		
 		PreparedStatement ps;
-
+		
 		try {
 			ps = con.prepareStatement("SELECT " + ID + " FROM " + table + " WHERE " + ID + " = ?");
 			ps.setString(1, value);
 			
 			ResultSet result = ps.executeQuery();
-
+			
 			while(result.next()) {
 				return true;
 			}
-
+			
 			return false;
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-
+		
 		return false;
 	}
 

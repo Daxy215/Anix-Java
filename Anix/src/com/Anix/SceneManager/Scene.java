@@ -49,7 +49,7 @@ public class Scene {
 		}
 		
 		if(gameObject.shouldBeRemoved) {
-			System.err.println("Should be r4emoved? " + gameObject.getName());
+			System.err.println("Should be removed? " + gameObject.getName());
 			return;
 		}
 		
@@ -173,6 +173,9 @@ public class Scene {
 	}
 	
 	public void destroy() {
+		if(SceneManager.getCurrentScene() == this)
+			SceneManager.currentScene = null;
+		
 		for(int i = 0; i < gameObjects.size(); i++) {
 			gameObjects.get(i).destroy();
 		}

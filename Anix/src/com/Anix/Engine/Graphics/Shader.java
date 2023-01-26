@@ -206,8 +206,10 @@ public class Shader implements Serializable {
 	}
 
 	public int setUniform(String name, int value) {
-		if(getUniformLocation(name) == -1) {
-			System.err.println("Error: Couldn't find a uniform with the name of " + name);
+		int location = getUniformLocation(name);
+		
+		if(location == -1) {
+			//System.err.println("Error: Couldn't find a uniform with the name of " + name);
 			return -1;
 		}
 		
@@ -219,7 +221,7 @@ public class Shader implements Serializable {
 			bind();
 		}*/
 		
-		GL20.glUniform1i(getUniformLocation(name), value);
+		GL20.glUniform1i(location, value);
 		
 		/*if(curProgram != -1) {
 			GL20.glUseProgram(curProgram);
@@ -229,7 +231,9 @@ public class Shader implements Serializable {
 	}
 	
 	public int setUniform(String name, float value) {
-		if(getUniformLocation(name) == -1) {
+		int location = getUniformLocation(name);
+		
+		if(location == -1) {
 			return -1;
 			//System.err.println("Error: Couldn't find a uniform with the name of " + name);
 		}
@@ -238,14 +242,16 @@ public class Shader implements Serializable {
 		
 		//bind();
 		
-		GL20.glUniform1f(getUniformLocation(name), value);
+		GL20.glUniform1f(location, value);
 		//GL20.glUseProgram(curProgram);
 		
 		return 0;
 	}
 	
 	public int setUniform(String name, boolean value) {
-		if(getUniformLocation(name) == -1) {
+		int location = getUniformLocation(name);
+		
+		if(location == -1) {
 			return -1;
 			//System.err.println("Error: Couldn't find a uniform with the name of " + name);
 		}
@@ -254,14 +260,16 @@ public class Shader implements Serializable {
 		
 		//bind();
 		
-		GL20.glUniform1f(getUniformLocation(name), value ? 1 : 0);
+		GL20.glUniform1f(location, value ? 1 : 0);
 		//GL20.glUseProgram(curProgram);
 		
 		return 0;
 	}
 	
 	public int setUniform(String name, float x, float y) {
-		if(getUniformLocation(name) == -1) {
+		int location = getUniformLocation(name);
+		
+		if(location == -1) {
 			return -1;
 			//System.err.println("Error: Couldn't find a uniform with the name of " + name);
 		}
@@ -270,46 +278,24 @@ public class Shader implements Serializable {
 		
 		//bind();
 		
-		GL20.glUniform2f(getUniformLocation(name), x, y);
+		GL20.glUniform2f(location, x, y);
 		//GL20.glUseProgram(curProgram);
 		
 		return 0;
 	}
 	
 	public int setUniform(String name, Vector2f value) {
-		if(getUniformLocation(name) == -1) {
-			return -1;
-			//System.err.println("Error: Couldn't find a uniform with the name of " + name);
-		}
-		
-		//int curProgram = GL11.glGetInteger(GL20.GL_CURRENT_PROGRAM);
-		
-		//bind();
-		
-		GL20.glUniform2f(getUniformLocation(name), value.getX(), value.getY());
-		//GL20.glUseProgram(curProgram);
-		
-		return 0;
+		return setUniform(name, value.x, value.y);
 	}
 	
 	public int setUniform(String name, Color color) {
-		if(getUniformLocation(name) == -1) {
-			return -1;
-			//System.err.println("Error: Couldn't find a uniform with the name of " + name);
-		}
-		
-		//int curProgram = GL11.glGetInteger(GL20.GL_CURRENT_PROGRAM);
-		
-		//bind();
-		
-		GL20.glUniform3f(getUniformLocation(name), color.getRed(), color.getGreen(), color.getBlue());
-		//GL20.glUseProgram(curProgram);
-		
-		return 0;
+		return setUniform(name, color.r, color.g, color.b);
 	}
 	
 	public int setUniform(String name, float x, float y, float z) {
-		if(getUniformLocation(name) == -1) {
+		int location = getUniformLocation(name);
+		
+		if(location == -1) {
 			return -1;
 			//System.err.println("Error: Couldn't find a uniform with the name of " + name);
 		}
@@ -318,14 +304,20 @@ public class Shader implements Serializable {
 		
 		//bind();
 		
-		GL20.glUniform3f(GL20.glGetUniformLocation(programID, name), x, y, z);
+		GL20.glUniform3f(location, x, y, z);
 		//GL20.glUseProgram(curProgram);
 		
 		return 0;
 	}
 	
 	public int setUniform(String name, Vector3f value) {
-		if(getUniformLocation(name) == -1) {
+		return setUniform(name, value.x, value.y, value.z);
+	}
+	
+	public int setUniform(String name, float x, float y, float z, float w) {
+		int location = getUniformLocation(name);
+		
+		if(location == -1) {
 			return -1;
 			//System.err.println("Error: Couldn't find a uniform with the name of " + name);
 		}
@@ -334,26 +326,14 @@ public class Shader implements Serializable {
 		
 		//bind();
 		
-		GL20.glUniform3f(GL20.glGetUniformLocation(programID, name), value.getX(), value.getY(), value.getZ());
+		GL20.glUniform4f(location, x, y, z, w);
 		//GL20.glUseProgram(curProgram);
 		
 		return 0;
 	}
 	
 	public int setUniform(String name, Vector4f value) {
-		if(getUniformLocation(name) == -1) {
-			return -1;
-			//System.err.println("Error: Couldn't find a uniform with the name of " + name);
-		}
-		
-		//int curProgram = GL11.glGetInteger(GL20.GL_CURRENT_PROGRAM);
-		
-		//bind();
-		
-		GL20.glUniform4f(getUniformLocation(name), value.getX(), value.getY(), value.getZ(), value.getW());
-		//GL20.glUseProgram(curProgram);
-		
-		return 0;
+		return setUniform(name, value.x, value.y, value.z, value.w);
 	}
 	
 	public int setUniform(String name, Matrix4f value) {
@@ -371,7 +351,7 @@ public class Shader implements Serializable {
 		try (MemoryStack stack = MemoryStack.stackPush()) {
             FloatBuffer buffer = stack.mallocFloat(4 * 4);
             value.toBuffer(buffer);
-            GL20.glUniformMatrix4fv(getUniformLocation(name), false, buffer);
+            GL20.glUniformMatrix4fv(location, false, buffer);
         }
 		
 		//GL20.glUniformMatrix4fv(getUniformLocation(name), true, value.getAll());
@@ -425,15 +405,15 @@ public class Shader implements Serializable {
 
 		return null;
 	}
-
+	
 	public void destroy() {
 		unbind();
-
+		
 		GL20.glDetachShader(programID, vertexID);
 		GL20.glDetachShader(programID, fragmentID);
-
+		
 		GL20.glDeleteProgram(programID);
-
+		
 		GL20.glDeleteShader(vertexID);
 		GL20.glDeleteShader(fragmentID);
 	}

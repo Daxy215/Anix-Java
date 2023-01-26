@@ -29,7 +29,7 @@ public class GameObject /*extends Entity*/ implements Cloneable, Serializable {
 	
 	private String name = "null";
 	private boolean isEnabled = true;
-	public boolean shouldBeRemoved;
+	public boolean isStatic, shouldBeRemoved;
 	private byte isDirty;
 	
 	public UUID uuid;
@@ -55,6 +55,26 @@ public class GameObject /*extends Entity*/ implements Cloneable, Serializable {
 	public GameObject(String name) {
 		this.name = name;
 		this.position = new Vector3f();
+		this.rotation = new Vector3f();
+		this.scale = new Vector3f(1);
+		uuid = UUID.randomUUID();
+		
+		Scene scene = SceneManager.getCurrentScene();
+		
+		if(scene == null) {
+			System.err.println("[ERROR] Couldn't add gameobject with the name of " + name + " to the scene since there isn't any open.");
+			
+			return;
+		}
+		
+		scene.addObject(this);
+		
+		this.transform = Matrix4f.transform(this);
+	}
+	
+	public GameObject(String name, Vector3f position) {
+		this.name = name;
+		this.position = position;
 		this.rotation = new Vector3f();
 		this.scale = new Vector3f(1);
 		uuid = UUID.randomUUID();

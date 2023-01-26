@@ -5,7 +5,7 @@ import java.nio.FloatBuffer;
 
 import com.Anix.Objects.GameObject;
 
-//https://github.com/SilverTiger/lwjgl3-tutorial/blob/master/src/silvertiger/tutorial/lwjgl/graphic/ShaderProgram.java
+//https://github.com/SilverTiger/lwjgl3-tutorial/blob/master/src/silvertiger/tutorial/lwjgl/math/Matrix4f.java
 //https://github.com/RGreenlees/Java-OpenGL-Math-Library/blob/89ce7803e139311e0c00ffaf67439a3eb2cd69ee/src/com/joml/matrix/Matrix4f.java#L319 - Invert method
 
 public class Matrix4f implements Serializable {
@@ -15,14 +15,14 @@ public class Matrix4f implements Serializable {
     private float m10, m11, m12, m13;
     private float m20, m21, m22, m23;
     private float m30, m31, m32, m33;
-
+    
     /**
      * Creates a 4x4 identity matrix.
      */
     public Matrix4f() {
         setIdentity();
     }
-
+    
     /**
      * Creates a 4x4 matrix with specified columns.
      *
@@ -36,23 +36,23 @@ public class Matrix4f implements Serializable {
         m10 = col1.y;
         m20 = col1.z;
         m30 = col1.w;
-
+        
         m01 = col2.x;
         m11 = col2.y;
         m21 = col2.z;
         m31 = col2.w;
-
+        
         m02 = col3.x;
         m12 = col3.y;
         m22 = col3.z;
         m32 = col3.w;
-
+        
         m03 = col4.x;
         m13 = col4.y;
         m23 = col4.z;
         m33 = col4.w;
     }
-
+    
     /**
      * Sets this matrix to the identity matrix.
      */
@@ -61,7 +61,7 @@ public class Matrix4f implements Serializable {
         m11 = 1f;
         m22 = 1f;
         m33 = 1f;
-
+        
         m01 = 0f;
         m02 = 0f;
         m03 = 0f;
@@ -75,7 +75,7 @@ public class Matrix4f implements Serializable {
         m31 = 0f;
         m32 = 0f;
     }
-
+    
     /**
      * Adds this matrix to another matrix.
      *
@@ -85,30 +85,30 @@ public class Matrix4f implements Serializable {
      */
     public Matrix4f add(Matrix4f other) {
         Matrix4f result = new Matrix4f();
-
+        
         result.m00 = this.m00 + other.m00;
         result.m10 = this.m10 + other.m10;
         result.m20 = this.m20 + other.m20;
         result.m30 = this.m30 + other.m30;
-
+        
         result.m01 = this.m01 + other.m01;
         result.m11 = this.m11 + other.m11;
         result.m21 = this.m21 + other.m21;
         result.m31 = this.m31 + other.m31;
-
+        
         result.m02 = this.m02 + other.m02;
         result.m12 = this.m12 + other.m12;
         result.m22 = this.m22 + other.m22;
         result.m32 = this.m32 + other.m32;
-
+        
         result.m03 = this.m03 + other.m03;
         result.m13 = this.m13 + other.m13;
         result.m23 = this.m23 + other.m23;
         result.m33 = this.m33 + other.m33;
-
+        
         return result;
     }
-
+    
     /**
      * Negates this matrix.
      *
@@ -117,7 +117,7 @@ public class Matrix4f implements Serializable {
     public Matrix4f negate() {
         return multiply(-1f);
     }
-
+    
     /**
      * Subtracts this matrix from another matrix.
      *
@@ -128,7 +128,7 @@ public class Matrix4f implements Serializable {
     public Matrix4f subtract(Matrix4f other) {
         return this.add(other.negate());
     }
-
+    
     /**
      * Multiplies this matrix with a scalar.
      *
@@ -160,6 +160,21 @@ public class Matrix4f implements Serializable {
         result.m33 = this.m33 * scalar;
 
         return result;
+    }
+    
+    /**
+     * Multiplies this matrix to a vector.
+     *
+     * @param vector The vector
+     *
+     * @return Vector product of this * other
+     */
+    public Vector3f multiply(Vector3f vector) {
+        float x = this.m00 * vector.x + this.m01 * vector.y + this.m02 * vector.z + this.m03;
+        float y = this.m10 * vector.x + this.m11 * vector.y + this.m12 * vector.z + this.m13;
+        float z = this.m20 * vector.x + this.m21 * vector.y + this.m22 * vector.z + this.m23;
+        //float w = this.m30 * vector.x + this.m31 * vector.y + this.m32 * vector.z + this.m33;
+        return new Vector3f(x, y, z);
     }
     
     /**
@@ -337,18 +352,18 @@ public class Matrix4f implements Serializable {
      */
     public static Matrix4f orthographic(float left, float right, float bottom, float top, float near, float far) {
         Matrix4f ortho = new Matrix4f();
-
+        
         float tx = -(right + left) / (right - left);
         float ty = -(top + bottom) / (top - bottom);
         float tz = -(far + near) / (far - near);
-
+        
         ortho.m00 = 2f / (right - left);
         ortho.m11 = 2f / (top - bottom);
         ortho.m22 = -2f / (far - near);
         ortho.m03 = tx;
         ortho.m13 = ty;
         ortho.m23 = tz;
-
+        
         return ortho;
     }
 
@@ -402,16 +417,26 @@ public class Matrix4f implements Serializable {
      */
     public static Matrix4f perspective(float fovy, float aspect, float near, float far) {
         Matrix4f perspective = new Matrix4f();
-
+        
         float f = (float) (1f / Math.tan(Math.toRadians(fovy) / 2f));
-
+        
         perspective.m00 = f / aspect;
         perspective.m11 = f;
         perspective.m22 = (far + near) / (near - far);
         perspective.m32 = -1f;
         perspective.m23 = (2f * far * near) / (near - far);
         perspective.m33 = 0f;
-
+        
+        /*float tanFOV = (float) Math.tan(Math.toRadians(fovy * 0.5f));
+		float range = far - near;
+		
+		perspective.m00 = 1.0f / (aspect * tanFOV);
+		perspective.m11 = 1.0f / tanFOV;
+		perspective.m22 = -((far + near) / range);
+		perspective.m32 = -1.0f;
+		perspective.m23 = -((2 * far * near) / range);
+		perspective.m33 = 0.0f;*/
+		
         return perspective;
     }
     
@@ -427,15 +452,48 @@ public class Matrix4f implements Serializable {
 		Vector3f negative = new Vector3f(-position.x, -position.y, -position.z);
 		Matrix4f translationMatrix = Matrix4f.translate(negative);
 		
-		Matrix4f rotXMatrix = rotate(rotation.getX(), 1, 0, 0);
-		Matrix4f rotYMatrix = rotate(rotation.getY(), 0, 1, 0);
-		Matrix4f rotZMatrix = rotate(rotation.getZ(), 0, 0, 1);
+		Matrix4f rotXMatrix = Matrix4f.rotate(-rotation.getX(), 1, 0, 0);
+		Matrix4f rotYMatrix = Matrix4f.rotate(-rotation.getY(), 0, 1, 0);
+		Matrix4f rotZMatrix = Matrix4f.rotate(rotation.getZ(), 0, 0, 1);
 		
-		Matrix4f rotationMatrix = multiply(rotYMatrix, multiply(rotZMatrix, rotXMatrix));
+		Matrix4f rotationMatrix = Matrix4f.multiply(rotXMatrix, multiply(rotYMatrix, rotZMatrix));
 		
-		return multiply(translationMatrix, rotationMatrix);
+		return Matrix4f.multiply(rotationMatrix, translationMatrix);
 	}
     
+    //https://github.com/LWJGL/lwjgl/blob/master/src/java/org/lwjgl/util/vector/Matrix4f.java
+    /**
+	 * Transform a Vector by a matrix and return the result in a destination
+	 * vector.
+	 * @param left The left matrix
+	 * @param right The right vector
+	 * @param dest The destination vector, or null if a new one is to be created
+	 * @return the destination vector
+	 */
+	public static Vector4f transform(Matrix4f left, Vector4f right, Vector4f dest) {
+		if (dest == null)
+			dest = new Vector4f();
+
+		float x = left.m00 * right.x + left.m01 * right.y + left.m02 * right.z + left.m03 * right.w;
+		float y = left.m10 * right.x + left.m11 * right.y + left.m12 * right.z + left.m13 * right.w;
+		float z = left.m20 * right.x + left.m21 * right.y + left.m22 * right.z + left.m23 * right.w;
+		float w = left.m30 * right.x + left.m31 * right.y + left.m32 * right.z + left.m33 * right.w;
+
+		dest.x = x;
+		dest.y = y;
+		dest.z = z;
+		dest.w = w;
+
+		return dest;
+	}
+    
+    /**
+     * Creates a transformation matrix.
+     * 
+     * @param GameObject
+     * 
+     * @return Transformation matrix
+     */
     public static Matrix4f transform(GameObject object) {
     	Matrix4f translationMatrix = new Matrix4f();
 		translationMatrix = translate(object.getPosition());
@@ -443,6 +501,17 @@ public class Matrix4f implements Serializable {
 		translationMatrix = multiply(translationMatrix, rotate(object.getRotation().getY(), 0, 1, 0));
 		translationMatrix = multiply(translationMatrix, rotate(object.getRotation().getZ(), 0, 0, 1));
 		translationMatrix = multiply(translationMatrix, scale(object.getScale()));
+		
+		return translationMatrix;
+    }
+    
+    public static Matrix4f transform(float x, float y, float z) {
+    	Matrix4f translationMatrix = new Matrix4f();
+		translationMatrix = translate(x, y, z);
+		translationMatrix = multiply(translationMatrix, rotate(1, 1, 0, 0));
+		translationMatrix = multiply(translationMatrix, rotate(1, 0, 1, 0));
+		translationMatrix = multiply(translationMatrix, rotate(1, 0, 0, 1));
+		translationMatrix = multiply(translationMatrix, scale(1, 1, 1));
 		
 		return translationMatrix;
     }
@@ -492,7 +561,7 @@ public class Matrix4f implements Serializable {
      */
     public static Matrix4f rotate(float angle, float x, float y, float z) {
         Matrix4f rotation = new Matrix4f();
-
+        
         float c = (float) Math.cos(Math.toRadians(angle));
         float s = (float) Math.sin(Math.toRadians(angle));
         Vector3f vec = new Vector3f(x, y, z);
@@ -513,7 +582,7 @@ public class Matrix4f implements Serializable {
         rotation.m02 = x * z * (1f - c) + y * s;
         rotation.m12 = y * z * (1f - c) - x * s;
         rotation.m22 = z * z * (1f - c) + c;
-
+        
         return rotation;
     }
     

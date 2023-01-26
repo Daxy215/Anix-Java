@@ -131,12 +131,30 @@ public final class Inspector {
 		if(obj == null)
 			return;
 		
+		ImGui.pushItemWidth(width - 100);
+		
 		//Name
 		name.set(obj.getName());
 		ImGui.text("Name:     ");
 		ImGui.sameLine();
+		
+		ImGui.pushItemWidth(width - 125);
+		
 		ImGui.inputText("##", name);
 		obj.setName(name.toString());
+		
+		ImGui.sameLine();
+		
+		boolean isStatic = obj.isStatic;
+		
+		ImGui.pushID("istaticjijoidijodfijdfijuofsdoijfd");
+		if(ImGui.checkbox("", isStatic)) {
+			System.err.println("IsStatic: " + isStatic);
+			obj.isStatic = !isStatic;
+		}
+		
+		ImGui.popID();
+		ImGui.popItemWidth();
 		
 		//Position
 		ImGui.pushID("Position" + obj.uuid);
@@ -177,6 +195,7 @@ public final class Inspector {
 		obj.setScale(scl[0], scl[1], scl[2]);
 		
 		ImGui.popID();
+		ImGui.popItemWidth();
 		
 		ImGui.spacing();
 		ImGui.separator();
@@ -238,7 +257,9 @@ public final class Inspector {
 	private void drawFields(Behaviour behaviour) throws IllegalArgumentException, IllegalAccessException {
 		for(int i = 0; i < behaviour.getFields().length; i++) {
 			try {
+				ImGui.pushItemWidth(width - 100);
 				drawField(behaviour.getFields()[i], behaviour);
+				ImGui.popItemWidth();
 			} catch (IllegalArgumentException | IllegalAccessException | NoSuchMethodException | SecurityException
 					| InvocationTargetException e) {
 				e.printStackTrace();
@@ -376,9 +397,10 @@ public final class Inspector {
 			if(f.get(object) == null) {
 				ImGui.popID();
 				counter++;
+				
 				return;
 			}
-
+			
 			if(ImGui.beginCombo("#", f.get(object).toString())) {
 				Method value = type.getMethod("values");
 				Object[] values = (Object[]) value.invoke(null, null);
@@ -391,7 +413,7 @@ public final class Inspector {
 				
 				ImGui.endCombo();
 			}
-		}else if(type.getSimpleName().equalsIgnoreCase("color")) {
+		} else if(type.getSimpleName().equalsIgnoreCase("color")) {
 			Color c = (Color)f.get(object);
 			
 			if(c != null) {

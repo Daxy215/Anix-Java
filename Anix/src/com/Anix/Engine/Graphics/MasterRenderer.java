@@ -17,22 +17,23 @@ import com.Anix.IO.Input;
 import com.Anix.IO.KeyCode;
 import com.Anix.Main.Core;
 import com.Anix.Math.Matrix4f;
+import com.Anix.Math.Vector3f;
 import com.Anix.Objects.GameObject;
 
 public final class MasterRenderer {
-	//private boolean testRender;
+	private boolean testRender;
 	
-	private Core core;
+	//private Core core;
 	
 	private Mesh mesh;
 	private Shader shader;
 	
 	//private List<GameObject> entitiesToAdd = new ArrayList<>();
-	//private List<GameObject> combinedObjects = new ArrayList<>();
+	private List<GameObject> combinedObjects = new ArrayList<>();
 	private Map<Mesh, List<GameObject>> entities = new HashMap<Mesh, List<GameObject>>();
 	
-	public MasterRenderer(Core core, boolean testRender) {
-		this.core = core;
+	public MasterRenderer(/*Core core, boolean testRender*/) {
+		//this.core = core;
 		//this.testRender = testRender;
 		
 		//if(testRender) {
@@ -67,16 +68,16 @@ public final class MasterRenderer {
 	}
 	
 	public void render() {
-		//if(Input.isKeyDown(KeyCode.F)) {
-		//	testRender = !testRender;
-		//	System.err.println("testing rendering: " + testRender);
-		//}
+		if(Input.isKeyDown(KeyCode.F)) {
+			testRender = !testRender;
+			System.err.println("testing rendering: " + testRender);
+		}
 		
-		//if(testRender) {
-		//	r2();
-		//} else {
+		if(testRender) {
+			r2();
+		} else {
 			r();
-		//}
+		}
 	}
 	
 	private void r() {
@@ -97,10 +98,8 @@ public final class MasterRenderer {
 		if(meshes == null)
 			return;
 		
-		int amount = 0;
+		int amount = 0, meshesAmount = 0;
 		long start = System.currentTimeMillis();
-		
-		GL11.glEnable(GL11.GL_TEXTURE_2D);
 		
 		for(int i = 0; i < meshes.length; i++) {
 			mesh = (Mesh)meshes[i];
@@ -117,14 +116,15 @@ public final class MasterRenderer {
 				continue;
 			}
 			
-			if(mesh.vertices.length == 0) {
+			if(mesh.vertices == null || mesh.vertices.length == 0
+					|| mesh.indices == null || mesh.indices.length == 0) {
 				entities.remove(mesh);
 				
 				continue;
 			}
 			
 			if(!mesh.hasBeenCreated())
-				mesh.create();
+				continue;
 			
 			shader = mesh.getMaterial().getShader();
 			
@@ -134,36 +134,26 @@ public final class MasterRenderer {
 			
 			shader.bind();
 			
-			//mvp = Matrix4f.multiply(Application.getProjectionMatrix(), camera.main.getViewMatrix());
-			
 			shader.setUniform("view", Camera.main.getViewMatrix());
 			shader.setUniform("projection", Application.getProjectionMatrix());
 			shader.setUniform("color", mesh.getMaterial().getColor());
-			
-			shader.setUniform("screenTexture", core.getFrameBuffer().getRefractionTexture());
-			
-			// Bind textures
-			/*glActiveTexture(GL_TEXTURE0);
-			glBindTexture(GL_TEXTURE_2D, diffuseTexId);
-			glActiveTexture(GL_TEXTURE1);
-			glBindTexture(GL_TEXTURE_2D, specularTexId);
-
-			// Set texture uniforms
-			GLint diffuseTexUniform = glGetUniformLocation(shaderProgram, "diffuseTex");
-			glUniform1i(diffuseTexUniform, 0); // Binds texture to texture unit 0
-			GLint specularTexUniform = glGetUniformLocation(shaderProgram, "specularTex");
-			glUniform1i(specularTexUniform, 1); // Binds texture to texture unit 1
-			*/
 			
 			prepareMesh(mesh);
 			
 			List<GameObject> batch = entities.get(mesh);
 			
 			if(batch == null) {
-				System.err.println("g");
 				entities.remove(mesh);
 				
 				return;
+			}
+			
+			if(batch.isEmpty()) {
+				if(mesh != null)
+					mesh.destroy();
+				
+				entities.remove(mesh);
+				Core.meshManager.pushRemove(mesh);
 			}
 			
 			for(int j = 0; j < batch.size(); j++) {
@@ -193,21 +183,21 @@ public final class MasterRenderer {
 					continue;
 				}
 				
-				/*if(MathD.distanceBetweenVector2(entity.getPosition().getXY(), Camera.main.gameObject.getPosition().getXY()) > 30 + Camera.main.gameObject.getPosition().z + 15)
-					continue;
-				*/
-				
-				//Slow method.
-				/*Vector3f pos = Camera.main.convertWorldToScreenSpace(entity.getPosition());
-				
-				if(pos.x > Application.getFullWidth() + 128 || pos.x < -128
-						|| pos.y > Application.getFullHeight() + 128|| pos.y < -128) {
-					continue;
-				}*/
+				//if(MathD.distanceBetweenVector2(entity.getPosition().getXY(), Camera.main.gameObject.getPosition().getXY()) > 45 + Camera.main.gameObject.getPosition().z)
+				//	continue;
 				
 				if(entity.getTransform() == null) {
-					System.err.println("[ERROR] Couldn't render a GameObject with the name of " + entity.getName());
+					entity.updateTransform();
+					//System.err.println("[ERROR] Couldn't render a GameObject with the name of " + entity.getName());
 					
+					continue;
+				}
+				
+				//Slow method.
+				Vector3f pos = Camera.main.convertWorldToScreenSpace(entity.getTransform(), entity.getPosition());
+				
+				if(pos.x > Application.getFullWidth() + 64 || pos.x < -64
+						|| pos.y > Application.getFullHeight() + 64 || pos.y < -64) {
 					continue;
 				}
 				
@@ -220,16 +210,20 @@ public final class MasterRenderer {
 				}
 				
 				GL11.glDrawElements(GL11.GL_TRIANGLES, mesh.getIndices().length, GL11.GL_UNSIGNED_INT, 0);
+				amount++;
 			}
+			
+			if(Input.isKey(KeyCode.Z))
+				System.err.println("Mesh: " + mesh.hasBeenCreated + " - " + mesh.hasBeenDestoried);
 			
 			unBindMesh(mesh);
 			
 			shader.unbind();
-			amount++;
+			meshesAmount++;
 		}
 		
 		if(Input.isKeyDown(KeyCode.L)) {
-			System.err.println("Took " + (Math.abs(System.currentTimeMillis() - start) + "ms to render " + amount + " entities"));
+			System.err.println("Took " + (Math.abs(System.currentTimeMillis() - start) + "ms to render " + amount + " entities. With " + meshesAmount + " mesh(es)."));
 		}
 		
 		GL11.glDisable(GL11.GL_TEXTURE_2D);
@@ -238,14 +232,14 @@ public final class MasterRenderer {
 	/**
 	 * Test rendering :)
 	 */
-	/*private void r2() {
+	private void r2() {
 		if(Camera.main == null) {
 			return;
 		}
 		
 		GL11.glEnable(GL11.GL_TEXTURE_2D);
 		
-		if(Input.isKeyDown(KeyCode.L)) {
+		if(Input.isKeyUp(KeyCode.L)) {
 			combinedObjects.clear();
 			
 			Object[] meshes = null;
@@ -273,13 +267,15 @@ public final class MasterRenderer {
 					return;
 				}
 				
+				System.out.println("Going to combine: " + batch.size() + " gameObjects!");
+				
 				GameObject ojb = combineObjects(batch);
 				
 				if(ojb != null)
 					combinedObjects.add(ojb);
 			}
 			
-			System.err.println("amuot " + combinedObjects.size());
+			System.err.println("amount " + combinedObjects.size());
 		}
 		
 		int amount = 0;
@@ -321,7 +317,7 @@ public final class MasterRenderer {
 				shader.setUniform("strength", light.strength);
 			}*/
 			
-			/*shader.setUniform("color", mesh.getMaterial().getColor());
+			shader.setUniform("color", mesh.getMaterial().getColor());
 			
 			if(entity.getTransform() == null) {
 				System.err.println("[ERROR] Couldn't render a GameObject with the name of " + entity.getName());
@@ -343,64 +339,54 @@ public final class MasterRenderer {
 		if(Input.isKeyDown(KeyCode.K)) {
 			System.err.println("render " + amount);
 		}
-	}*/
+	}
 	
-	/*private GameObject combineObjects(List<GameObject> batch) {
+	private GameObject combineObjects(List<GameObject> batch) {
 		if(batch.isEmpty())
 			return null;
 		
 		List<Vertex> vertices = new ArrayList<Vertex>();
 		List<Integer> indices = new ArrayList<Integer>();
 		
+	    int offset = 0;
+		
 		System.err.println("looping through: " + batch.size());
 		
 		for(int j = 0; j < batch.size(); j++) {
+			Matrix4f transformation = batch.get(j).getTransform();
 			Mesh mesh = batch.get(j).getMesh();
-			Vector3f pos = batch.get(j).getPosition();
 			
 			if(mesh == null)
 				return null;
-			
-			int vertsSize = mesh.getVertices().length;
-			
-			for(int l = 0; l < vertsSize; l++) {
-				/*Vertex v = new Vertex(
-							new Vector3f(pos.x + mesh.getVertices()[l].getPosition().x, 
-									pos.y + mesh.getVertices()[l].getPosition().y, 
-									pos.z + mesh.getVertices()[l].getPosition().z),
-							mesh.getVertices()[l].getNormal(), //NORMALS.. TODO
-							mesh.getVertices()[l].getTextureCoord());*/
-				/*Vertex v = mesh.getVertices()[l].clone();
-				v.getPosition().add(pos);
-				
-				//if(batch.size() == 5) {
-				//	System.err.println("mesh: " + pos.toString() + " - " + mesh.getVertices()[l].getPosition().x + " " + mesh.getVertices()[l].getPosition().y);
-				//}
-				
-				//vertices.add(mesh.getVertices()[l]);
-				vertices.add(v);
-			}
-			
-			int tl = vertices.size() - 4 * 4;
-			
-			for(int i = 0; i < 4; i++) {
-				indices.add(tl + i * 4);
-				indices.add(tl + i * 4 + 1);
-				indices.add(tl + i * 4 + 2);
-				indices.add(tl + i * 4);
-				indices.add(tl + i * 4 + 2);
-				indices.add(tl + i * 4 + 3);
-			}
+						
+	        for(int index = 0; index < mesh.getVertices().length; index++) {
+	        	Vector3f position = transformation.multiply(mesh.vertices[index].getPosition());
+	            Vector3f normal = transformation.multiply(mesh.vertices[index].getNormal());
+	        	
+				Vertex vertex = new Vertex();
+	            
+	            vertex.setPosition(position);
+	            vertex.setNormal(normal);
+	            vertex.setTextureCoord(mesh.getVertices()[index].getTextureCoord());
+	            
+		        vertices.add(vertex);
+	        }
+	        
+	        for(int i = 0; i < mesh.indices.length; i++) {
+	        	indices.add(mesh.indices[i] + offset);
+	        }
+	        
+	        offset += mesh.vertices.length;
 		}
 		
-		System.err.println("For " + batch.size() + " batches. Created a mesh with " + vertices.size() + " vertices and " + indices.size() + " indices");
+		System.err.println("For " + batch.size() + " batch(es). Created a mesh with " + vertices.size() + " vertices and " + indices.size() + " indices");
 		
 		Mesh mesh = new Mesh(batch.get(0).getMesh().getSprite());
 		mesh.set(vertices, indices);
 		mesh.create();
 		
 		return new GameObject("", new Vector3f(), new Vector3f(), new Vector3f(1), mesh, false);
-	}*/
+	}
 	
 	public void render(GameObject gameObject) {
 		if(gameObject.shouldBeRemoved || !gameObject.isEnabled() || gameObject.getMesh() == null) {
@@ -472,7 +458,7 @@ public final class MasterRenderer {
 			entities.put(mesh, newBatch);
 		}
 		
-		System.err.println("added: " + entity.getName() + " - " + entity.shouldBeRemoved);
+		//System.out.println("added: " + entity.getName() + " - " + entities.size());
 	}
 	
 	public void destroy() {

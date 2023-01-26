@@ -97,8 +97,9 @@ public final class Editor {
 			File[] projects = getProjects();
 			core.setProjectName("Projects\\" + projects[index].getName());
 		} else {
-            ProjectSettings.projectType = ProjectType.D2;
-			core.setProjectName("Projects\\Dino Lands");
+            ProjectSettings.projectType = ProjectType.D3;
+			core.setProjectName("Projects\\my project");
+			//core.setProjectName("Projects\\Dino Lands");
 		}
 		
 		workSpaceDirectory += "\\" + core.getProjectName() + "\\";
@@ -137,6 +138,7 @@ public final class Editor {
 		
 		String fileSeparator = System.getProperty("file.separator");
 		
+		//TODO: Check if this is only needed in a jar version!
 		tempPath = Assets.createTempDirectory("Anix").toPath();
 		texturesPath = Assets.createTempDirectory("Anix\\Textures").toPath();
 		
@@ -323,8 +325,11 @@ public final class Editor {
 			e.printStackTrace();
 		}
 		
-		//currentScene.getGameObjects().clear();
-		currentScene.destroy();
+		for(int i = 0; i < currentScene.getGameObjects().size(); i++) {
+			currentScene.getGameObjects().get(i).destroy();
+		}
+		
+		currentScene.getGameObjects().clear();
 		
 		UUID lastSelectedUUID = core.getGUI().getHierachy().getSelectedObject() != null ? core.getGUI().getHierachy().getSelectedObject().uuid : null;
 		core.getGUI().getHierachy().setSelectedObject(null);
@@ -400,6 +405,7 @@ public final class Editor {
 								
 								if(go != null) {
 									GameObject nGo = GameObject.find(go.uuid);
+									
 									f.set(beh, nGo);
 								} else {
 									f.set(beh, null);
@@ -407,9 +413,9 @@ public final class Editor {
 							} catch (IllegalArgumentException | IllegalAccessException e) {
 								e.printStackTrace();
 							}
-						} else {
+						} /*else {
 							System.err.println("[ERROR] [TSH] Couldn't find a type of: " + typeName);
-						}
+						}*/
 					}
 				}
 			}
@@ -609,8 +615,8 @@ public final class Editor {
 		Core.meshManager.clear();
 		LightSource.lights.clear();
 		Core.getSprites().clear();
-		//Core.getMasterRenderer().destroy();
-		Core.getMasterRenderer().getEntities().clear();
+		//TODO: This will cause a problem with the meshes. Fix it
+		Core.getMasterRenderer().destroy();
 		Application.setFOV(70);
 		Camera.main = null;
 		Shader.shaders.clear();
@@ -627,9 +633,9 @@ public final class Editor {
 		}
 		
 		if(!isPlaying) {
-			for(int i = 0; i < SceneManager.getScenes().size(); i++) {
+			/*for(int i = 0; i < SceneManager.getScenes().size(); i++) {
 				saveScene(SceneManager.getScenes().get(i));
-			}
+			}*/
 			
 			String fullPath = System.getProperty("user.dir");
 			String fileSeparator = System.getProperty("file.separator");
@@ -649,9 +655,9 @@ public final class Editor {
 		if(isPlaying) {
 			setIsPlaying(false);
 		} else {
-			if(Core.getMasterRenderer() != null) {
+			/*if(Core.getMasterRenderer() != null) {
 				Core.getMasterRenderer().getEntities().clear();
-			}
+			}*/
 			
 			if(SceneManager.getCurrentScene() != null) {
 				load(SceneManager.getCurrentScene());
@@ -756,7 +762,7 @@ public final class Editor {
 				Assets.createTempFile(classesPath.toString() + "\\" + name[name.length - 1]);
 			}
 			
-			Files.write(srcPath, reader.lines().collect(Collectors.joining(seperator)).getBytes(StandardCharsets.UTF_8));	
+			Files.write(srcPath, reader.lines().collect(Collectors.joining(seperator)).getBytes(StandardCharsets.UTF_8));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -1123,7 +1129,7 @@ public final class Editor {
 			
 			UI.popups.clear();
 			
-			Scene scene = SceneManager.getCurrentScene();
+			Scene scene = startedScene;
 			
 			if(scene != null)
 				for(int i = 0; i < scene.getGameObjects().size(); i++) {
@@ -1154,17 +1160,15 @@ public final class Editor {
 		if(!isPlaying) {
 			canAddObjects = false;
 			
-			if(Core.getMasterRenderer() != null) {
-				Core.getMasterRenderer().destroy();
-				//Core.getMasterRenderer().getEntities().clear();
-			}
-			
-			if(SceneManager.getCurrentScene() != null) {
-				if(startedScene != null && !SceneManager.getCurrentScene().getName().equals(startedScene.getName()))
-					SceneManager.loadScene(startedScene.getName());
-				
+			if(SceneManager.getCurrentScene() != null && !SceneManager.getCurrentScene().getName().equals(startedScene.getName())) {
 				SceneManager.getCurrentScene().destroy();
 			}
+			
+			SceneManager.currentScene = startedScene;
+			
+			//if(startedScene != null/* && !SceneManager.getCurrentScene().getName().equals(startedScene.getName())*/) {
+			//	SceneManager.loadScene(startedScene.getName());
+			//}
 			
 			reLoad();
 			

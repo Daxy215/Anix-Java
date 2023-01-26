@@ -55,6 +55,8 @@ public final class SceneViewer {
 					Vector2f pos = Camera.main.convertScreenToWorldSpace();
 					
 					if(Input.isMouseButtonDown(KeyCode.Mouse0)) {
+						System.out.println("Pos: " + pos);
+						
 						GameObject obj = SceneManager.getCurrentScene().getGameObjectUsingCollision(pos);
 						
 						if(obj != null) {

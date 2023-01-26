@@ -21,9 +21,9 @@ public class PlayerMovement extends Behaviour {
 	@Override
 	public void update() {
 		if(Input.isKey(KeyCode.W)) {
-			gameObject.addPosition(0, movementSpeed * Time.deltaTime);
-		} else if(Input.isKey(KeyCode.S)) {
 			gameObject.addPosition(0, -movementSpeed * Time.deltaTime);
+		} else if(Input.isKey(KeyCode.S)) {
+			gameObject.addPosition(0, movementSpeed * Time.deltaTime);
 		}
 		
 		if(Input.isKey(KeyCode.A)) {

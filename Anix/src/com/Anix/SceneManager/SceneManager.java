@@ -8,7 +8,7 @@ import com.Anix.Behaviours.Camera;
 import com.Anix.Main.Core;
 
 public class SceneManager {
-	private static Scene currentScene;
+	public static Scene currentScene;
 	
 	private static Core core;
 	
@@ -19,6 +19,10 @@ public class SceneManager {
 	}
 	
 	public static void loadScene(String name) {
+		if(name == null || name.isEmpty()) {
+			return;
+		}
+		
 		Scene scene = null;
 		
 		for(int i = 0; i < scenes.size(); i++) {
@@ -30,8 +34,9 @@ public class SceneManager {
 		}
 		
 		if(scene != null) {
-			if(scene == currentScene)
+			if(scene == currentScene) {
 				return;
+			}
 			
 			scene.destroy();
 			Camera.main = null;

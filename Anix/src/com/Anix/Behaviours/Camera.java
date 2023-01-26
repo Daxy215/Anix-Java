@@ -17,7 +17,7 @@ public class Camera extends Behaviour {
 	private static final long serialVersionUID = 2993667212260007602L;
 	
 	public static enum ProjectionType {
-		projection, orthographics
+		projection, orthographics, frustum
 	}
 	
 	private static float mouseSensitivity = 0.20f, distance = 2.0f, horizontalAngle = 0, verticalAngle = 0;
@@ -134,8 +134,6 @@ public class Camera extends Behaviour {
 		
 		Vector4f pos = new Vector4f((float)(mouseX / (width / 2.0f) - 1f), 1 - (float)(mosueY / (height / 2.0f)), 0, 1);
 		
-		//TODO: Remove this?
-		//gameObject.updateTransform();
 		Matrix4f model = gameObject.getTransform();
 		Matrix4f projection = Application.getProjectionMatrix();
 		
@@ -144,7 +142,10 @@ public class Camera extends Behaviour {
 		
 		pos = mvp.multiply(pos);
 		
-		pos.w = (1f + (Camera.main.projectionType.equals(ProjectionType.projection) ? + gameObject.getPosition().z : 0)) / pos.w;
+		if(pos.w == 0.0f)
+			pos.w = 1;
+		
+		pos.w = (1 - (Camera.main.projectionType.equals(ProjectionType.projection) ? + gameObject.getPosition().z : 0)) / pos.w;
 		pos.x *= pos.w;
 		pos.y *= pos.w;
 		pos.z *= pos.w;
@@ -157,7 +158,7 @@ public class Camera extends Behaviour {
 		Vector2f rPos = new Vector2f(pos.x + -cPosX, pos.y + -cPosY);
 		
 		if(Camera.main.projectionType.equals(ProjectionType.projection))
-			return new Vector2f(-rPos.x, -rPos.y);
+			return new Vector2f(rPos.x, rPos.y);
 		else
 			return new Vector2f(rPos.x, rPos.y);
 	}
@@ -172,7 +173,6 @@ public class Camera extends Behaviour {
 		
 		Vector4f pos = new Vector4f((float)(x / (width / 2.0f) - 1f), 1 - (float)(y / (height / 2.0f)), 0, 1);
 		
-		//gameObject.updateTransform();
 		Matrix4f model = gameObject.getTransform();
 		Matrix4f projection = Application.getProjectionMatrix();
 		
@@ -206,7 +206,6 @@ public class Camera extends Behaviour {
 		
 		Vector4f pos = new Vector4f((float)(mouseX / (width / 2.0f) - 1f), 1 - (float)(mosueY / (height / 2.0f)), 0, 1);
 		
-		//gameObject.updateTransform();
 		Matrix4f model = gameObject.getTransform();
 		Matrix4f projection = Application.getProjectionMatrix();
 		
@@ -268,14 +267,13 @@ public class Camera extends Behaviour {
 			return new Vector2f(rPos.x, rPos.y);
 	}
 	
-	public Vector3f convertWorldToScreenSpace(Vector3f position) {
-		/*Matrix4f projection = Application.getProjectionMatrix();
+	public Vector3f convertWorldToScreenSpace(Matrix4f transform, Vector3f position) {
+		Matrix4f projection = Application.getProjectionMatrix();
 		
-		org.lwjglx.util.vector.Vector4f point4 = new org.lwjglx.util.vector.Vector4f(position.x, position.y, position.z, 1);
-		point4 = org.lwjglx.util.vector.Matrix4f.transform(MathD.convertMatrix(viewMatrix), point4, null);
-		point4 = org.lwjglx.util.vector.Matrix4f.transform(MathD.convertMatrix(projection), point4, null);
+		Vector4f point4 = new Vector4f(position.x, position.y, position.z, 1);
+		point4 = Matrix4f.transform(viewMatrix, point4, null);
+		point4 = Matrix4f.transform(projection, point4, null);
 		
-		//Vector3f point = new Vector3f(point4.x, -point4.y, -point4.z);
 		float pointx = point4.x;
 		float pointy = -point4.y;
 		float pointz = -point4.z;
@@ -287,16 +285,25 @@ public class Camera extends Behaviour {
 		pointx = (pointx + 1) * (Application.getWidth() * 0.5f);
 		pointy = (pointy + 1) * (Application.getHeight() * 0.5f);
 		
-		return new Vector3f(pointx + (ProjectSettings.isEditor ? Application.getStartX() : 0), pointy + (ProjectSettings.isEditor ? Application.getStartY() : 0), pointz);*/
-		return null;
+		return new Vector3f(pointx + (ProjectSettings.isEditor ? Application.getStartX() : 0), pointy + (ProjectSettings.isEditor ? Application.getStartY() : 0), pointz);
+	
+		
+		/*Matrix4f MVP = Matrix4f.multiply(Application.getProjectionMatrix(), viewMatrix).multiply(transform);
+		Vector4f point4 = new Vector4f(position.x, position.y, position.z, 1);
+		
+		Vector4f point = MVP.multiply(point4);
+		
+		return new Vector3f(point.x / point.w * (Application.getFullWidth() / 2.0f + Application.getFullWidth() / 2.0f),
+				point.y / point.w * (Application.getFullHeight() / 2.0f + Application.getFullHeight() / 2.0f),
+				point.z / point.w);*/
 	}
 	
 	public Vector3f convertWorldToScreenSpace(Vector3f position, Vector2f size) {
-		/*Matrix4f projection = Application.getProjectionMatrix();
+		Matrix4f projection = Application.getProjectionMatrix();
 		
-		org.lwjglx.util.vector.Vector4f point4 = new org.lwjglx.util.vector.Vector4f(position.x, position.y, position.z, 1);
-		point4 = org.lwjglx.util.vector.Matrix4f.transform(MathD.convertMatrix(viewMatrix), point4, null);
-		point4 = org.lwjglx.util.vector.Matrix4f.transform(MathD.convertMatrix(projection), point4, null);
+		Vector4f point4 = new Vector4f(position.x, position.y, position.z, 1);
+		point4 = Matrix4f.transform(viewMatrix, point4, null);
+		point4 = Matrix4f.transform(projection, point4, null);
 		
 		float pointx = point4.x;
 		float pointy = -point4.y;
@@ -309,8 +316,7 @@ public class Camera extends Behaviour {
 		pointx = (pointx + 1) * (size.x * 0.5f);
 		pointy = (pointy + 1) * (size.y * 0.5f);
 		
-		return new Vector3f(pointx, pointy, pointz);*/
-		return null;
+		return new Vector3f(pointx, pointy, pointz);
 	}
 	
 	@Override

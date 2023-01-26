@@ -12,6 +12,10 @@ public class Vertex implements Serializable, Cloneable {
 	private Vector3f normal;
 	private Vector2f textureCoord;
 	
+	public Vertex() {
+		
+	}
+	
 	public Vertex(Vector3f position, Vector3f normal, Vector2f textureCoord) {
 		this.position = position;
 		this.normal = normal;
@@ -29,6 +33,18 @@ public class Vertex implements Serializable, Cloneable {
 		return position;
 	}
 	
+	public void setPosition(Vector3f position) {
+		this.position = position;
+	}
+
+	public void setNormal(Vector3f normal) {
+		this.normal = normal;
+	}
+
+	public void setTextureCoord(Vector2f textureCoord) {
+		this.textureCoord = textureCoord;
+	}
+
 	public Vector3f getNormal() {
 		return normal;
 	}

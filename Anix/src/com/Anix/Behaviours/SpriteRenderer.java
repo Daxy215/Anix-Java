@@ -109,10 +109,12 @@ public class SpriteRenderer extends Behaviour {
 				
 				if(mesh == null) {
 					mesh = new Mesh(new Sprite(spriteName, "/textures/" + spriteName, null));
-					Core.meshManager.push(mesh);
+					Core.meshManager.addMesh(mesh);
 				}
 			}
 		}
+		
+		mesh.setHasBeenDestroied(false);
 		
 		gameObject.setMesh(mesh);
 	}

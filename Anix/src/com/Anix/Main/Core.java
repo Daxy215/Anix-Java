@@ -65,10 +65,11 @@ import imgui.flag.ImGuiConfigFlags;
  * There is a leak fix it!<br>
  * Fixed?<br>
  * <br>
- * TODO: Make Physics2D as BoxCollider that has a separate list of objects and update before movement.<br>
+ * Make Physics2D as BoxCollider that has a separate list of objects and update before movement.<br>
+ * Done<br>
  * <br>
  * Change BoxCollider to BoxCollider2D:<br>
- * Fixed<br>
+ * Done<br>
  * <br>
  * Fix not being able to save Maps: Cannot find a (Map) Key deserializer for type [simple type, class Building].<br>
  * Used a different saving system :)<br>
@@ -76,6 +77,10 @@ import imgui.flag.ImGuiConfigFlags;
  * Another memory leak<br>
  * Wasn't a memory leak, but a lot of new instances being created from the UI so I used ImGui.<br>
  * <br>
+ * TODO: Make the ability of making a custom renderer much easier.<br>
+ * <br>
+ * TODO: Make a "Core.RequestUpdate" and "Core.RequestRender", for behaviours.<br>
+ * So that, they can only be updated or rendered if it is called.<br>
  */
 public final class Core implements Runnable {
 	private String projectName = "";
@@ -168,9 +173,10 @@ public final class Core implements Runnable {
 	}
 	
 	private void init() {
+		//?
 		new Material(Shader.defaultShader);
 		new SceneManager(this);
-		new Panel(gui);
+		//new Panel(gui);
 		new ProjectSettings(this);
 		
 		editor.init(args);
@@ -192,7 +198,7 @@ public final class Core implements Runnable {
 	public void run() {
 		application = new Application(gui, 1280, 720, "Anix " + editor.getVersion());
 		application.create();
-		masterRenderer = new MasterRenderer(this, false);
+		masterRenderer = new MasterRenderer();
 		
 		ImGui.styleColorsDark();
 		redDarkTheme();
@@ -218,7 +224,7 @@ public final class Core implements Runnable {
 				
 				Time.process();
 				
-				frameBuffer.bindRefractionFrameBuffer();
+				frameBuffer.bindReflectionFrameBuffer();
 				application.update();
 				frameBuffer.unbindCurrentFrameBuffer();
 				application.update();
@@ -262,7 +268,7 @@ public final class Core implements Runnable {
 				application.imGuiGlfw.newFrame();
 				ImGui.newFrame();
 				
-				frameBuffer.bindRefractionFrameBuffer();
+				frameBuffer.bindReflectionFrameBuffer();
 				
 				render();
 				renderBehaviours();

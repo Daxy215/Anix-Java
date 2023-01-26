@@ -72,23 +72,22 @@ public final class MeshManager {
 	private List<Mesh> meshesToBeRemoved = new ArrayList<Mesh>();
 	
 	public void update() {
-		for(int i = 0; i < meshesToBeCreated.size() || i < meshesToBeRemoved.size(); i++) {
-			if(i < meshesToBeCreated.size()) {
-				if(meshesToBeCreated.get(i) != null)
-					meshesToBeCreated.get(i).create();
-				
-				meshesToBeCreated.remove(i);
-			}
+		for(int i = 0; i < meshesToBeCreated.size(); i++) {
+			if(meshesToBeCreated.get(i) != null)
+				meshesToBeCreated.get(i).create();
 			
-			if(i < meshesToBeRemoved.size()) {
-				if(meshesToBeRemoved.get(i) != null)
-					meshesToBeRemoved.get(i).destroy();
-				
-				meshesToBeRemoved.remove(i);
-			}
-			
-			i--;
+			meshesToBeCreated.remove(i);
 		}
+		
+		for(int i = 0; i < meshesToBeRemoved.size(); i++) {
+			if(meshesToBeRemoved.get(i) != null)
+				meshesToBeRemoved.get(i).destroy();
+			
+			meshesToBeRemoved.remove(i);
+		}
+		
+		if(Input.isKeyDown(KeyCode.P))
+			System.err.println("There are: " + meshes.size() + " mesh(es)");
 	}
 	
 	public List<Mesh> getMeshes() {
@@ -133,7 +132,9 @@ public final class MeshManager {
 	}
 	
 	public void clear() {
-		if(ProjectSettings.isEditor)
+		if(ProjectSettings.isEditor) {
+			System.err.println("Clearning");
 			meshesToBeCreated.clear();
+		}
 	}
 }

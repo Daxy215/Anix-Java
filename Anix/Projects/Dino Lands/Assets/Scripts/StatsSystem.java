@@ -1,8 +1,9 @@
-import com.Anix.Behaviours.Behaviour;
+package Scripts;
 
 import java.lang.reflect.Field;
 
 import com.Anix.Annotation.Header;
+import com.Anix.Behaviours.Behaviour;
 
 public class StatsSystem extends Behaviour {
 	/*

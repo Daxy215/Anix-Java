@@ -13,6 +13,16 @@ public class RayCast {
 	
 	private static final int MAX_ITERATIONS = 169;
 	
+	public static boolean rayCast(Vector3f point, Vector3f position, Vector3f direction) {
+		Vector3f normal = direction.normalize();
+		
+		Vector3f newNorm = point.sub(position);
+		newNorm.normalize();
+		
+		float d = Vector3f.dot(newNorm, normal);
+		return Math.abs(1f - d) < 0.000001f;
+	}
+	
 	public static GameObject rayCast(int distance) {
 		float x = -(float)Math.sin(Math.toRadians(Camera.main.gameObject.getRotation().getY()));
 		float y = (float)Math.sin(Math.toRadians(Camera.main.gameObject.getRotation().getX()));

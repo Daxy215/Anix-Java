@@ -33,6 +33,15 @@ public class Chunk {
 						return;
 					
 					blocks[xx][yy][zz] = GetBlockType(xx+x-1, yy+y, zz+z-1);
+					
+					/*float val = World.fs.GetNoise(xx+x, yy+y, zz+z);
+					 
+					//System.out.println("val " + val);g
+					
+					if(val > 0.5f)
+						blocks[xx][yy][zz] = BlockType.Grass;
+					else
+						blocks[xx][yy][zz] = BlockType.Air;*/
 				}
 			}
 		}
@@ -43,10 +52,13 @@ public class Chunk {
 		
 		BlockType block = null;
 		
+		if(blocks == null)
+			return;
+		
 		for(int x = 1; x < World.chunkSizeX + 1; x++) {
 			for(int z = 1; z < World.chunkSizeZ + 1; z++) {
 				for(int y = 0; y < World.chunkSizeY; y++) {
-					block = blocks[x][y][z ];
+					block = blocks[x][y][z];
 					
 					if(block == BlockType.Air)
 						continue;
@@ -102,7 +114,7 @@ public class Chunk {
 				data.vertices.add(new Vertex(new Vector3f( 0.5f+x,  0.5f+y, -0.5f+z), World.normal, World.topRightCoord));
 			}
 		}
-
+		
 		//Front
 		if(blocks[x][y][z + 1] == BlockType.Air) {
 			if(LODLevel == 0) {
@@ -122,7 +134,7 @@ public class Chunk {
 				data.vertices.add(new Vertex(new Vector3f( 0.5f+x,  0.5f+y,  0.5f+z), World.normal, World.topRightCoord));
 			}
 		}
-
+		
 		//RIGHT
 		if(blocks[x + 1][y][z] == BlockType.Air) {
 			if(LODLevel == 0) {
@@ -142,7 +154,7 @@ public class Chunk {
 				data.vertices.add(new Vertex(new Vector3f( 0.5f+x,  0.5f+y,  0.5f+z), World.normal, World.topRightCoord));
 			}
 		}
-
+		
 		//LEFT
 		if(blocks[x - 1][y][z] == BlockType.Air) {
 			if(LODLevel == 0) {
@@ -162,7 +174,7 @@ public class Chunk {
 				data.vertices.add(new Vertex(new Vector3f(-0.5f+x,  0.5f+y,  0.5f+z), World.normal, World.topRightCoord));
 			}
 		}
-
+		
 		//TOP
 		if(y < World.chunkSizeY - 1 && blocks[x][y + 1][z] == BlockType.Air) {
 			if(LODLevel == 0) {
@@ -209,20 +221,20 @@ public class Chunk {
         //print(noise.GetSimplex(x, z));
         float simplex1 = World.fs.GetSimplex(f*.8f, h*.8f)*10;
         float simplex2 = World.fs.GetSimplex(f * 3f, h * 3f) * 10*(World.fs.GetSimplex(f*.3f, h*.3f)+.5f);
-
+        
         float heightMap = simplex1 + simplex2;
-
+        
         //add the 2d noise to the middle of the terrain chunk
         float baseLandHeight = World.chunkSizeY * .5f + heightMap;
-
+        
         //3d noise for caves and overhangs and such
-        float caveNoise1 = World.fs.GetPerlinFractal(f*5f, g*10f, h*5f) * 15;
-        float caveMask = World.fs.GetSimplex(f * .3f, h * .3f)+.3f * 15;
-
+        //float caveNoise1 = World.fs.GetPerlinFractal(f*5f, g*10f, h*5f) * 15;
+        //float caveMask = World.fs.GetSimplex(f * .3f, h * .3f)+.3f * 15;
+        
         //stone layer heightmap
         float simplexStone1 = World.fs.GetSimplex(f * 1f, h * 1f) * 10;
         float simplexStone2 = (World.fs.GetSimplex(f * 5f, h * 5f)+.5f) * 20 * (World.fs.GetSimplex(f * .3f, h * .3f) + .5f);
-
+        
         float stoneHeightMap = simplexStone1 + simplexStone2;
         float baseStoneHeight = World.chunkSizeY * .25f + stoneHeightMap;
         
@@ -230,7 +242,7 @@ public class Chunk {
         //float cliffThingMask = noise.GetSimplex(x * .4f, z * .4f) + .3f;
         
         BlockType blockType = BlockType.Air;
-
+        
         //under the surface, dirt block
         if(g <= baseLandHeight) {
             blockType = BlockType.Dirt;
@@ -243,8 +255,8 @@ public class Chunk {
                 blockType = BlockType.Stone;
         }
         
-        if(caveNoise1 > Math.max(caveMask, 0.2f))
-            blockType = BlockType.Air;
+        //if(caveNoise1 > Math.max(caveMask, 0.2f))
+        //   blockType = BlockType.Air;
         
         /*if(blockType != BlockType.Air)
             blockType = BlockType.Stone;*/
