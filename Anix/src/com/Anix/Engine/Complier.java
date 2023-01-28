@@ -120,20 +120,24 @@ final class Complier {
 		for(Map.Entry<File, String> file : files.entrySet()) {
 			try {
 				//TODO: java.lang.ClassFormatError: Truncated class file?????
-				Class<?> clazz = Class.forName(/*"Scripts.Player." + */ file.getValue() + file.getKey().getName().split(".java")[0].trim(), true, classLoader);
+				Class<?> clazz = Class.forName(/*"Scripts.Player." + */ /*file.getValue() + */file.getKey().getName().split(".java")[0].trim(), true, classLoader);
 				//addSoftwareLibrary(files.get(i));
 				
 				if(clazz != null) {
-					Object obj = clazz.getConstructor().newInstance();
-					
 					try {
-						if(obj instanceof Behaviour) {
-							Editor.importedClasses.add((Behaviour)obj);
-						}
+						Object obj = clazz.getConstructor().newInstance();
 						
-						System.out.println("Successfully loaded class with the name of: " +  file.getKey().getName().split(".java")[0]);
-					} catch(Exception e) {
-						System.err.println("[ERROR] " + clazz.getSimpleName() + " : " + e.getMessage());
+						try {
+							if(obj instanceof Behaviour) {
+								Editor.importedClasses.add((Behaviour)obj);
+							}
+							
+							System.out.println("Successfully loaded class with the name of: " +  file.getKey().getName().split(".java")[0]);
+						} catch(Exception e) {
+							System.err.println("[ERROR] " + clazz.getSimpleName() + " : " + e.getMessage());
+						}
+					} catch(NoSuchMethodException e) {
+						System.err.println("[ERROR] Please include a default constructor for the class with the name of: " + file.getKey().getName().split(".java")[0]);
 					}
 				}
 			} catch(Exception | NoClassDefFoundError e) {

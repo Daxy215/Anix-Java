@@ -21,7 +21,7 @@ import com.Anix.Math.Vector3f;
 import com.Anix.Objects.GameObject;
 
 public final class MasterRenderer {
-	private boolean testRender;
+	private boolean testRender;//, updateCombiedObjects;
 	
 	//private Core core;
 	
@@ -41,6 +41,65 @@ public final class MasterRenderer {
 		//}
 		
 		//testShader = UI.loadTexture("/textures/AmbientOcclusionMap.png").getId();
+		
+		/*Thread thread = new Thread() {
+			public void run() {
+				System.err.println("starting");
+				
+				while(!Application.shouldClose()) {
+					if(!updateCombiedObjects)
+						continue;
+					
+					System.err.println("updating");
+					
+					combinedObjects.clear();
+					
+					Object[] meshes = null;
+					
+					try {
+						meshes = entities.keySet().toArray();
+					} catch(Exception e) {
+						System.err.println("Error 3:( " + e.getMessage());
+						
+						continue;
+					}
+					
+					for(int i = 0; i < meshes.length; i++) {
+						mesh = (Mesh)meshes[i];
+						
+						if(!mesh.hasBeenCreated) {
+							mesh.create();
+						}
+						
+						List<GameObject> batch = entities.get(mesh);
+						
+						if(batch == null) {
+							entities.remove(mesh);
+							
+							continue;
+						}
+						
+						GameObject obj = combineObjects(batch);
+						
+						if(obj != null) {
+							entities.remove(mesh);
+							combinedObjects.add(obj);
+						}
+					}
+					
+					updateCombiedObjects = false;
+					
+					try {
+						Thread.sleep(1000);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+		};
+		
+		thread.setName("MasterRenderer Thread");
+		thread.start();*/
 	}
 	
 	public void update() {
@@ -73,11 +132,11 @@ public final class MasterRenderer {
 			System.err.println("testing rendering: " + testRender);
 		}
 		
-		if(testRender) {
-			r2();
-		} else {
-			r();
-		}
+		//if(testRender) {
+			//r2();
+		//} else {
+		r();
+		//}
 	}
 	
 	private void r() {
@@ -90,7 +149,7 @@ public final class MasterRenderer {
 		try {
 			meshes = entities.keySet().toArray();
 		} catch(Exception e) {
-			System.err.println("Error :( " + e.getMessage());
+			System.err.println("Error :(2 " + e.getMessage());
 			
 			return;
 		}
@@ -124,6 +183,9 @@ public final class MasterRenderer {
 			}
 			
 			if(!mesh.hasBeenCreated())
+				continue;
+			
+			if(mesh.getMaterial() == null)
 				continue;
 			
 			shader = mesh.getMaterial().getShader();
@@ -172,7 +234,7 @@ public final class MasterRenderer {
 				}
 				
 				if(entity.getMesh() != null && !entity.getMesh().equals(mesh)) { //If object's mesh has been changed. Update it.
-					if(entities.get(mesh).remove(entity)) {
+					if(entities.get(mesh) != null && entities.get(mesh).remove(entity)) {
 						addEntity(entity);
 					}
 					
@@ -194,12 +256,12 @@ public final class MasterRenderer {
 				}
 				
 				//Slow method.
-				Vector3f pos = Camera.main.convertWorldToScreenSpace(entity.getTransform(), entity.getPosition());
+				/*Vector3f pos = Camera.main.convertWorldToScreenSpace(entity.getTransform(), entity.getPosition());
 				
 				if(pos.x > Application.getFullWidth() + 64 || pos.x < -64
 						|| pos.y > Application.getFullHeight() + 64 || pos.y < -64) {
 					continue;
-				}
+				}*/
 				
 				shader.setUniform("model", entity.getTransform());
 				
@@ -238,45 +300,6 @@ public final class MasterRenderer {
 		}
 		
 		GL11.glEnable(GL11.GL_TEXTURE_2D);
-		
-		if(Input.isKeyUp(KeyCode.L)) {
-			combinedObjects.clear();
-			
-			Object[] meshes = null;
-			
-			try {
-				meshes = entities.keySet().toArray();
-			} catch(Exception e) {
-				System.err.println("Error :( " + e.getMessage());
-				
-				return;
-			}
-			
-			for(int i = 0; i < meshes.length; i++) {
-				mesh = (Mesh)meshes[i];
-				
-				if(!mesh.hasBeenCreated) {
-					mesh.create();
-				}
-				
-				List<GameObject> batch = entities.get(mesh);
-				
-				if(batch == null) {
-					entities.remove(mesh);
-					
-					return;
-				}
-				
-				System.out.println("Going to combine: " + batch.size() + " gameObjects!");
-				
-				GameObject ojb = combineObjects(batch);
-				
-				if(ojb != null)
-					combinedObjects.add(ojb);
-			}
-			
-			System.err.println("amount " + combinedObjects.size());
-		}
 		
 		int amount = 0;
 		
@@ -452,6 +475,10 @@ public final class MasterRenderer {
 		
 		if(batch != null) {
 			batch.add(entity);
+			
+			//if(entity.isStatic) {
+			//	updateCombiedObjects = true;
+			//}
 		} else {
 			List<GameObject> newBatch = new ArrayList<GameObject>();
 			newBatch.add(entity);

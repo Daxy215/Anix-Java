@@ -6,6 +6,8 @@ import org.lwjgl.glfw.GLFWKeyCallback;
 import org.lwjgl.glfw.GLFWMouseButtonCallback;
 import org.lwjgl.glfw.GLFWScrollCallback;
 
+import imgui.ImGui;
+
 public final class Input {
 	static int currentPressedKey = 0;
 	
@@ -119,26 +121,44 @@ public final class Input {
 	}
 	
 	public static boolean isKey(int key) {
+		if(ImGui.getIO().getWantCaptureMouse())
+			return false;
+		
 		return keys[key];
 	}
 	
 	public static boolean isKeyDown(int key) {
+		if(ImGui.getIO().getWantCaptureMouse())
+			return false;
+		
 		return keys[key] && !keysLast[key];
 	}
 	
 	public static boolean isKeyUp(int key) {
+		if(ImGui.getIO().getWantCaptureMouse())
+			return false;
+		
 		return !keys[key] && keysLast[key];
 	}
 	
 	public static boolean isMouseButton(int button) {
+		if(ImGui.getIO().getWantCaptureMouse())
+			return false;
+		
 		return buttons[button];
 	}
 	
 	public static boolean isMouseButtonDown(int button) {
+		if(ImGui.getIO().getWantCaptureMouse())
+			return false;
+		
 		return buttons[button] && !buttonsLast[button];
 	}
 	
 	public static boolean isMouseButtonUp(int button) {
+		if(ImGui.getIO().getWantCaptureMouse())
+			return false;
+		
 		return !buttons[button] && buttonsLast[button];
 	}
 	

@@ -97,9 +97,8 @@ public final class Editor {
 			File[] projects = getProjects();
 			core.setProjectName("Projects\\" + projects[index].getName());
 		} else {
-            ProjectSettings.projectType = ProjectType.D3;
-			core.setProjectName("Projects\\my project");
-			//core.setProjectName("Projects\\Dino Lands");
+            ProjectSettings.projectType = ProjectType.D2;
+			core.setProjectName("Projects\\RoboFactory");
 		}
 		
 		workSpaceDirectory += "\\" + core.getProjectName() + "\\";
@@ -109,28 +108,30 @@ public final class Editor {
 		if(is == null) {
 			File configFile = new File(workSpaceDirectory + "config.properties");
 			
-			try {
-				FileReader r = new FileReader(configFile);
-				Properties p = new Properties();
-				
-				p.load(r);
-				
-				String recordedVersion = p.getProperty("Version");
-				String type = p.getProperty("ProjectType");
-				
-				if(type != null)
-					ProjectSettings.projectType = ProjectType.valueOf(type);
-				
-				if(!editorVersion.equals(recordedVersion)) {
-					Console.LogWar("[Warning] Editor version isn't the same as the projects editor version! This could case some issues!");
+			if(configFile.exists()) {
+				try {
+					FileReader r = new FileReader(configFile);
+					Properties p = new Properties();
+					
+					p.load(r);
+					
+					String recordedVersion = p.getProperty("Version");
+					String type = p.getProperty("ProjectType");
+					
+					if(type != null)
+						ProjectSettings.projectType = ProjectType.valueOf(type);
+					
+					if(!editorVersion.equals(recordedVersion)) {
+						Console.LogWar("[Warning] Editor version isn't the same as the projects editor version! This could case some issues!");
+					}
+					
+					r.close();
+				} catch(FileNotFoundException e) {
+					saveConfig(configFile);
+					e.printStackTrace();
+				} catch(IOException e) {
+					e.printStackTrace();
 				}
-				
-				r.close();
-			} catch(FileNotFoundException e) {
-				saveConfig(configFile);
-				e.printStackTrace();
-			} catch(IOException e) {
-				e.printStackTrace();
 			}
 		} else {
 			ProjectSettings.load(new BufferedReader(new InputStreamReader(is)), false);
@@ -538,7 +539,8 @@ public final class Editor {
 		if(ProjectSettings.isEditor) {
 			File file = new File(path);
 			
-			is = new FileInputStream(file);
+			if(file.exists())
+				is = new FileInputStream(file);
 		} else {
 			File file = new File(path);
 			Path newPath = null;
@@ -616,7 +618,7 @@ public final class Editor {
 		LightSource.lights.clear();
 		Core.getSprites().clear();
 		//TODO: This will cause a problem with the meshes. Fix it
-		Core.getMasterRenderer().destroy();
+		//Core.getMasterRenderer().destroy();
 		Application.setFOV(70);
 		Camera.main = null;
 		Shader.shaders.clear();
@@ -628,7 +630,7 @@ public final class Editor {
 		
 		try {
 			complier.compile();
-		} catch (Exception e) {
+		} catch(Exception e) {
 			e.printStackTrace();
 		}
 		

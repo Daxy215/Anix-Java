@@ -18,9 +18,9 @@ import com.Anix.Engine.Graphics.Material;
 import com.Anix.GUI.GUI;
 import com.Anix.GUI.Texture;
 import com.Anix.IO.Application;
-import com.Anix.IO.Input;
 import com.Anix.IO.KeyCode;
 import com.Anix.Main.Core;
+import com.Anix.Objects.GameObject;
 import com.Anix.SceneManager.SceneManager;
 
 import imgui.ImGui;
@@ -124,7 +124,6 @@ public final class Assets {
 				
 				popup = "Script";
 				openNewPopup = true;
-				
 			}
 			
 			if (ImGui.menuItem("New Material")) {
@@ -163,7 +162,7 @@ public final class Assets {
 			//folderName.set(popup);
 			ImGui.inputTextWithHint("##", popup + " name..", folderName);
 			
-			if(Input.isKeyDown(KeyCode.Return)) {
+			if(ImGui.isKeyDown(KeyCode.Return)) {
 				if(folderName.get().length() > 0) {
 					switch(popup.toLowerCase()) {
 					case "folder":
@@ -224,6 +223,7 @@ public final class Assets {
 		for(int i = 0; i < folders.size(); i++) {
 			Folder folder = folders.get(i);
 			
+			//TODO:
 			if(folder.getExtension().equalsIgnoreCase("class")
 					|| folder.getExtension().equalsIgnoreCase("project"))
 				continue;
@@ -236,23 +236,35 @@ public final class Assets {
 			if(ImGui.imageButton(folder.getTexture().getId(), 
 					folderWidth, folderHeight)) {}
 			
-	        if (ImGui.isItemHovered() && ImGui.isMouseDoubleClicked(0)) {
-	        	if(folder.isDirectory()) {
-	        		inFolder = folder;
-	        	} else { //Open the file
-	        		if(!folder.getName().split("\\.")[1].equalsIgnoreCase("scene")) {
-		        		if(Desktop.isDesktopSupported()) {
-		        			try {
-								Desktop.getDesktop().open(folder);
-							} catch (IOException e) {
-								e.printStackTrace();
-							}
+	        if (ImGui.isItemHovered()) {
+	        	if(ImGui.isMouseDoubleClicked(0)) {
+		        	if(folder.isDirectory()) {
+		        		inFolder = folder;
+		        	} else { //Open the file
+		        		if(!folder.getName().split("\\.")[1].equalsIgnoreCase("scene")) {
+			        		if(Desktop.isDesktopSupported()) {
+			        			try {
+									Desktop.getDesktop().open(folder);
+								} catch (IOException e) {
+									e.printStackTrace();
+								}
+			        		}
+		        		} else {
+		        			SceneManager.loadScene(folder.getName().split("\\.")[0]);
 		        		}
-	        		} else {
-	        			SceneManager.loadScene(folder.getName().split("\\.")[0]);
-	        		}
+		        	}
 	        	}
 	        }
+	        
+	      //On right click basically
+			if(ImGui.beginPopupContextItem()) {
+				if(ImGui.button("Delete")) {
+					folders.get(i).delete();
+					this.folders.remove(i);
+				}
+				
+				ImGui.endPopup();
+			}
 			
 			ImGui.sameLine();
 			ImGui.calcTextSize(vec2, folder.getName());

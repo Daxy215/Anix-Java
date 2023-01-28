@@ -38,12 +38,13 @@ public class Mesh implements Serializable, Cloneable {
 	protected boolean hasBeenCreated, hasBeenDestoried;
 	
 	public Mesh() {
-		
+		this.material = new Material(Shader.defaultShader);
 	}
 	
 	public Mesh(Sprite sprite) {
 		if(sprite != null)
 			this.path = sprite.getPath();
+		
 		this.sprite = sprite;
 		
 		if(ProjectSettings.projectType.equals(ProjectType.D2)) {

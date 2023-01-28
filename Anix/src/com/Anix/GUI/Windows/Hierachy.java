@@ -78,13 +78,13 @@ public final class Hierachy {
 				}
 			}
 			
-			if(Input.isKeyDown(KeyCode.UpArrow)) {
+			if(ImGui.isKeyDown(KeyCode.UpArrow)) {
 				if(selectedObjectIndex != -1 && selectedObjectIndex - 1 >= 0) {
 					setSelectedObject(--selectedObjectIndex);
 				}
 			}
 			
-			if(Input.isKeyDown(KeyCode.DownArrow)) {
+			if(ImGui.isKeyDown(KeyCode.DownArrow)) {
 				if(selectedObjectIndex != -1 && selectedObjectIndex + 1 < SceneManager.getCurrentScene().getGameObjects().size()) {
 					setSelectedObject(++selectedObjectIndex);
 				}
@@ -134,7 +134,7 @@ public final class Hierachy {
 		}
 		
 		if(selectedObject != null) {
-			if(Input.isKeyDown(KeyCode.Delete)) {
+			if(ImGui.isKeyDown(KeyCode.Delete)) {
 				selectedObject.destroy();
 			}
 		}

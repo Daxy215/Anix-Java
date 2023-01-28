@@ -1236,10 +1236,10 @@ public final class UI {
 		
 		try {
 			//InputStream is = null;
-
+			
 			//if(ProjectSettings.isEditor) {
 				/*is = UI.class.getResourceAsStream(fileName);
-
+			
 				if(is == null) {
 					String tempPath = "";
 					
@@ -1299,16 +1299,15 @@ public final class UI {
 			        // Use info to read image metadata without decoding the entire image.
 			        // We don't need this for this demo, just testing the API.
 			        if (!stbi_info_from_memory(imageBuffer, w, h, comp)) {
-			            throw new RuntimeException("Failed to read image information: " + stbi_failure_reason());
-			        }/* else {
-			            System.out.println("OK with reason: " + stbi_failure_reason());
-			        }*/
-
+			        	System.err.println("[ERROR] Couldn't load an image with the name of: " + fileName);
+			            //throw new RuntimeException("Failed to read image information: " + stbi_failure_reason());
+			        }
+			        
 			        //System.out.println("Image width: " + w.get(0));
 			        //System.out.println("Image height: " + h.get(0));
 			        //System.out.println("Image components: " + comp.get(0));
 			        //System.out.println("Image HDR: " + stbi_is_hdr_from_memory(imageBuffer));
-
+			        
 			        // Decode the image
 			        image = stbi_load_from_memory(imageBuffer, w, h, comp, 0);
 			        
@@ -1320,7 +1319,7 @@ public final class UI {
 			    }
 				
 				//texture = TextureLoader.getTexture(fileName.split("[.]")[1], is);
-
+				
 				//is.close();
 			//} else {
 				/*if(!fileName.startsWith("/")) {
@@ -1339,7 +1338,7 @@ public final class UI {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-
+		
 		return returnImage;
 	}
 	

@@ -93,24 +93,24 @@ public class ResourceLoader {
 			try (InputStream source = Editor.getInputStream(resource);
 					ReadableByteChannel rbc = Channels.newChannel(source)) {
 				buffer = BufferUtils.createByteBuffer(bufferSize);
-
+				
 				while (true) {
 					int bytes = rbc.read(buffer);
 					if(bytes == -1) {
 						break;
 					}
-
+					
 					if(buffer.remaining() == 0) {
 						buffer = resizeBuffer(buffer, buffer.capacity() * 2);
 					}
 				}
 			}
 		}
-
+		
 		((Buffer)buffer).flip();
 		return buffer;
 	}
-
+	
 	public static ByteBuffer resizeBuffer(ByteBuffer buffer, int newCapacity) {
 		ByteBuffer newBuffer = BufferUtils.createByteBuffer(newCapacity);
 		((Buffer)buffer).flip();

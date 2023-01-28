@@ -12,13 +12,13 @@ bool isEmpty(sampler2D sampler) {
 }
 
 void main() {
-  vec4 texColor;
+  //vec4 texColor;
   
-  if(isEmpty(tex)) {
-    texColor = vec4(color, 1.0);
-  } else {
-    texColor = mix(vec4(color, 1.0), texture(tex, passTextureCoord), 0.5);
-  }
+  //if(isEmpty(tex)) {
+  //  texColor = vec4(color, 1.0);
+  //} else {
+    //texColor = mix(vec4(color, 1.0), texture(tex, passTextureCoord), 0.5);
+  //}
   
-  FragColor = texColor;
+  FragColor = mix(vec4(color, 1.0), texture(tex, passTextureCoord), 0.5);//texColor;
 }

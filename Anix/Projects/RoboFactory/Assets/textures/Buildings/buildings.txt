@@ -1,0 +1,33 @@
+#Main Building HEALTH:ROTATEABLE:ELECTRCITYREQUIRED:SHOWRADIUS
+Type:MainBuilding,name:MainBuilding,levels<50:false:0:8,100:false:0:12,150:false:0:18>,requirements<Log:0,Log:100,Log:500;Metal:100>
+
+#Buildings HEALTH:ROTATEABLE:ELECTRICITYREQUIRED
+Type:Fence,name:Fence,levels<5:false:0,10:false:0,15:0,20:false:0>,requirements<Log:5,Log:25,Log:50;Stone:50,Log:85;Stone:85;Metal:25>
+
+#Storage HEALTH:ROTATEABLE:ELECTRICITYREQUIRED:MAXCARRY
+Type:Storage,name:Storage,levels<25:false:0:800,50:false:0:1600,75:false:0:2400>,requirements<Log:25,Log:50,Log:100>
+
+#Furnace HEALTH:ROTATEABLE:ELECTRICITYREQUIRED:MAXCOALAMOUNT:MAXSTORAGE:SPEED
+Type:Furnace,name:Furnace,levels<25:false:0:2:15:5000>,requirements<Stone:50>
+
+#Coal Generator HEALTH:ROTATEABLE:ELECTRICITYREQUIRED:ELECTRICITYGENERATE:ELECTRICITYGENERATERATE:MAXELECTRCITY
+Type:CoalGenerator,name:CoalGenerator,levels<5:false:0:2:1000:10>,requirements<Lithium:15;Stone:50>
+
+#Solar Panel HEALTH:ROTATEABLE:ELECTRICITYREQUIRED:ELECTRICITYGENERATERATE:ELECTRCITYGENERATIONTIME:MAXELECTRICITY
+Type:SolarPanel,name:SolarPanel,levels<5:false:0:1:4:10>,requirements<Metal:50;Lithium:35>
+
+#Battery HEALTH:ROTATEABLE:ELECTRICITYREQUIRED:MAXELECTRICITY
+Type:Battery,name:Battery,levels<8:false:0:14>,requirements<Metal:30;Lithium:50>
+
+#Pole HEALTH:ROTATEABLE:ELECTRICITYREQUIRED:MAXELECTRICITY:MAXDISTANCE
+Type:Pole,name:Pole,levels<5:false:0:5:5>,requirements<Log:8;Metal:2>
+
+#Mine HEALTH:ROTATEABLE:ELECTRICITYREQUIRED:MAXCARRY:TIME
+Type:Mine,name:Mine,levels<10:true:5:400:2500>,requirements<Metal:50>
+
+#Rails HEALTH:ROTATEABLE:ELECTRICITYREQUIRED:MAXCARRY:TIME
+Type:Rail,name:Rail,levels<10:true:5:5:250>,requirements<Metal:10>
+
+#Towers HEALTH:ROTATEABLE:ELECTRICITYREQUIRED:MAXRANGE:DAMAGE:TIMETOFIRE
+Type:Tower,name:Archery,levels<15:false:0:6:0.5:1500,25:false:0:5:1.5:1250,35:false:0:5:2.5:1000>,requirements<Log:25,Log:50,Log:50;Stone:50>
+Type:Tower,name:Turret,levels<35:false:0:3:2:3000,50:false:0:3:4.5:2500,75:false:0:4:5:2000>,requirements<Log:50;Stone:50;Metal:50,Log:85;Stone:80;Metal:85,Log:150;Stone:250;Metal:150>

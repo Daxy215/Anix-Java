@@ -21,8 +21,8 @@ public class Button extends Behaviour {
 	
 	@Override
 	public void render() {
-		double mouseX = Input.getMouseX() - Application.getStartX();
-		double mouseY = Input.getMouseY() - Application.getStartY();
+		//double mouseX = Input.getMouseX() - Application.getStartX();
+		//double mouseY = Input.getMouseY() - Application.getStartY();
 		
 		/*boolean isHovering = UI.drawButton(position.x + Application.getStartX(), position.y + Application.getStartY(), position.z, size.x, size.y,
 				new Text(text, textSize, new Vector3f(textOffset.x, textOffset.y, textOffset.z + -0.1f), textColor), color);

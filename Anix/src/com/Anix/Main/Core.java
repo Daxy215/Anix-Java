@@ -394,11 +394,11 @@ public final class Core implements Runnable {
 			for(int i = 0; i < updateAbleObjects.size(); i++) {
 				GameObject obj = updateAbleObjects.get(i);
 				
-				if(obj == null || obj.shouldBeRemoved) {
+				/*if(obj == null || obj.shouldBeRemoved) {
 					updateAbleObjects.remove(i);
 					i--;
 					continue;
-				}
+				}*/
 				
 				if(!obj.getBehaviours().isEmpty() && obj.isEnabled()) {
 					for(int j = 0; j < obj.getBehaviours().size(); j++) {
@@ -466,12 +466,12 @@ public final class Core implements Runnable {
 			for(int i = 0; i < updateAbleObjects.size(); i++) {
 				GameObject obj = updateAbleObjects.get(i);
 				
-				if(obj == null || obj.shouldBeRemoved) {
+				/*if(obj == null || obj.shouldBeRemoved) {
 					updateAbleObjects.remove(i);
 					i--;
 					
 					continue;
-				}
+				}*/
 				
 				if(!obj.getBehaviours().isEmpty() && obj.isEnabled()) {
 					for(int j = 0; j < obj.getBehaviours().size(); j++) {
