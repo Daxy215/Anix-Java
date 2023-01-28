@@ -21,7 +21,7 @@ import com.Anix.Math.Vector3f;
 import com.Anix.Objects.GameObject;
 
 public final class MasterRenderer {
-	private boolean testRender;//, updateCombiedObjects;
+	//private boolean testRender;//, updateCombiedObjects;
 	
 	//private Core core;
 	
@@ -127,10 +127,10 @@ public final class MasterRenderer {
 	}
 	
 	public void render() {
-		if(Input.isKeyDown(KeyCode.F)) {
-			testRender = !testRender;
-			System.err.println("testing rendering: " + testRender);
-		}
+		//if(Input.isKeyDown(KeyCode.F)) {
+		//	testRender = !testRender;
+		//	System.err.println("testing rendering: " + testRender);
+		//}
 		
 		//if(testRender) {
 			//r2();

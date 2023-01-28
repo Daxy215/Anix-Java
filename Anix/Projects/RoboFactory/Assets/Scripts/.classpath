@@ -6,6 +6,6 @@
 			<attribute name="module" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="C:/Users/smsmk/Desktop/Game Engine/Anix.jar" sourcepath="/Anix"/>
+	<classpathentry kind="lib" path="C:/Users/smsmk/Desktop/GameEngine/Anix.jar"/>
 	<classpathentry kind="output" path=""/>
 </classpath>

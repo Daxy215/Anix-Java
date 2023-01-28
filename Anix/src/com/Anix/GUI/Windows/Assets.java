@@ -260,7 +260,7 @@ public final class Assets {
 			if(ImGui.beginPopupContextItem()) {
 				if(ImGui.button("Delete")) {
 					folders.get(i).delete();
-					this.folders.remove(i);
+					folders.remove(i);
 				}
 				
 				ImGui.endPopup();

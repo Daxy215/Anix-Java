@@ -426,6 +426,10 @@ public class GameObject /*extends Entity*/ implements Cloneable, Serializable {
 		return behaviours.stream().filter(b -> b.getClass().equals(behaviour)).findFirst().orElse(null);
 	}
 	
+	public <T> T addBehaviour(Class<T> behaviour) {
+		return (T) addBehaviour(behaviour);
+	}
+	
 	public Behaviour addBehaviour(Behaviour behaviour) {
 		if(behaviour == null) {
 			System.err.println("[ERROR] Cannot add a null behaviour!");

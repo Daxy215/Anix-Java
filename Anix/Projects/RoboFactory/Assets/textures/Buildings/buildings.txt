@@ -22,8 +22,8 @@ Type:Battery,name:Battery,levels<8:false:0:14>,requirements<Metal:30;Lithium:50>
 #Pole HEALTH:ROTATEABLE:ELECTRICITYREQUIRED:MAXELECTRICITY:MAXDISTANCE
 Type:Pole,name:Pole,levels<5:false:0:5:5>,requirements<Log:8;Metal:2>
 
-#Mine HEALTH:ROTATEABLE:ELECTRICITYREQUIRED:MAXCARRY:TIME
-Type:Mine,name:Mine,levels<10:true:5:400:2500>,requirements<Metal:50>
+#Miner HEALTH:ROTATEABLE:ELECTRICITYREQUIRED:MAXCARRY:TIME
+Type:Miner,name:Miner,levels<10:true:5:400:2500>,requirements<Metal:50>
 
 #Rails HEALTH:ROTATEABLE:ELECTRICITYREQUIRED:MAXCARRY:TIME
 Type:Rail,name:Rail,levels<10:true:5:5:250>,requirements<Metal:10>
