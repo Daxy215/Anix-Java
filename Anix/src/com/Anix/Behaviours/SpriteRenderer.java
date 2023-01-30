@@ -92,14 +92,13 @@ public class SpriteRenderer extends Behaviour {
 			if(Core.getSprites().get(i).getName().equalsIgnoreCase(spriteName.toLowerCase())) {
 				sprite = Core.getSprites().get(i);
 				mesh = Core.meshManager.getMeshByPath(sprite.getPath());
-				
 				break;
 			}
 		}
 		
 		//Either doesn't exists
 		//or uses a default path.
-		if(sprite == null) {
+		if(mesh == null) {
 			if(SpriteRenderer.class.getResource("/textures/" + spriteName) == null) {
 				System.err.println("[ERROR] [SpriteRenderer] Couldn't locate a texture with the name of: " + spriteName);
 				
@@ -108,6 +107,7 @@ public class SpriteRenderer extends Behaviour {
 				mesh = Core.meshManager.getMeshByPath("/textures/" + spriteName);
 				
 				if(mesh == null) {
+					System.err.println("creating new mesh for: " + spriteName);
 					mesh = new Mesh(new Sprite(spriteName, "/textures/" + spriteName, null));
 					Core.meshManager.addMesh(mesh);
 				}

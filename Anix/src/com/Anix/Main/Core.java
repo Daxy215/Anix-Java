@@ -81,6 +81,8 @@ import imgui.flag.ImGuiConfigFlags;
  * <br>
  * TODO: Make a "Core.RequestUpdate" and "Core.RequestRender", for behaviours.<br>
  * So that, they can only be updated or rendered if it is called.<br>
+ * <br>
+ * TODO: Make the compiler to check for errors first AND then compile<br>
  */
 public final class Core implements Runnable {
 	private String projectName = "";

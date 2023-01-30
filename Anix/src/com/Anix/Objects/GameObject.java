@@ -426,8 +426,16 @@ public class GameObject /*extends Entity*/ implements Cloneable, Serializable {
 		return behaviours.stream().filter(b -> b.getClass().equals(behaviour)).findFirst().orElse(null);
 	}
 	
-	public <T> T addBehaviour(Class<T> behaviour) {
-		return (T) addBehaviour(behaviour);
+	@SuppressWarnings("unchecked")
+	public <T extends Behaviour> T addBehaviour(Class<T> behaviour) {
+		try {
+			return (T) addBehaviour(behaviour.getDeclaredConstructor().newInstance());
+		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
+				| NoSuchMethodException | SecurityException e) {
+			e.printStackTrace();
+		}
+		
+		return null;
 	}
 	
 	public Behaviour addBehaviour(Behaviour behaviour) {
@@ -510,6 +518,10 @@ public class GameObject /*extends Entity*/ implements Cloneable, Serializable {
 	
 	public Vector3f getPosition() {
 		return position;
+	}
+	
+	public void setPosition(Vector2f position) {
+		this.setPosition(position.x, position.y);
 	}
 	
 	public void setPosition(Vector3f position) {

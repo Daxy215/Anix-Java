@@ -129,7 +129,7 @@ public class Camera extends Behaviour {
 		
 		float width = Application.getWidth(), height = Application.getHeight();
 		
-		float cPosX = gameObject.getPosition().x;
+		float cPosX = 0;
 		float cPosY = gameObject.getPosition().y;
 		
 		Vector4f pos = new Vector4f((float)(mouseX / (width / 2.0f) - 1f), 1 - (float)(mosueY / (height / 2.0f)), 0, 1);

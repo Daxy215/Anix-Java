@@ -182,11 +182,13 @@ public final class MasterRenderer {
 				continue;
 			}
 			
-			if(!mesh.hasBeenCreated())
+			if(!mesh.hasBeenCreated()) {
 				continue;
+			}
 			
-			if(mesh.getMaterial() == null)
+			if(mesh.getMaterial() == null) {
 				continue;
+			}
 			
 			shader = mesh.getMaterial().getShader();
 			
@@ -475,10 +477,6 @@ public final class MasterRenderer {
 		
 		if(batch != null) {
 			batch.add(entity);
-			
-			//if(entity.isStatic) {
-			//	updateCombiedObjects = true;
-			//}
 		} else {
 			List<GameObject> newBatch = new ArrayList<GameObject>();
 			newBatch.add(entity);

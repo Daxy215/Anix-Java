@@ -41,7 +41,7 @@ public class FileUtils {
 				result.append(line).append("\n");
 			}
 		} catch(Exception e) {
-			System.err.println("[ERROR] Couldn't find the file at ");
+			System.err.println("[ERROR] Couldn't find the file at somewhere");
 		}
 		
 		return result.toString();

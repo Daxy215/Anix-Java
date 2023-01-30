@@ -1,6 +1,7 @@
 package com.Anix.Engine;
 
 import java.io.File;
+import java.lang.reflect.Modifier;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
@@ -87,6 +88,8 @@ final class Complier {
 		}
 		
 		if (javaObjects == null || javaObjects.size() == 0) {
+			System.err.println("none :(");
+			
 			return;
 		}
 		
@@ -120,10 +123,10 @@ final class Complier {
 		for(Map.Entry<File, String> file : files.entrySet()) {
 			try {
 				//TODO: java.lang.ClassFormatError: Truncated class file?????
-				Class<?> clazz = Class.forName(/*"Scripts.Player." + */ /*file.getValue() + */file.getKey().getName().split(".java")[0].trim(), true, classLoader);
+				Class<?> clazz = Class.forName(/*"Scripts.Player." + *//*file.getValue() + */file.getKey().getName().split(".java")[0].trim(), true, classLoader);
 				//addSoftwareLibrary(files.get(i));
 				
-				if(clazz != null) {
+				if(clazz != null && !Modifier.isAbstract(clazz.getModifiers())) {
 					try {
 						Object obj = clazz.getConstructor().newInstance();
 						
@@ -138,6 +141,9 @@ final class Complier {
 						}
 					} catch(NoSuchMethodException e) {
 						System.err.println("[ERROR] Please include a default constructor for the class with the name of: " + file.getKey().getName().split(".java")[0]);
+					} catch(Exception e) {
+						System.err.println("Class name; " + file.getKey().getName());
+						e.printStackTrace();
 					}
 				}
 			} catch(Exception | NoClassDefFoundError e) {
@@ -208,15 +214,15 @@ final class Complier {
 	public File getClassesDir() {
 		return classesDir;
 	}
-
+	
 	public void setClassesDir(File classesDir) {
 		this.classesDir = classesDir;
 	}
-
+	
 	public File getSourceDir() {
 		return sourceDir;
 	}
-
+	
 	public void setSourceDir(File sourceDir) {
 		this.sourceDir = sourceDir;
 	}

@@ -148,6 +148,7 @@ public final class Inspector {
 		boolean isStatic = obj.isStatic;
 		
 		ImGui.pushID("istaticjijoidijodfijdfijuofsdoijfd");
+		
 		if(ImGui.checkbox("", isStatic)) {
 			System.err.println("IsStatic: " + isStatic);
 			obj.isStatic = !isStatic;
@@ -257,9 +258,7 @@ public final class Inspector {
 	private void drawFields(Behaviour behaviour) throws IllegalArgumentException, IllegalAccessException {
 		for(int i = 0; i < behaviour.getFields().length; i++) {
 			try {
-				ImGui.pushItemWidth(width - 100);
 				drawField(behaviour.getFields()[i], behaviour);
-				ImGui.popItemWidth();
 			} catch (IllegalArgumentException | IllegalAccessException | NoSuchMethodException | SecurityException
 					| InvocationTargetException e) {
 				e.printStackTrace();
@@ -316,6 +315,8 @@ public final class Inspector {
 		ImGui.sameLine();
 		
 		ImGui.pushID("Field: " + object.hashCode() + counter);
+		
+		ImGui.pushItemWidth(width - 100);
 		
 		if(type.isPrimitive()) {
 			switch(typeName.toLowerCase()) {
@@ -433,6 +434,7 @@ public final class Inspector {
 			if(ImGui.treeNodeEx(type.getSimpleName())) {
 			//if(ImGui.collapsingHeader(type.getSimpleName())) {
 				ImGui.treePop();
+				ImGui.popItemWidth();
 				ImGui.popID();
 				
 				counter++;
@@ -443,6 +445,7 @@ public final class Inspector {
 			}
 		}
 		
+		ImGui.popItemWidth();
 		ImGui.popID();
 		
 		counter++;

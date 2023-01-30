@@ -76,7 +76,7 @@ public final class MeshManager {
 			if(meshesToBeCreated.get(i) != null)
 				meshesToBeCreated.get(i).create();
 			
-			meshesToBeCreated.remove(i);
+			meshes.add(meshesToBeCreated.remove(i));
 		}
 		
 		for(int i = 0; i < meshesToBeRemoved.size(); i++) {
@@ -101,7 +101,6 @@ public final class MeshManager {
 		
 		if(getMeshByPath(mesh.getPath()) == null) {
 			push(mesh);
-			meshes.add(mesh);
 		}
 	}
 	

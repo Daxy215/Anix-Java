@@ -18,7 +18,7 @@ import com.Anix.SceneManager.SceneManager;
 
 public abstract class Behaviour extends Object implements Cloneable, Serializable {
 	private static final long serialVersionUID = -143035466258379783L;
-
+	
 	@HideFromInspector
 	public boolean isEnabled = true;
 	
