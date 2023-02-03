@@ -149,7 +149,7 @@ public final class Application {
 		createCallbacks();
 		
 		GLFW.glfwShowWindow(window);
-		GLFW.glfwSwapInterval(1);
+		//GLFW.glfwSwapInterval(1);
 		updateProjection();
 		
 		ImGui.createContext();
@@ -347,10 +347,10 @@ public final class Application {
 		if(projectionType.equals(ProjectionType.projection)) {
 			projection = Matrix4f.perspective(fov, (float)width / (float)height, 1, -1);
 		} else if(projectionType.equals(ProjectionType.orthographics)) {
-			float rf = 7 * Camera.main.gameObject.getPosition().z / 4;
-			float tb = 4 * Camera.main.gameObject.getPosition().z / 4;
+			float rf = 7 * Camera.main.gameObject.getPosition().z / 8;
+			float tb = 4 * Camera.main.gameObject.getPosition().z / 8;
 			
-			projection = Matrix4f.orthographic(-rf, rf, tb, -tb, -1000, 1000);
+			projection = Matrix4f.orthographic(rf, -rf, -tb, tb, 1000, -1000);
 		} else if(projectionType.equals(ProjectionType.frustum)) {
 			float rf = 7 * Camera.main.gameObject.getPosition().z;
 			float tb = 4 * Camera.main.gameObject.getPosition().z;

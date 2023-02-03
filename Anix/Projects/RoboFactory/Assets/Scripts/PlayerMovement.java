@@ -21,15 +21,15 @@ public class PlayerMovement extends Behaviour {
 	@Override
 	public void update() {
 		if(Input.isKey(KeyCode.W)) {
-			gameObject.addPosition(0, -speed * Time.deltaTime);
-		} else if(Input.isKey(KeyCode.S)) {
 			gameObject.addPosition(0, speed * Time.deltaTime);
+		} else if(Input.isKey(KeyCode.S)) {
+			gameObject.addPosition(0, -speed * Time.deltaTime);
 		}
 		
 		if(Input.isKey(KeyCode.A)) {
-			gameObject.addPosition(-speed * Time.deltaTime, 0);
-		} else if(Input.isKey(KeyCode.D)) {
 			gameObject.addPosition(speed * Time.deltaTime, 0);
+		} else if(Input.isKey(KeyCode.D)) {
+			gameObject.addPosition(-speed * Time.deltaTime, 0);
 		}
 		
 		Camera.main.followObject2D(gameObject, 0.05f);

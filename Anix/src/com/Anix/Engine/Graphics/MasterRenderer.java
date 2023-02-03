@@ -200,7 +200,7 @@ public final class MasterRenderer {
 			
 			shader.setUniform("view", Camera.main.getViewMatrix());
 			shader.setUniform("projection", Application.getProjectionMatrix());
-			shader.setUniform("color", mesh.getMaterial().getColor());
+			//shader.setUniform("color", mesh.getMaterial().getColor());
 			
 			prepareMesh(mesh);
 			

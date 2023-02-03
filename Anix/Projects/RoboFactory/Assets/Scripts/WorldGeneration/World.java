@@ -43,8 +43,8 @@ public class World extends Behaviour {
 		}
 	}
 	
-    public static final int renderDistance = 4;
-	
+    public int renderDistance = 4;
+    
 	public static final int terrainWidth = 16, terrainHeight = 16;
 	
 	public static Vector3f normal = new Vector3f(0, 0, -1);
@@ -57,7 +57,8 @@ public class World extends Behaviour {
 	public float textureWidth = 224, textureHeight = 224, tileSizeX = 32, tileSizeY = 32;
 	public Texture texture;
 	
-	public static FastNoise fs = new FastNoise(999);
+	public static int SEED = 999;
+	public static FastNoise fs = new FastNoise(SEED);
 	public static World instance;
 	
 	public List<Terrain> terrains = new ArrayList<Terrain>();
@@ -69,7 +70,7 @@ public class World extends Behaviour {
 		World.instance = this;
 		
 		blocks = Arrays.asList(new Block("Grass", 0, 0), new Block("Ice", 1, 0), new Block("Jungle", 2, 0), new Block("Water", 3, 0),
-				new Block("Sand", 0, 1), new Block("Savanna", 1, 1), new Block("Snow", 3, 1));
+				new Block("Sand", 0, 1), new Block("Savanna", 1, 1), new Block("Snow", 2, 1));
 		
 		texture = UI.loadTexture("tileMap.png");
 		

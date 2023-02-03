@@ -21,6 +21,7 @@ import Buildings.Rail;
 import Buildings.SolarPanel;
 import Buildings.Storage;
 import Buildings.Turret;
+import Enums.ItemType;
 
 public class BuildingLoaderManager extends Behaviour {
 	/*
@@ -42,10 +43,10 @@ public class BuildingLoaderManager extends Behaviour {
 			
 			for(int i = 0; i < fileData.length; i++) {
 				String line = fileData[i];
-
+				
 				if(line.startsWith("#") || line.isEmpty())
 					continue;
-
+				
 				String[] data = line.split(":");
 				String[] levelsData = line.split("levels<")[1].split(">")[0].split(",");
 				String[] requirementData = line.split("requirements<")[1].split(">")[0].split(",");
@@ -220,10 +221,10 @@ public class BuildingLoaderManager extends Behaviour {
 				List<Building.Requirement> requirements = new ArrayList<Building.Requirement>();
 				
 				for(int l = 0; l < types.length; l++) {
-					//Item.ItemType type = Item.ItemType.valueOf(types[l].Split(":")[0]);
+					ItemType type = ItemType.valueOf(types[l].split(":")[0]);
 					int amount = Integer.parseInt(types[l].split(":")[1]);
 					
-					requirements.add(new Building.Requirement(amount/*, type*/));
+					requirements.add(new Building.Requirement(amount, type));
 				}
 				
 				building.requirements.add(requirements);

@@ -10,17 +10,6 @@ public class BiomeGenerator extends Behaviour {
 		OCEAN, BEACH, FOREST, JUNGLE, SAVANNAH, DESERT, SNOW
 	}
 	
-	@Override
-	//Will be called on game start
-	public void start() {
-		//TODO: Code here..
-	}
-	
-	@Override
-	public void update() {
-		
-	}
-	
 	public static BiomeType getBiomeAt(int nx, int ny) {
 		float e = (1.00f * noiseE(1 * nx, 1 * ny)
 			   + 1.00f * noiseE(2 * nx, 2 * ny)
@@ -28,8 +17,8 @@ public class BiomeGenerator extends Behaviour {
 			   + 0.09f * noiseE(8 * nx, 8 * ny)
 			   + 0.09f * noiseE(16 * nx, 16 * ny)
 			   + 0.03f * noiseE(32 * nx, 32 * ny));
-		e = e / (1.00f + 1.00f + 0.27f + 0.09f + 0.09f + 0.03f);
-		e = (float) Math.pow(e, 0.50f);
+		e = e / (1.00f + 1.00f + 0.00f + 0.00f + 0.00f + 0.00f);
+		e = (float) Math.pow(e, 0.5f);
 
 		return getBiome(e);
 	}

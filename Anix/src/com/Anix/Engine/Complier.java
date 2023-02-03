@@ -111,7 +111,7 @@ final class Complier {
 			
 			System.out.println();
 			
-			return;
+			//return;
 		}
 		
 		classLoader = URLClassLoader.newInstance(new URL[]{classesDir.toURI().toURL()});
@@ -146,6 +146,8 @@ final class Complier {
 						e.printStackTrace();
 					}
 				}
+			} catch(ClassNotFoundException e) {
+				System.err.println("[ERROR] " + file.getKey().getName().split(".java")[0] + " isn't of type 'CLASS'. ");
 			} catch(Exception | NoClassDefFoundError e) {
 				System.err.println("[ERORR] [TSH] Couldn't load a class with the name of: " +
 						file.getKey().getName().split(".java")[0] + " because of " + e.getMessage());
@@ -162,6 +164,41 @@ final class Complier {
 	 * method.setAccessible(true); method.invoke(ClassLoader.getSystemClassLoader(),
 	 * new Object[]{file.toURI().toURL()}); }
 	 */
+	
+	/*public boolean isErrorFree() {
+		JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
+		DiagnosticCollector<JavaFileObject> diagnostics = new DiagnosticCollector<JavaFileObject>();
+		StandardJavaFileManager fileManager = compiler.getStandardFileManager(diagnostics, Locale.getDefault(), null);
+		List<JavaFileObject> javaObjects = null;
+		
+		if(ProjectSettings.isEditor) {
+			javaObjects = scanRecursivelyForJavaObjects(sourceDir, fileManager);
+		} else {
+			javaObjects = scanRecursivelyForJavaObjects(classesDir, fileManager);
+		}
+		
+		if (javaObjects == null || javaObjects.size() == 0) {
+			return true;
+		}
+		
+		String[] compileOptions = new String[]{"-d", classesDir.getAbsolutePath()};
+		Iterable<String> compilationOptions = Arrays.asList(compileOptions);
+		
+		CompilationTask compilerTask = compiler.getTask(null, fileManager, diagnostics, compilationOptions, null, javaObjects);
+		
+		if (!compilerTask.call()) {
+			for(Diagnostic<?> diagnostic : diagnostics.getDiagnostics()) {
+				System.err.format("[Error] on line %d in %s", diagnostic.getLineNumber(), diagnostic);
+				Console.LogErr("[Error] on line " + diagnostic.getLineNumber() + " in " + diagnostic + "\n");
+			}
+			
+			System.out.println();
+			
+			return false;
+		}
+		
+		return true;
+	}*/
 	
 	private List<JavaFileObject> scanRecursivelyForJavaObjects(File dir, StandardJavaFileManager fileManager) {
 		List<JavaFileObject> javaObjects = new LinkedList<JavaFileObject>();

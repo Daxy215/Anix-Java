@@ -4,3 +4,7 @@
 /ServerManager.class
 /BuilderManager$BuildingType.class
 /BuildingLoaderManager$BuildingType.class
+/ChatManager.class
+/ChatManager$Text.class
+/WorldManager.class
+/WorldManager$Time.class

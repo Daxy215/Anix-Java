@@ -5,18 +5,22 @@ import java.util.List;
 
 import com.Anix.Behaviours.Behaviour;
 
+import Enums.ItemType;
+
 public abstract class Building extends Behaviour {
 	private static final long serialVersionUID = 1L;	
 	
 	public static class Requirement {
 		public int amount;
+		public ItemType type;
 		
 		public Requirement() {
 
 		}
-
-		public Requirement(int amount) {
+		
+		public Requirement(int amount, ItemType type) {
 			this.amount = amount;
+			this.type = type;
 		}
 	}
 	

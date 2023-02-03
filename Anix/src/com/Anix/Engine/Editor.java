@@ -321,7 +321,8 @@ public final class Editor {
 		System.out.println("Loading scene with the name of: " + currentScene.getName());
 		
 		try {
-			complier.compile();
+			//if(complier.isErrorFree())
+				complier.compile();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -629,7 +630,8 @@ public final class Editor {
 		System.out.println("Reloading the project..");
 		
 		try {
-			complier.compile();
+			//if(complier.isErrorFree())
+				complier.compile();
 		} catch(Exception e) {
 			e.printStackTrace();
 		}

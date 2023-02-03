@@ -178,7 +178,7 @@ public final class Input {
 	public static double getMouseX() {
 		return mouseX;
 	}
-
+	
 	public static double getMouseY() {
 		return mouseY;
 	}

@@ -7,6 +7,8 @@ import java.lang.reflect.Modifier;
 import java.util.List;
 import java.util.function.Consumer;
 
+import org.lwjgl.glfw.GLFW;
+
 import com.Anix.Annotation.Header;
 import com.Anix.Behaviours.Behaviour;
 import com.Anix.Engine.Editor;
@@ -246,6 +248,14 @@ public final class Inspector {
 				}
 			}
 			
+			/*if(ImGui.beginPopupContextItem()) {
+				if(ImGui.button("Remove")) {
+					Hierachy.selectedObject.removeBehaviour(behaviour);
+				}
+				
+				ImGui.endPopup();
+			}*/
+			
 			if(!behaviour.isEnabled) {
 				ImGui.popStyleColor();
 			}
@@ -366,7 +376,10 @@ public final class Inspector {
 				break;
 			}
 		} else if(type.getSimpleName().equalsIgnoreCase("string")) {
-			sv.set(f.get(object).toString());
+			if(f.get(object) != null)
+				sv.set(f.get(object).toString());
+			else
+				sv.set("");
 			
 			if(ImGui.inputText("", sv))
 				f.set(object, sv.toString());
@@ -376,8 +389,13 @@ public final class Inspector {
 			else
 				ImGui.text("null");
 		} else if(type.getSimpleName().equalsIgnoreCase("vector2f")) {
-			fv[0] = ((Vector2f)f.get(object)).x;
-			fv[1] = ((Vector2f)f.get(object)).y;
+			if(f.get(object) != null) {
+				fv[0] = ((Vector2f)f.get(object)).x;
+				fv[1] = ((Vector2f)f.get(object)).y;
+			} else {
+				fv[0] = 0;
+				fv[1] = 0;
+			}
 			
 			if(ImGui.dragFloat2("", fv, 0.1f)) {
 				Vector2f vec2 = new Vector2f(fv[0], fv[1]);
@@ -385,9 +403,15 @@ public final class Inspector {
 				f.set(object, vec2);
 			}
 		} else if(type.getSimpleName().equalsIgnoreCase("vector3f")) {
-			fv[0] = ((Vector3f)f.get(object)).x;
-			fv[1] = ((Vector3f)f.get(object)).y;
-			fv[2] = ((Vector3f)f.get(object)).z;
+			if(f.get(object) != null) {
+				fv[0] = ((Vector3f)f.get(object)).x;
+				fv[1] = ((Vector3f)f.get(object)).y;
+				fv[2] = ((Vector3f)f.get(object)).z;
+			} else {
+				fv[0] = 0;
+				fv[1] = 0;
+				fv[2] = 0;
+			}
 			
 			if(ImGui.dragFloat3("", fv, 0.1f)) {
 				Vector3f vec3 = new Vector3f(fv[0], fv[1], fv[2]);
@@ -427,6 +451,28 @@ public final class Inspector {
 				c.b = cv[2];
 				
 				f.set(object, c);
+			}
+		} else if(type.isArray()) {
+			//System.err.println("it's array");
+		} else if(type.equals(List.class)) {
+			//System.err.println("list");
+			List<Object> list = (List<Object>) f.get(object);
+			
+			if(list != null) {
+				if(ImGui.treeNodeEx(type.getSimpleName())) {
+					//if(ImGui.collapsingHeader(type.getSimpleName())) {
+					ImGui.treePop();
+					ImGui.popItemWidth();
+					ImGui.popID();
+					
+					counter++;
+					
+					for(int i = 0; i < list.size(); i++) {
+						drawFields(f.get(object));
+					}
+					
+					return;
+				}
 			}
 		} else {
 			//ImGui.newLine();

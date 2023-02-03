@@ -459,12 +459,23 @@ public class GameObject /*extends Entity*/ implements Cloneable, Serializable {
 		
 		behaviour.setGameObject(this);
 		
-		if(behaviour.isEnabled) {
-			behaviour.awake();
-			
-			if(Editor.isPlaying()) {
-				behaviour.start();
+		try {
+			if(behaviour.isEnabled) {
+				behaviour.awake();
+				
+				if(Editor.isPlaying()) {
+					behaviour.start();
+				}
 			}
+		} catch(Exception e) {
+			CharArrayWriter cw = new CharArrayWriter();
+			PrintWriter w = new PrintWriter(cw);
+			e.printStackTrace(w);
+			w.close();
+			String trace = cw.toString();
+			
+			System.err.println("[ERROR] " + behaviour.getName() + " because " + trace);
+			Console.LogErr("[ERROR] " + behaviour.getName() + " because " + trace);
 		}
 		
 		behaviours.add(behaviour);
@@ -473,6 +484,19 @@ public class GameObject /*extends Entity*/ implements Cloneable, Serializable {
 	}
 	
 	public void removeBehaviour(Behaviour behaviour) {
+		try {
+			behaviour.onRemove();
+		} catch(Exception e) {
+			CharArrayWriter cw = new CharArrayWriter();
+		    PrintWriter w = new PrintWriter(cw);
+		    e.printStackTrace(w);
+		    w.close();
+		    String trace = cw.toString();
+			
+			System.err.print("[ERROR] " + behaviour.getName() + " because " + trace);
+			Console.LogErr("[ERROR] " + behaviour.getName() + " because " + trace);
+		}
+		
 		this.behaviours.remove(behaviour);
 		
 		if(behaviours.isEmpty()) {

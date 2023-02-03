@@ -2,10 +2,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import com.Anix.Behaviours.SpriteRenderer;
 import com.Anix.Engine.Graphics.Mesh;
 import com.Anix.Engine.Graphics.Vertex;
 import com.Anix.GUI.Sprite;
 import com.Anix.Main.Core;
+import com.Anix.Math.MathD;
 import com.Anix.Math.Vector3f;
 import com.Anix.Objects.GameObject;
 
@@ -114,8 +116,8 @@ public class Terrain {
     				vertices.add(new Vertex(new Vector3f( 0.5f+x, -0.5f+y, 0), World.normal, savanna.uvs[2]));
     				vertices.add(new Vertex(new Vector3f( 0.5f+x,  0.5f+y, 0), World.normal, savanna.uvs[3]));
 					
-					treeChanceMin = 10;
-					treeChanceMax = 20;
+					//treeChanceMin = 10;
+					//treeChanceMax = 20;
 					
 					treeChanceMin = 20;
 					treeChanceMax = 30;
@@ -144,8 +146,8 @@ public class Terrain {
     				vertices.add(new Vertex(new Vector3f( 0.5f+x, -0.5f+y, 0), World.normal, sand.uvs[2]));
     				vertices.add(new Vertex(new Vector3f( 0.5f+x,  0.5f+y, 0), World.normal, sand.uvs[3]));
 					
-					treeChanceMin = 10;
-					treeChanceMax = 20;
+					//treeChanceMin = 10;
+					//treeChanceMax = 20;
 					
 					treeChanceMin = 0;
 					treeChanceMax = 0;
@@ -205,6 +207,91 @@ public class Terrain {
 				} else {
 					System.err.println("[ERROR] Couldn't find biometype of " + type.name());
 				}
+                
+                //Ores
+                float r = MathD.getRandomNumberBetweenF(0, 100, World.SEED * (xx * yy + 1) * 2500);
+                
+                if(r > treeChanceMin && r < treeChanceMax/* && !getTreeAt(xx, yy)*/) {
+                	GameObject tree = new GameObject("tree");//9
+					tree.setPosition(new Vector3f(xx, yy, zz - 0.01f));
+					//jungle.transform.SetParent(transform);
+					
+					SpriteRenderer sr = new SpriteRenderer();
+					sr.spriteName = "tree.png";
+					
+					tree.addBehaviour(sr);
+					tree.isStatic = true;
+					
+                	continue;
+                }
+                
+                if(r <= 0.4f * ironBuff) {
+                	GameObject metal = new GameObject("metal");//9
+                	metal.setPosition(new Vector3f(xx, yy, zz - 0.01f));
+					//jungle.transform.SetParent(transform);
+					
+					SpriteRenderer sr = new SpriteRenderer();
+					sr.spriteName = "metalOre.png";
+					
+					metal.addBehaviour(sr);
+					metal.isStatic = true;
+                	
+                	//Metal metal = new Metal(new Vector3f(xx, yy, 0.01f), new Vector3f(), new Vector3f(1, 1, 1));
+                	//metal.init(World.meshes[4]);
+                	
+                	continue;
+                }
+                
+                if(r <= 0.6f * lithiumBuff) {
+                	GameObject lithium = new GameObject("lithium");//9
+                	lithium.setPosition(new Vector3f(xx, yy, zz - 0.01f));
+					//jungle.transform.SetParent(transform);
+					
+					SpriteRenderer sr = new SpriteRenderer();
+					sr.spriteName = "lithiumOre.png";
+					
+					lithium.addBehaviour(sr);
+					lithium.isStatic = true;
+                	
+                	//Lithium lithium = new Lithium(new Vector3f(xx, yy, 0.01f), new Vector3f(), new Vector3f(1, 1, 1));
+                	//lithium.init(World.meshes[3]);
+                	
+                	continue;
+                }
+                
+                if(r <= 1f * stoneBuff) {
+                	GameObject stone = new GameObject("stone");//9
+                	stone.setPosition(new Vector3f(xx, yy, zz - 0.01f));
+					//jungle.transform.SetParent(transform);
+					
+					SpriteRenderer sr = new SpriteRenderer();
+					sr.spriteName = "stoneOre.png";
+					
+					stone.addBehaviour(sr);
+					stone.isStatic = true;
+                	
+                	//Stone stone = new Stone(new Vector3f(xx, yy, 0.01f), new Vector3f(), new Vector3f(1, 1, 1));
+                	//stone.init(World.meshes[2]);
+                	
+                	continue;
+                }
+                
+                if(r <= 1.5f * coalBuff) {
+                	GameObject coal = new GameObject("coal");//9
+                	coal.setPosition(new Vector3f(xx, yy, zz - 0.5f));
+					//jungle.transform.SetParent(transform);
+					
+					SpriteRenderer sr = new SpriteRenderer();
+					sr.spriteName = "stoneOre.png";
+					
+					coal.addBehaviour(sr);
+					coal.isStatic = true;
+                	
+                	//Coal coal = new Coal(new Vector3f(xx, yy, 0.01f), new Vector3f(), new Vector3f(1, 1, 1));
+                	//coal.init(World.meshes[1]);
+                	
+                	continue;
+                }
             }
 			
 			int numFaces = (Math.abs(vertices.size() / 4));
@@ -220,7 +307,7 @@ public class Terrain {
 			}
         }
         
-        mesh = new Mesh(new Sprite("", "", World.instance.texture));
+        mesh = new Mesh(new Sprite("", "", World.instance.texture), WorldManager.material);
 		mesh.set(vertices, indices);
 		mesh.create();
 		

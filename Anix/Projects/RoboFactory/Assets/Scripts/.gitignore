@@ -1,3 +1,11 @@
 /Player.class
 /PlayerMovement.class
 /Archery.class
+/Inventory.class
+/Inventory$Lost.class
+/Inventory$Slot.class
+/Inventory$Item.class
+/Inventory$ItemType.class
+/Item.class
+/Slot.class
+/Item$ItemType.class

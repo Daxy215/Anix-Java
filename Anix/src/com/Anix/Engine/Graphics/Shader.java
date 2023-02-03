@@ -201,6 +201,12 @@ public class Shader implements Serializable {
 		}
 	}
 	
+	@Override
+	public String toString() {
+		return "Shader [name=" + name + ", vertexFile=" + vertexFile + ", fragmentFile=" + fragmentFile + ", vertexID="
+				+ vertexID + ", fragmentID=" + fragmentID + ", programID=" + programID + "]";
+	}
+
 	public int getUniformLocation(String name) {
 		return GL20.glGetUniformLocation(programID, name);
 	}

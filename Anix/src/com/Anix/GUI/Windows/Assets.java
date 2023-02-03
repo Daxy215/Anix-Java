@@ -256,15 +256,15 @@ public final class Assets {
 	        	}
 	        }
 	        
-	      //On right click basically
-			if(ImGui.beginPopupContextItem()) {
-				if(ImGui.button("Delete")) {
-					folders.get(i).delete();
-					folders.remove(i);
-				}
-				
-				ImGui.endPopup();
-			}
+	        //On right click basically
+	        if(ImGui.beginPopupContextItem()) {
+	        	if(ImGui.button("Delete")) {
+	        		folders.get(i).delete();
+	        		folders.remove(i);
+	        	}
+
+	        	ImGui.endPopup();
+	        }
 			
 			ImGui.sameLine();
 			ImGui.calcTextSize(vec2, folder.getName());
