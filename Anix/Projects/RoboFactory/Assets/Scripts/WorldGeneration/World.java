@@ -41,11 +41,30 @@ public class World extends Behaviour {
 					new Vector2f(x + sizeX, y), //Top Right
 			};
 		}
+		
+		public Block(String name, int indexX, int indexY, float textureWidth, float textureHeight) {
+			this.name = name;
+			this.indexX = indexX;
+			this.indexY = indexY;
+			
+			float sizeX = textureWidth / World.instance.textureWidth;
+			float sizeY = textureHeight / World.instance.textureHeight;
+			
+			float x = ((textureWidth * indexX) / World.instance.textureWidth);
+			float y = ((textureHeight * indexY) / World.instance.textureHeight);
+			
+			uvs = new Vector2f[] {
+					new Vector2f(x, y), //Top Left
+					new Vector2f(x, y + sizeY), //Bottom Left
+					new Vector2f(x + sizeX, y + sizeY), //Bottom Right
+					new Vector2f(x + sizeX, y), //Top Right
+			};
+		}
 	}
 	
     public int renderDistance = 4;
     
-	public static final int terrainWidth = 16, terrainHeight = 16;
+	public static final int terrainWidth = 64, terrainHeight = 64;
 	
 	public static Vector3f normal = new Vector3f(0, 0, -1);
 	
@@ -70,7 +89,10 @@ public class World extends Behaviour {
 		World.instance = this;
 		
 		blocks = Arrays.asList(new Block("Grass", 0, 0), new Block("Ice", 1, 0), new Block("Jungle", 2, 0), new Block("Water", 3, 0),
-				new Block("Sand", 0, 1), new Block("Savanna", 1, 1), new Block("Snow", 2, 1));
+				new Block("Sand", 0, 1), new Block("Savanna", 1, 1), new Block("Snow", 2, 1),
+				
+				//Meterials
+				new Block("Tree", 0, 1, 64, 64), new Block("Metal", 0, 6, 30, 32), new Block("Lithium", 1, 6, 30, 32), new Block("Stone", 2, 6, 30, 32), new Block("Coal", 3, 6, 30, 32));
 		
 		texture = UI.loadTexture("tileMap.png");
 		
@@ -82,8 +104,6 @@ public class World extends Behaviour {
 					
 					if(!Editor.isPlaying())
 						return;
-					
-					
 					
 					try {
 						Thread.sleep(250);
@@ -111,6 +131,7 @@ public class World extends Behaviour {
                     continue;
                 
                 terrain.generate();
+                terrain.generateMaterials();
                 
                 terrains.add(terrain);
             }
@@ -133,6 +154,8 @@ public class World extends Behaviour {
 		for(int i = 0; i < blocks.size(); i++)
 			if(blocks.get(i).name.equalsIgnoreCase(name.toLowerCase()))
 				return blocks.get(i);
+
+		System.err.println("couldn't find " + name);
 		
 		return null;
 	}

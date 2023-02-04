@@ -15,7 +15,7 @@ public abstract class Building extends Behaviour {
 		public ItemType type;
 		
 		public Requirement() {
-
+			
 		}
 		
 		public Requirement(int amount, ItemType type) {

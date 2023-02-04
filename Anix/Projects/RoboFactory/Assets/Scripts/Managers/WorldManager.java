@@ -171,7 +171,7 @@ public class WorldManager extends Behaviour {
 			time.addSecond(false);
         };
         
-        executor.scheduleAtFixedRate(task, 0, (long) 1, TimeUnit.SECONDS);
+        executor.scheduleAtFixedRate(task, 0, 50, TimeUnit.MILLISECONDS);
         //executor.shutdown();
 	}
 	

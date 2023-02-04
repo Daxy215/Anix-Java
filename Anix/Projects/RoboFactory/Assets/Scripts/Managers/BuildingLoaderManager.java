@@ -10,6 +10,7 @@ import com.Anix.Objects.GameObject;
 
 import Buildings.Archery;
 import Buildings.Battery;
+import Buildings.BiomassGenerator;
 import Buildings.Building;
 import Buildings.CoalGenerator;
 import Buildings.Fence;
@@ -30,7 +31,7 @@ public class BuildingLoaderManager extends Behaviour {
 	private static final long serialVersionUID = 1L;	
 	
 	public static enum BuildingType {
-		MainBuilding, Fence, Storage, Furnace, CoalGenerator, SolarPanel, Battery, Pole, Miner, Rail, Tower
+		MainBuilding, Fence, Storage, Furnace, BiomassGenerator, CoalGenerator, SolarPanel, Battery, Pole, Miner, Rail, Tower
 	}
 
 	@Override
@@ -62,8 +63,8 @@ public class BuildingLoaderManager extends Behaviour {
 				case MainBuilding:
 					MainBuilding building = new MainBuilding();
 					building.health = health;
-					building.electricityRequired = electrictyRequired;
 					building.isRotateable = isRotateable;
+					building.electricityRequired = electrictyRequired;
 					//building.showRadius = Integer.parseInt(levelsData[0].split(":")[3]);
 					
 					addRequirements(requirementData, building);
@@ -73,8 +74,8 @@ public class BuildingLoaderManager extends Behaviour {
                 case Fence:
                 	Fence fence = new Fence();
                     fence.health = health;
-                    fence.electricityRequired = electrictyRequired;
                     fence.isRotateable = isRotateable;
+                    fence.electricityRequired = electrictyRequired;
                     
                     addRequirements(requirementData, fence);
                     BuilderManager.instance.buildings.add(fence);
@@ -83,8 +84,8 @@ public class BuildingLoaderManager extends Behaviour {
                 case Storage:
                 	Storage storage = new Storage();
                     storage.health = health;
-                    storage.electricityRequired = electrictyRequired;
                     storage.isRotateable = isRotateable;
+                    storage.electricityRequired = electrictyRequired;
                     //storage.maxCarry = int.Parse(levelsData[0].Split(":")[3]);
                     
                     addRequirements(requirementData, storage);
@@ -94,18 +95,29 @@ public class BuildingLoaderManager extends Behaviour {
                 case Furnace:
                 	Furnace furnace = new Furnace();
                     furnace.health = health;
-                    furnace.electricityRequired = electrictyRequired;
                     furnace.isRotateable = isRotateable;
+                    furnace.electricityRequired = electrictyRequired;
                     
                     addRequirements(requirementData, furnace);
                     BuilderManager.instance.buildings.add(furnace);
                     
                     break;
+                case BiomassGenerator:
+                	BiomassGenerator biomassGnerator = new BiomassGenerator();
+                	biomassGnerator.health = health;
+                	biomassGnerator.electricityRequired = electrictyRequired;
+                	biomassGnerator.isRotateable = isRotateable;
+                	biomassGnerator.maxCapacity = Float.parseFloat(levelsData[0].split(":")[3]);
+                	
+                    addRequirements(requirementData, biomassGnerator);
+                    BuilderManager.instance.buildings.add(biomassGnerator);
+                	
+                	break;
                 case CoalGenerator:
                 	CoalGenerator generator = new CoalGenerator();
                     generator.health = health;
-                    generator.electricityRequired = electrictyRequired;
                     generator.isRotateable = isRotateable;
+                    generator.electricityRequired = electrictyRequired;
                     
                     addRequirements(requirementData, generator);
                     BuilderManager.instance.buildings.add(generator);
@@ -114,8 +126,8 @@ public class BuildingLoaderManager extends Behaviour {
                 case SolarPanel:
                 	SolarPanel panel = new SolarPanel();
                     panel.health = health;
-                    panel.electricityRequired = electrictyRequired;
                     panel.isRotateable = isRotateable;
+                    panel.electricityRequired = electrictyRequired;
                     //panel.electricityGenerateRate = Float.parseFloat(levelsData[0].split(":")[3]);
                     //panel.electricityGenerationTime = Float.parseFloat(levelsData[0].split(":")[4]);
                     //panel.maxElctricity = Float.parseFloat(levelsData[0].split(":")[5]);
@@ -127,8 +139,8 @@ public class BuildingLoaderManager extends Behaviour {
                 case Battery:
                 	Battery battery = new Battery();
                     battery.health = health;
-                    battery.electricityRequired = electrictyRequired;
                     battery.isRotateable = isRotateable;
+                    battery.electricityRequired = electrictyRequired;
                     
                     addRequirements(requirementData, battery);
                     BuilderManager.instance.buildings.add(battery);
@@ -137,8 +149,8 @@ public class BuildingLoaderManager extends Behaviour {
                 case Pole:
                 	Pole pole = new Pole();
                     pole.health = health;
-                    pole.electricityRequired = electrictyRequired;
                     pole.isRotateable = isRotateable;
+                    pole.electricityRequired = electrictyRequired;
                     
                     addRequirements(requirementData, pole);
                     BuilderManager.instance.buildings.add(pole);
@@ -147,8 +159,8 @@ public class BuildingLoaderManager extends Behaviour {
                 case Miner:
                 	Miner mine = new Miner();
                     mine.health = health;
-                    mine.electricityRequired = electrictyRequired;
                     mine.isRotateable = isRotateable;
+                    mine.electricityRequired = electrictyRequired;
                     //mine.maxCarry = Integer.parseInt(levelsData[0].split(":")[3]);
                     //mine.timeBetweenMining = Long.parseLong(levelsData[0].split(":")[4]);
                     
@@ -159,8 +171,8 @@ public class BuildingLoaderManager extends Behaviour {
                 case Rail:
                 	Rail rail = new Rail();
                     rail.health = health;
-                    rail.electricityRequired = electrictyRequired;
                     rail.isRotateable = isRotateable;
+                    rail.electricityRequired = electrictyRequired;
                     
                     addRequirements(requirementData, rail);
                     BuilderManager.instance.buildings.add(rail);
@@ -171,8 +183,8 @@ public class BuildingLoaderManager extends Behaviour {
                         case "Archery":
                         	Archery archery = new Archery();
                             archery.health = health;
-                            archery.electricityRequired = electrictyRequired;
                             archery.isRotateable = isRotateable;
+                            archery.electricityRequired = electrictyRequired;
                             
                             addRequirements(requirementData, archery);
                             BuilderManager.instance.buildings.add(archery);
@@ -181,8 +193,8 @@ public class BuildingLoaderManager extends Behaviour {
                         case "Turret":
                         	Turret turret = new Turret();
                             turret.health = health;
-                            turret.electricityRequired = electrictyRequired;
                             turret.isRotateable = isRotateable;
+                            turret.electricityRequired = electrictyRequired;
                             
                             addRequirements(requirementData, turret);
                             BuilderManager.instance.buildings.add(turret);
@@ -224,7 +236,7 @@ public class BuildingLoaderManager extends Behaviour {
 					ItemType type = ItemType.valueOf(types[l].split(":")[0]);
 					int amount = Integer.parseInt(types[l].split(":")[1]);
 					
-					requirements.add(new Building.Requirement(amount, type));
+					//requirements.add(new Building.Requirement(amount, type));
 				}
 				
 				building.requirements.add(requirements);

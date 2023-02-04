@@ -277,9 +277,6 @@ public final class MasterRenderer {
 				amount++;
 			}
 			
-			if(Input.isKey(KeyCode.Z))
-				System.err.println("Mesh: " + mesh.hasBeenCreated + " - " + mesh.hasBeenDestoried);
-			
 			unBindMesh(mesh);
 			
 			shader.unbind();

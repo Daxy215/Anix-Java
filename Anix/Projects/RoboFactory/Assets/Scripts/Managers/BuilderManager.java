@@ -24,6 +24,8 @@ public class BuilderManager extends Behaviour {
 	 */
 	private static final long serialVersionUID = 1L;	
 	
+	private int buildingIndex;
+	
 	public boolean isBuilding;
 	public Building selectedBuilding;
 	
@@ -56,6 +58,15 @@ public class BuilderManager extends Behaviour {
 			
 			placeHolder.setIsEnabled(isBuilding);
 		}
+		
+		//buildingIndex += Input.getScrollX();
+		
+		//if(buildingIndex > buildings.size())
+		//	buildingIndex = 0;
+		//if(buildingIndex < 0)
+		//	buildingIndex = buildings.size() - 1;
+		
+		//selectedBuilding = buildings.get(buildingIndex);
 		
 		for(int i = 0; i < buildings.size(); i++) {
 			Building b = buildings.get(i);
@@ -98,9 +109,9 @@ public class BuilderManager extends Behaviour {
 		
 		if(Input.isMouseButtonDown(KeyCode.Mouse0)) {
 			if(selectedBuilding != null && !placedBuildings.contains(pos)) {
-				System.err.println("Placing.. " + getCraftAmount(selectedBuilding));
+				System.err.println("Placing..");
 				
-				GameObject obj = new GameObject(selectedBuilding.getName(), new Vector3f(pos.x, pos.y, 2));
+				GameObject obj = new GameObject(selectedBuilding.getName(), new Vector3f(pos.x, pos.y, -2));
 				SpriteRenderer sr = new SpriteRenderer();
 				sr.spriteName = selectedBuilding.getName() + "0.png";
 				sr.material = WorldManager.material;
