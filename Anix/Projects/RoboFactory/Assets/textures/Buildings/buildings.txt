@@ -10,6 +10,9 @@ Type:Storage,name:Storage,levels<25:false:0:800,50:false:0:1600,75:false:0:2400>
 #Furnace HEALTH:ROTATEABLE:ELECTRICITYREQUIRED:MAXCOALAMOUNT:MAXSTORAGE:SPEED
 Type:Furnace,name:Furnace,levels<25:false:0:2:15:5000>,requirements<Stone:50>
 
+#Fabricatron HEALTH:ELECTRICITYREQUIRED
+Type:Fabricatron,name:Fabricatron,levels<50,6>,requirements<Metal:50>
+
 #Generators HEALTH:ROTATEABLE:ELECTRICITYREQUIRED:MAXCAPACITY
 type:BiomassGenerator,name:Biomass,levels<5:false:0:20>,requirements<Log:50;Stone:18>
 Type:CoalGenerator,name:CoalGenerator,levels<5:false:0:20>,requirements<Lithium:15;Stone:50>

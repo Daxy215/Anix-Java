@@ -1,16 +1,16 @@
 package Buildings;
 
-public class BiomassGenerator extends Generator {
+public class BasicGenerator extends Generator {
 	/*
 	* Please ignore this tyvm :)
 	*/
 	private static final long serialVersionUID = 1L;
 	
-	public BiomassGenerator() {
+	public BasicGenerator() {
 		super();
 	}
 	
-	public BiomassGenerator(float maxCapcity) {
+	public BasicGenerator(float maxCapcity) {
 		super(maxCapcity);
 	}
 }

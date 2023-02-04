@@ -7,4 +7,12 @@ public class Generator extends Building {
 	private static final long serialVersionUID = 1L;
 	
 	public float maxCapacity;
+	
+	public Generator() {
+		
+	}
+	
+	public Generator(float maxCapcity) {
+		this.maxCapacity = maxCapcity;
+	}
 }

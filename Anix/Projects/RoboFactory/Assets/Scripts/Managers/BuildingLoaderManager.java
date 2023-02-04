@@ -30,13 +30,13 @@ public class BuildingLoaderManager extends Behaviour {
 	*/
 	private static final long serialVersionUID = 1L;	
 	
-	public static enum BuildingType {
-		MainBuilding, Fence, Storage, Furnace, BiomassGenerator, CoalGenerator, SolarPanel, Battery, Pole, Miner, Rail, Tower
-	}
-
+	//public static enum BuildingType {
+	//	MainBuilding, Fence, Storage, Furnace, Fabricatron, BiomassGenerator, CoalGenerator, SolarPanel, Battery, Pole, Miner, Rail, Tower
+	//}
+	
 	@Override
 	public void start() {
-		String path = "C:\\Users\\smsmk\\git\\Anix-Java\\Anix\\Projects\\RoboFactory\\Assets\\textures\\Buildings\\buildings.txt";
+		/*String path = "C:\\Users\\smsmk\\git\\Anix-Java\\Anix\\Projects\\RoboFactory\\Assets\\textures\\Buildings\\buildings.txt";
 		
 		try {
 			FileInputStream is = (FileInputStream) Editor.getInputStream(path);
@@ -215,7 +215,7 @@ public class BuildingLoaderManager extends Behaviour {
 			}
 		} catch(IOException e) {
 			e.printStackTrace();
-		}
+		}*/
 	}
 	
 	@Override

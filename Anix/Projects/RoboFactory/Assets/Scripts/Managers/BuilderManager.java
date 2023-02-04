@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import com.Anix.Behaviours.Behaviour;
@@ -15,7 +16,10 @@ import com.Anix.Math.Vector2f;
 import com.Anix.Math.Vector3f;
 import com.Anix.Objects.GameObject;
 
+import Buildings.BasicGenerator;
 import Buildings.Building;
+import Buildings.CoalGenerator;
+import Buildings.MainBuilding;
 import Enums.ItemType;
 
 public class BuilderManager extends Behaviour {
@@ -49,6 +53,16 @@ public class BuilderManager extends Behaviour {
 		placeHolder = new GameObject("PlaceHolder");
 		placeHolder.setIsEnabled(false);
 		placeHolder.addBehaviour(SpriteRenderer.class).spriteName = "hoveredArea.png";
+		
+		//requirements.add(Arrays.asList(new Building.Requirement(10, ItemType.Biomass));
+		buildings.add(new MainBuilding());
+		
+		/*
+		 *   Iron Plates: 5
+  		 *   Copper Wires: 5
+		 *   Gears: 2
+		 */
+		buildings.add(new BasicGenerator());
 	}
 	
 	@Override
@@ -58,15 +72,6 @@ public class BuilderManager extends Behaviour {
 			
 			placeHolder.setIsEnabled(isBuilding);
 		}
-		
-		//buildingIndex += Input.getScrollX();
-		
-		//if(buildingIndex > buildings.size())
-		//	buildingIndex = 0;
-		//if(buildingIndex < 0)
-		//	buildingIndex = buildings.size() - 1;
-		
-		//selectedBuilding = buildings.get(buildingIndex);
 		
 		for(int i = 0; i < buildings.size(); i++) {
 			Building b = buildings.get(i);
