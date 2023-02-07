@@ -1,3 +1,5 @@
+package WorldGeneration;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -95,6 +97,8 @@ public class World extends Behaviour {
 				new Block("Tree", 0, 1, 64, 64), new Block("Metal", 0, 6, 30, 32), new Block("Lithium", 1, 6, 30, 32), new Block("Stone", 2, 6, 30, 32), new Block("Coal", 3, 6, 30, 32));
 		
 		texture = UI.loadTexture("tileMap.png");
+		
+		requestUpdate();
 		
 		/*Thread thread = new Thread() {
 			public void run() {

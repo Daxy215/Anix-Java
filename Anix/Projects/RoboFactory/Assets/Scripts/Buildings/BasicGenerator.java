@@ -13,4 +13,16 @@ public class BasicGenerator extends Generator {
 	public BasicGenerator(float maxCapcity) {
 		super(maxCapcity);
 	}
+	
+	@Override
+	public void start() {
+		requestUpdate();
+		
+		gameObject.addBehaviour(new Player.Inventory.Inventory());
+	}
+	
+	@Override
+	public void update() {
+		
+	}
 }

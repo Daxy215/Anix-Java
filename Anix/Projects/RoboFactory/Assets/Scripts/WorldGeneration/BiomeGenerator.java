@@ -1,3 +1,5 @@
+package WorldGeneration;
+
 import com.Anix.Behaviours.Behaviour;
 
 public class BiomeGenerator extends Behaviour {
@@ -19,11 +21,11 @@ public class BiomeGenerator extends Behaviour {
 			   + 0.03f * noiseE(32 * nx, 32 * ny));
 		e = e / (1.00f + 1.00f + 0.00f + 0.00f + 0.00f + 0.00f);
 		e = (float) Math.pow(e, 0.5f);
-
+		
 		return getBiome(e);
 	}
-
-	private static float noiseE(float x, float y) { 
+	
+	private static float noiseE(float x, float y) {
 		return World.fs.GetPerlin(x, y);
 	}
 	

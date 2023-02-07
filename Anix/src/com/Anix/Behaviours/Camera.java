@@ -54,6 +54,8 @@ public class Camera extends Behaviour {
 		ry = gameObject.getRotation().y;
 		rz = gameObject.getRotation().z;
 		viewMatrix = Matrix4f.view(Camera.main.gameObject.getPosition(), Camera.main.gameObject.getRotation());
+		
+		requestRender();
 	}
 	
 	@Override

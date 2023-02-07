@@ -1,4 +1,8 @@
+package Managers;
+
 import com.Anix.Behaviours.Behaviour;
+import com.Anix.Behaviours.Camera;
+import com.Anix.IO.Input;
 
 public class GameManager extends Behaviour {
 	/*
@@ -7,14 +11,12 @@ public class GameManager extends Behaviour {
 	private static final long serialVersionUID = 1L;	
 	
 	@Override
-	//Will be called on game start
 	public void start() {
-		//TODO: Code here..
+		requestUpdate();
 	}
 	
 	@Override
-	//Will be called once per tick
 	public void update() {
-		//TODO: Code here..
+		Camera.main.gameObject.getPosition().z -= Input.getScrollY();
 	}
 }

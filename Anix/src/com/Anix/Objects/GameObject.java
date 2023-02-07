@@ -369,7 +369,10 @@ public class GameObject /*extends Entity*/ implements Cloneable, Serializable {
 		shouldBeRemoved = true;
 		
 		for(int i = 0; i < getBehaviours().size(); i++) {
-			try {
+			try {				
+				Core.updateAble.remove(getBehaviours().get(i));
+				Core.renderAble.remove(getBehaviours().get(i));
+				
 				getBehaviours().get(i).onDestroy();
 			} catch(Exception e) {
 				CharArrayWriter cw = new CharArrayWriter();
@@ -383,7 +386,6 @@ public class GameObject /*extends Entity*/ implements Cloneable, Serializable {
 			}
 		}
 		
-		Core.updateAbleObjects.remove(this);
 		behaviours.clear();
 		
 		setParent(null);
@@ -405,10 +407,10 @@ public class GameObject /*extends Entity*/ implements Cloneable, Serializable {
 	}
 	
 	public void setBehaviours(List<Behaviour> behaviours) {
-		if(this.behaviours.isEmpty() && !behaviours.isEmpty()) {
+		/*if(this.behaviours.isEmpty() && !behaviours.isEmpty()) {
 			if(!Core.updateAbleObjects.contains(this))
 				Core.updateAbleObjects.add(this);
-		}
+		}*/
 		
 		this.behaviours = behaviours;
 	}
@@ -453,9 +455,9 @@ public class GameObject /*extends Entity*/ implements Cloneable, Serializable {
 			}
 		}
 		
-		if(behaviours.isEmpty()) {
-			Core.updateAbleObjects.add(this);
-		}
+		//if(behaviours.isEmpty()) {
+		//	Core.updateAbleObjects.add(this);
+		//}
 		
 		behaviour.setGameObject(this);
 		
@@ -500,7 +502,9 @@ public class GameObject /*extends Entity*/ implements Cloneable, Serializable {
 		this.behaviours.remove(behaviour);
 		
 		if(behaviours.isEmpty()) {
-			Core.updateAbleObjects.remove(this);
+			//Core.updateAbleObjects.remove(this);
+			Core.updateAble.remove(behaviour);
+			Core.renderAble.remove(behaviour);
 		}
 	}
 	

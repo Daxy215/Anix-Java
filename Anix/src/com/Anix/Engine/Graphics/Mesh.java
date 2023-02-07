@@ -20,6 +20,7 @@ import com.Anix.IO.MeshManager;
 import com.Anix.IO.ProjectSettings;
 import com.Anix.IO.ProjectSettings.ProjectType;
 import com.Anix.Main.Core;
+import com.Anix.Math.Vector2f;
 
 public class Mesh implements Serializable, Cloneable {
 	private static final long serialVersionUID = -4953707361353170722L;
@@ -135,7 +136,7 @@ public class Mesh implements Serializable, Cloneable {
 			positionData[i * 3]     = vertices[i].getPosition().getX();
 			positionData[i * 3 + 1] = vertices[i].getPosition().getY();
 			positionData[i * 3 + 2] = vertices[i].getPosition().getZ();
-
+			
 			textureData[i * 2 + 0] = vertices[i].getTextureCoord().getX();
 			textureData[i * 2 + 1] = vertices[i].getTextureCoord().getY();
 			
@@ -204,7 +205,7 @@ public class Mesh implements Serializable, Cloneable {
 	}
 	
 	@Override
-	protected Mesh clone()  {
+	protected Mesh clone() {
 		try {
 			return (Mesh)super.clone();
 		} catch(CloneNotSupportedException e) {
@@ -243,7 +244,30 @@ public class Mesh implements Serializable, Cloneable {
 	public Vertex[] getVertices() {
 		return vertices;
 	}
-
+	
+	public void setUvs(Vector2f[] uvs) {
+		for(int i = 0; i < vertices.length; i++) {
+			vertices[i].setTextureCoord(uvs[i % 4]);
+		}
+		
+		GL15.glDeleteBuffers(tbo);
+		GL30.glBindVertexArray(vao);
+		
+		FloatBuffer textureBuffer = MemoryUtil.memAllocFloat(vertices.length * 2);
+		float[] textureData = new float[vertices.length * 2];
+		
+		for (int i = 0; i < vertices.length; i++) {
+			textureData[i * 2 + 0] = vertices[i].getTextureCoord().getX();
+			textureData[i * 2 + 1] = vertices[i].getTextureCoord().getY();
+		}
+		
+		textureBuffer.put(textureData);
+		((Buffer)textureBuffer).flip();
+		
+		tbo = storeData(textureBuffer, 1, 2);
+		MemoryUtil.memFree(textureBuffer);
+	}
+	
 	public void setVertices(Vertex[] vertices) {
 		this.vertices = vertices;
 		

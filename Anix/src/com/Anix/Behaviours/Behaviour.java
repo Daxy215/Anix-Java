@@ -12,6 +12,7 @@ import java.util.stream.Collectors;
 import com.Anix.Annotation.HideFromInspector;
 import com.Anix.Behaviours.Collider2D.Collision;
 import com.Anix.Engine.Editor;
+import com.Anix.Main.Core;
 import com.Anix.Math.Vector3f;
 import com.Anix.Objects.GameObject;
 import com.Anix.SceneManager.SceneManager;
@@ -24,6 +25,7 @@ public abstract class Behaviour extends Object implements Cloneable, Serializabl
 	
 	@HideFromInspector
 	public transient GameObject gameObject = null;
+
 	
 	public Behaviour() {}
 	
@@ -39,7 +41,21 @@ public abstract class Behaviour extends Object implements Cloneable, Serializabl
 	
 	public void update() {}
 	
+	public void requestUpdate() {
+		if(Core.updateAble.contains(this))
+			return;
+		
+		Core.updateAble.add(this);
+	}
+	
 	public void render() {}
+	
+	public void requestRender() {
+		if(Core.renderAble.contains(this))
+			return;
+		
+		Core.renderAble.add(this);
+	}
 	
 	public void onButtonClicked(String id, int clickType) {}
 	

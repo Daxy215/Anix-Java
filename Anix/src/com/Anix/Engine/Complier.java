@@ -1,17 +1,19 @@
 package com.Anix.Engine;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.lang.reflect.Modifier;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 
 import javax.tools.Diagnostic;
 import javax.tools.DiagnosticCollector;
@@ -19,8 +21,10 @@ import javax.tools.JavaCompiler;
 import javax.tools.JavaCompiler.CompilationTask;
 import javax.tools.JavaFileObject;
 import javax.tools.StandardJavaFileManager;
+import javax.tools.StandardLocation;
 import javax.tools.ToolProvider;
 
+import com.Anix.Behaviours.Animator2D;
 import com.Anix.Behaviours.AudioPlayer;
 import com.Anix.Behaviours.Behaviour;
 import com.Anix.Behaviours.BoxCollider2D;
@@ -38,13 +42,14 @@ final class Complier {
 	private File sourceDir;
 	private URLClassLoader classLoader;
 	
-	//private List<File> files = null;
-	private Map<File, String> files;
+	private List<File> files = null;
+	private List<File> directories = new ArrayList<>();
+	//private Map<File, String> files;
 	// private List<String> failers = new ArrayList<String>();
 	
 	public Complier() {
-		//files = new ArrayList<File>();
-		files = new HashMap<File, String>();
+		files = new ArrayList<File>();
+		//files = new HashMap<File, String>();
 	}
 	
 	public void compile() throws Exception {
@@ -69,6 +74,7 @@ final class Complier {
 		
 		Editor.importedClasses.add(new AudioPlayer());
 		Editor.importedClasses.add(new BoxCollider2D());
+		Editor.importedClasses.add(new Animator2D());
 		Editor.importedClasses.add(new Button());
 		Editor.importedClasses.add(new Camera());
 		Editor.importedClasses.add(new LightSource());
@@ -93,6 +99,13 @@ final class Complier {
 			return;
 		}
 		
+		directories.add(new File("C:/Users/smsmk/Desktop/Game Engine/Anix.jar"));
+		File dir = new File("C:/Users/smsmk/git/Anix-Java/Anix/includes");
+		
+		getExternalLibraries(dir);
+		
+		fileManager.setLocation(StandardLocation.CLASS_PATH, directories);
+		
 		String[] compileOptions = new String[]{"-d", classesDir.getAbsolutePath()};
 		Iterable<String> compilationOptions = Arrays.asList(compileOptions);
 		
@@ -114,16 +127,34 @@ final class Complier {
 			//return;
 		}
 		
-		classLoader = URLClassLoader.newInstance(new URL[]{classesDir.toURI().toURL()});
+		URL[] directoryURLs = directories.stream().map(d -> {
+			try {
+				return d.toURI().toURL();
+			} catch (MalformedURLException e1) {
+				e1.printStackTrace();
+			}
+			
+			return null;
+		}).toArray(URL[]::new);
+		
+		classLoader = URLClassLoader.newInstance(directoryURLs);
 		Thread.currentThread().setContextClassLoader(classLoader);
 		
 		//Field scl = ClassLoader.class.getDeclaredField("scl"); // Get system class loader
 		//scl.setAccessible(true); // Set accessible scl.set(null, classLoader);
 		
-		for(Map.Entry<File, String> file : files.entrySet()) {
+		//for(Map.Entry<File, String> file : files.entrySet()) {
+		for(File f : files) {
 			try {
 				//TODO: java.lang.ClassFormatError: Truncated class file?????
-				Class<?> clazz = Class.forName(/*"Scripts.Player." + *//*file.getValue() + */file.getKey().getName().split(".java")[0].trim(), true, classLoader);
+				//Class<?> clazz = Class.forName(/*"Scripts.Player." + *//*file.getValue() + */file.getKey().getName().split(".java")[0].trim(), true, classLoader);
+				
+				String packageName = extractPackageNameFromSourceCode(f);
+				String className = f.getName().split(".java")[0].trim();
+				String fullyQualifiedName = packageName + "." + className;
+				
+				System.err.println("Currently loading: " + fullyQualifiedName);
+				Class<?> clazz = Class.forName(fullyQualifiedName, true, classLoader);
 				//addSoftwareLibrary(files.get(i));
 				
 				if(clazz != null && !Modifier.isAbstract(clazz.getModifiers())) {
@@ -135,22 +166,30 @@ final class Complier {
 								Editor.importedClasses.add((Behaviour)obj);
 							}
 							
-							System.out.println("Successfully loaded class with the name of: " +  file.getKey().getName().split(".java")[0]);
+							System.out.println("Successfully loaded class with the name of: " +  f.getName().split(".java")[0]);
+							//System.out.println("Successfully loaded class with the name of: " +  file.getKey().getName().split(".java")[0]);
 						} catch(Exception e) {
 							System.err.println("[ERROR] " + clazz.getSimpleName() + " : " + e.getMessage());
 						}
 					} catch(NoSuchMethodException e) {
-						System.err.println("[ERROR] Please include a default constructor for the class with the name of: " + file.getKey().getName().split(".java")[0]);
+						System.err.println("[ERROR] Please include a default constructor for the class with the name of: " + f.getName().split(".java")[0]);
+						//System.err.println("[ERROR] Please include a default constructor for the class with the name of: " + file.getKey().getName().split(".java")[0]);
 					} catch(Exception e) {
-						System.err.println("Class name; " + file.getKey().getName());
+						System.err.println("Class name; " + f.getName());
+						//System.err.println("Class name; " + file.getKey().getName());
 						e.printStackTrace();
 					}
 				}
 			} catch(ClassNotFoundException e) {
-				System.err.println("[ERROR] " + file.getKey().getName().split(".java")[0] + " isn't of type 'CLASS'. ");
+				//System.err.println("[ERROR] " + f.getName().split(".java")[0] + " isn't of type 'CLASS'. ");
+				//System.err.println("[ERROR] " + file.getKey().getName().split(".java")[0] + " isn't of type 'CLASS'. ");
+				e.printStackTrace();
 			} catch(Exception | NoClassDefFoundError e) {
 				System.err.println("[ERORR] [TSH] Couldn't load a class with the name of: " +
-						file.getKey().getName().split(".java")[0] + " because of " + e.getMessage());
+						f.getName().split(".java")[0] + " because of " + e.getMessage());
+				
+				//System.err.println("[ERORR] [TSH] Couldn't load a class with the name of: " +
+				//		file.getKey().getName().split(".java")[0] + " because of " + e.getMessage());
 				e.printStackTrace();
 			}
 		}
@@ -200,6 +239,51 @@ final class Complier {
 		return true;
 	}*/
 	
+	private static String extractPackageNameFromSourceCode(File javaFile) throws IOException {
+		StringBuilder source = new StringBuilder();
+		BufferedReader reader = new BufferedReader(new FileReader(javaFile));
+		String line = reader.readLine();
+		
+		while (line != null) {
+			source.append(line).append("\n");
+			line = reader.readLine();
+		}
+		
+		reader.close();
+		
+		int packageIndex = source.indexOf("package");
+		
+		if (packageIndex == -1) {
+			return "";
+		}
+		
+		int semicolonIndex = source.indexOf(";", packageIndex);
+		
+		if (semicolonIndex == -1) {
+			return "";
+		}
+		
+		return source.substring(packageIndex + 7, semicolonIndex).trim();
+	}
+	
+	private List<File> getExternalLibraries(File dir) {
+		List<File> filesList = new ArrayList<>();
+		File[] files = dir.listFiles();
+		
+		if (files == null)
+			return null;
+		
+		for (File file : files) {
+		    if (file.isDirectory()) {
+		        directories.addAll(getExternalLibraries(file));
+		    } else if (file.isFile() && file.getName().toLowerCase().endsWith(".jar")) {
+		        directories.add(file);
+		    }
+		}
+		
+		return filesList;
+	}
+
 	private List<JavaFileObject> scanRecursivelyForJavaObjects(File dir, StandardJavaFileManager fileManager) {
 		List<JavaFileObject> javaObjects = new LinkedList<JavaFileObject>();
 		File[] files = dir.listFiles();
@@ -209,9 +293,11 @@ final class Complier {
 		
 		for (File file : files) {
 			if (file.isDirectory()) {
+				System.err.println("Adding: " + file.getAbsolutePath());
+				directories.add(file);
 				javaObjects.addAll(scanRecursivelyForJavaObjects(file, fileManager));
 			} else if (file.isFile() && file.getName().toLowerCase().endsWith(".java")) {
-				String parent = "";
+				/*String parent = "";
 				
 				if(!file.getParentFile().getParentFile().getName().equalsIgnoreCase("assets")) {
 					File curFile = file.getParentFile();
@@ -227,10 +313,11 @@ final class Complier {
 					for(int i = parents.size() - 1; i > 0; i--) {
 						parent += parents.get(i).getName() + ".";
 					}
-				}
+				}*/
 				
 				javaObjects.add(readJavaObject(file, fileManager));
-				this.files.put(file, parent);
+				this.files.add(file);
+				//this.files.put(file, parent);
 			}
 		}
 		

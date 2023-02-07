@@ -79,10 +79,12 @@ import imgui.flag.ImGuiConfigFlags;
  * <br>
  * TODO: Make the ability of making a custom renderer much easier.<br>
  * <br>
- * TODO: Make a "Core.RequestUpdate" and "Core.RequestRender", for behaviours.<br>
+ * Make a "Core.RequestUpdate" and "Core.RequestRender", for behaviours.<br>
  * So that, they can only be updated or rendered if it is called.<br>
+ * Done :D<br>
  * <br>
- * TODO: Make the compiler to check for errors first AND then compile<br>
+ * Make the compiler to check for errors first AND then compile<br>
+ * Done :)<br>
  */
 public final class Core implements Runnable {
 	private String projectName = "";
@@ -111,7 +113,9 @@ public final class Core implements Runnable {
 	
 	private String[] args;
 	private static List<Sprite> sprites = new ArrayList<Sprite>();
-	public static List<GameObject> updateAbleObjects = new ArrayList<GameObject>();
+	//public static List<GameObject> updateAbleObjects = new ArrayList<GameObject>();
+	public static List<Behaviour> updateAble = new ArrayList<>();
+	public static List<Behaviour> renderAble = new ArrayList<>();
 	
 	private ImGuiStyle redDarkTheme() {
 		ImGuiStyle style = ImGui.getStyle();
@@ -389,45 +393,36 @@ public final class Core implements Runnable {
 		if(!Editor.isPlaying() && ProjectSettings.isEditor)
 			return;
 		
-		if(updateAbleObjects.isEmpty())
+		if(updateAble.isEmpty())
 			return;
 		
-		if(SceneManager.getCurrentScene() != null) {
-			for(int i = 0; i < updateAbleObjects.size(); i++) {
-				GameObject obj = updateAbleObjects.get(i);
+		Scene currentScene = SceneManager.getCurrentScene();
+		
+		if(currentScene != null) {
+			for(int i = 0; i < updateAble.size(); i++) {
+				Behaviour b = updateAble.get(i);
 				
-				/*if(obj == null || obj.shouldBeRemoved) {
-					updateAbleObjects.remove(i);
+				if(b == null || b.gameObject.shouldBeRemoved) {
+					updateAble.remove(i);
 					i--;
+					
 					continue;
-				}*/
+				}
 				
-				if(!obj.getBehaviours().isEmpty() && obj.isEnabled()) {
-					for(int j = 0; j < obj.getBehaviours().size(); j++) {
-						Behaviour b = obj.getBehaviours().get(j);
-						
-						if(b == null) {
-							obj.getBehaviours().remove(j);
-							j--;
-							continue;
-						}
-						
-						if(!b.isEnabled)
-							continue;
-						
-						try {
-							b.update();
-						} catch(Exception | Error e) {
-							CharArrayWriter cw = new CharArrayWriter();
-							PrintWriter w = new PrintWriter(cw);
-							e.printStackTrace(w);
-							w.close();
-							String trace = cw.toString();
-							
-							System.err.println("[ERROR] " + b.getName() + " because " + trace);
-							Console.LogErr("[ERROR] " + b.getName() + " because " + trace);
-						}
-					}
+				if(!b.isEnabled)
+					continue;
+				
+				try {
+					b.update();
+				} catch(Exception | Error e) {
+					CharArrayWriter cw = new CharArrayWriter();
+					PrintWriter w = new PrintWriter(cw);
+					e.printStackTrace(w);
+					w.close();
+					String trace = cw.toString();
+
+					System.err.println("[ERROR] " + b.getName() + " because " + trace);
+					Console.LogErr("[ERROR] " + b.getName() + " because " + trace);
 				}
 			}
 		}
@@ -459,48 +454,36 @@ public final class Core implements Runnable {
 	}
 	
 	public void renderBehaviours() {
-		if(Application.isMinimized() || updateAbleObjects.isEmpty() || updateAbleObjects.size() < 1)
+		if(Application.isMinimized() || renderAble.isEmpty())
 			return;
 		
 		Scene currentScene = SceneManager.getCurrentScene();
 		
-		if(/*&& Application.isFocused() */currentScene != null) {
-			for(int i = 0; i < updateAbleObjects.size(); i++) {
-				GameObject obj = updateAbleObjects.get(i);
+		if(currentScene != null) {
+			for(int i = 0; i < renderAble.size(); i++) {
+				Behaviour b = renderAble.get(i);
 				
-				/*if(obj == null || obj.shouldBeRemoved) {
-					updateAbleObjects.remove(i);
+				if(b == null || b.gameObject.shouldBeRemoved) {
+					renderAble.remove(i);
 					i--;
 					
 					continue;
-				}*/
+				}
 				
-				if(!obj.getBehaviours().isEmpty() && obj.isEnabled()) {
-					for(int j = 0; j < obj.getBehaviours().size(); j++) {
-						Behaviour b = obj.getBehaviours().get(j);
-						
-						if(b == null) {
-							obj.getBehaviours().remove(j);
-							j--;
-							continue;
-						}
-						
-						if(!b.isEnabled)
-							continue;
-						
-						try {
-							b.render();
-						} catch(Exception | Error e) {
-							CharArrayWriter cw = new CharArrayWriter();
-							PrintWriter w = new PrintWriter(cw);
-							e.printStackTrace(w);
-							w.close();
-							String trace = cw.toString();
-							
-							System.err.println("[ERROR] " + b.getName() + " because " + trace);
-							Console.LogErr("[ERROR] " + b.getName() + " because " + trace);
-						}
-					}
+				if(!b.isEnabled)
+					continue;
+				
+				try {
+					b.render();
+				} catch(Exception | Error e) {
+					CharArrayWriter cw = new CharArrayWriter();
+					PrintWriter w = new PrintWriter(cw);
+					e.printStackTrace(w);
+					w.close();
+					String trace = cw.toString();
+
+					System.err.println("[ERROR] " + b.getName() + " because " + trace);
+					Console.LogErr("[ERROR] " + b.getName() + " because " + trace);
 				}
 			}
 		}

@@ -30,6 +30,8 @@ public class SpriteRenderer extends Behaviour {
 			
 			addedToRenderering = true;
 		}
+		
+		requestRender();
 	}
 	
 	@Override
@@ -115,6 +117,7 @@ public class SpriteRenderer extends Behaviour {
 		}
 		
 		mesh.setHasBeenDestroied(false);
+		mesh.setMaterial(material);
 		
 		gameObject.setMesh(mesh);
 	}

@@ -1,27 +1,11 @@
-import java.io.FileInputStream;
-import java.io.IOException;
+package Managers;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import com.Anix.Behaviours.Behaviour;
-import com.Anix.Engine.Editor;
-import com.Anix.Engine.Utils.FileUtils;
-import com.Anix.Objects.GameObject;
 
-import Buildings.Archery;
-import Buildings.Battery;
-import Buildings.BiomassGenerator;
 import Buildings.Building;
-import Buildings.CoalGenerator;
-import Buildings.Fence;
-import Buildings.Furnace;
-import Buildings.MainBuilding;
-import Buildings.Miner;
-import Buildings.Pole;
-import Buildings.Rail;
-import Buildings.SolarPanel;
-import Buildings.Storage;
-import Buildings.Turret;
 import Enums.ItemType;
 
 public class BuildingLoaderManager extends Behaviour {

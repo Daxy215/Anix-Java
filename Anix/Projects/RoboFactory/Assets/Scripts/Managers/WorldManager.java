@@ -1,3 +1,5 @@
+package Managers;
+
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -6,7 +8,6 @@ import com.Anix.Behaviours.Behaviour;
 import com.Anix.Behaviours.Camera;
 import com.Anix.Engine.Graphics.Material;
 import com.Anix.Engine.Graphics.Shader;
-import com.Anix.GUI.TrueTypeFont;
 import com.Anix.GUI.UI;
 import com.Anix.Math.Color;
 
@@ -159,6 +160,9 @@ public class WorldManager extends Behaviour {
 	public void awake() {
 		shader = Shader.getShader("GameShader");
 		material = new Material(shader);
+		
+		requestUpdate();
+		requestRender();
 	}
 	
 	@Override

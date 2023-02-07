@@ -1,3 +1,5 @@
+package WorldGeneration.Ore;
+
 import com.Anix.Behaviours.Behaviour;
 
 public class Ore extends Behaviour {

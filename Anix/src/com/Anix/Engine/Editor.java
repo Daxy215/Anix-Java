@@ -322,7 +322,7 @@ public final class Editor {
 		
 		try {
 			//if(complier.isErrorFree())
-				complier.compile();
+			complier.compile();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -466,8 +466,8 @@ public final class Editor {
 				parentsToLoad.add(obj.uuid + ";" + parentInfo);
 			}
 			
-			if(!obj.getBehaviours().isEmpty())
-				Core.updateAbleObjects.add(obj);
+			//if(!obj.getBehaviours().isEmpty())
+			//	Core.updateAbleObjects.add(obj);
 			
 			for(int j = 0; j < obj.getBehaviours().size(); j++) {
 				Behaviour behaviour = obj.getBehaviours().get(j);
@@ -613,7 +613,9 @@ public final class Editor {
 	}
 	
 	public void reLoad() {
-		Core.updateAbleObjects.clear();
+		//Core.updateAbleObjects.clear();
+		Core.updateAble.clear();
+		Core.renderAble.clear();
 		core.getGUI().getConsole().clear();
 		Core.meshManager.clear();
 		LightSource.lights.clear();
@@ -1072,6 +1074,7 @@ public final class Editor {
 				Mesh mesh = new Mesh(s);
 				
 				Core.meshManager.addMesh(mesh);
+				Core.meshManager.update();
 			} else if(extension.equalsIgnoreCase("scene")) {
 				System.out.println("Adding a new scene with the name of " + absolutePath[absolutePath.length - 1].split("\\.")[0]);
 				

@@ -350,7 +350,7 @@ public final class Application {
 			float rf = 7 * Camera.main.gameObject.getPosition().z / 8;
 			float tb = 4 * Camera.main.gameObject.getPosition().z / 8;
 			
-			projection = Matrix4f.orthographic(rf, -rf, -tb, tb, 1000, -1000);
+			projection = Matrix4f.orthographic(-rf, rf, -tb, tb, 1000, -1000);
 		} else if(projectionType.equals(ProjectionType.frustum)) {
 			float rf = 7 * Camera.main.gameObject.getPosition().z;
 			float tb = 4 * Camera.main.gameObject.getPosition().z;

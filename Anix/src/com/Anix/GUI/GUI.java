@@ -85,7 +85,7 @@ public final class GUI {
 	
 	public static boolean centeredButton(String label, float sizeX, float sizeY, float alignment){
 	    ImGuiStyle style = ImGui.getStyle();
-
+	    
 	    float size = 0;
 		try {
 			ImVec2 pos = new ImVec2();
@@ -96,11 +96,11 @@ public final class GUI {
 		}
 		
 	    float avail = ImGui.getContentRegionAvail().x;
-
+	    
 	    float off = (avail - size) * alignment;
 	    if (off > 0.0f)
 	        ImGui.setCursorPosX(ImGui.getCursorPosX() + off);
-
+	    
 	    return ImGui.button(label, sizeX, sizeY);
 	}
 	

@@ -40,7 +40,8 @@ public class SceneManager {
 			
 			scene.destroy();
 			Camera.main = null;
-			Core.updateAbleObjects.clear();
+			Core.updateAble.clear();
+			Core.renderAble.clear();
 			
 			currentScene = scene;
 			

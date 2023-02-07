@@ -223,7 +223,7 @@ public final class Assets {
 		for(int i = 0; i < folders.size(); i++) {
 			Folder folder = folders.get(i);
 			
-			//TODO:
+			//TODO: ????????????????
 			if(folder.getExtension().equalsIgnoreCase("class")
 					|| folder.getExtension().equalsIgnoreCase("project"))
 				continue;
@@ -262,7 +262,7 @@ public final class Assets {
 	        		folders.get(i).delete();
 	        		folders.remove(i);
 	        	}
-
+	        	
 	        	ImGui.endPopup();
 	        }
 			
