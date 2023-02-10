@@ -1,4 +1,4 @@
-package Player;
+package PlayerP;
 
 import com.Anix.Behaviours.Behaviour;
 import com.Anix.Behaviours.Camera;

@@ -1,4 +1,4 @@
-package Player.Inventory;
+package PlayerP.InventoryManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,12 +28,12 @@ public class Inventory extends Behaviour {
 	public int sizeX = 6, sizeY = 8;
 	private int padding = 4;
 	
-	private boolean showInventory, isDragging;
+	public boolean showInventory, isDragging;
 	
 	private Item draggedItem;
 	public Vector2f position = new Vector2f();
-
-	public Texture[] textures;
+	
+	public static Texture[] textures;
 	public List<Slot> slots;
 	public List<Item> items;
 	
@@ -50,45 +50,22 @@ public class Inventory extends Behaviour {
 	
 	@Override
 	public void start() {
-		textures = new Texture[ItemType.values().length];
-		slots = new ArrayList<Slot>();
-		items = new ArrayList<Item>();
-		
-		name += ":" + UUID.randomUUID().toString();
-		
-		if(position != null && position.x < 250 || position.y < 25) {
-			position.x += 250;
-			position.y += 25;
-		}
-		
-		inventories.add(this);
-		
-		for(int i = 0; i < ItemType.values().length; i++) {
-			textures[i] = UI.loadTexture("/Inventory/Items/" + ItemType.values()[i] + ".png");
-		}
-		
-		for(int y = 0; y < sizeY; y++) {
-			for(int x = 0; x < sizeX; x++) {
-				slots.add(new Slot(slots.size(), new Vector2f(x * slotWidth + (padding * x), y * slotHeight + (padding * y)), this));
-			}
-		}
+		updateSlots();
 		
 		requestUpdate();
 	}
 	
 	public void update() {
-		if(Input.isKeyDown(KeyCode.I))
-			showInventory = !showInventory;
+		//if(Input.isKeyDown(KeyCode.I))
+		//	showInventory = !showInventory;
 		
 		if(!showInventory)
 			return;
 		
-		Vector2f sv = new Vector2f((float)Input.getMouseX(), (float)Input.getMouseY());
+		Slot slot = getSlotAt(new Vector2f((float)Input.getMouseX(), (float)Input.getMouseY()));
 		
-		Slot slot = getSlotAt(sv);
-				
-		if(slot != null)
-			System.err.println("hovering over: " + slot.getNumber());
+		//if(slot != null)
+			//System.err.println("hovering over: " + slot.getNumber());
 		
 		if(slot != null) {
 			if(Input.isMouseButtonDown(KeyCode.Mouse0)) {
@@ -138,6 +115,7 @@ public class Inventory extends Behaviour {
 							slot.getItem().removeAmount(Math.round(slot.getItem().getAmount() * 0.5f));
 							
 							isDragging = true;
+							
 							try {
 								draggedItem = slot.getItem().clone();
 							} catch (CloneNotSupportedException e) {
@@ -169,8 +147,6 @@ public class Inventory extends Behaviour {
 			Inventory inv = Inventory.getInventoryAt(new Vector2f((float)Input.getMouseX(), (float)Input.getMouseY()));
 			
 			if(inv != null && inv != this && inv.showInventory) {
-				System.out.println("found inv?");
-				
 				inv.isDragging = true;
 				
 				try {
@@ -185,21 +161,49 @@ public class Inventory extends Behaviour {
 		}
 		
 		if(isDragging) {
-			int x = 34;
+			int x = Item.width;
 			
 			if(draggedItem.getAmount() >= 10) {
-				x = 30;
+				x -= 4;
 			} else if(draggedItem.getAmount() == 100) {
-				x = 24;
+				x -= 10;
 			}
 			
 			draggedItem.render(new Vector2f((float)Input.getMouseX(), (float)Input.getMouseY()));
-			UI.drawString("x" + draggedItem.getAmount(), (float)Input.getMouseX() + x, (float)Input.getMouseY() + 34, 0.5f, 0.5f, Color.white);
+			UI.drawString("x" + draggedItem.getAmount(), (float)Input.getMouseX() + x, (float)Input.getMouseY() + Item.width, -0.2f, 0.5f, 0.5f, Color.white);
 		}
 		
 		for(int i = 0; i < slots.size(); i++) {
 			UI.drawImage(slots.get(i).getTexture().getTextureID(), position.x + slots.get(i).getPosition().x, position.y + slots.get(i).getPosition().y, 0.1f, slotWidth, slotHeight);
 			slots.get(i).render();
+		}
+	}
+	
+	public void updateSlots() {
+		if(textures == null)
+			textures = new Texture[ItemType.values().length];
+		
+		slots = new ArrayList<Slot>();
+		items = new ArrayList<Item>();
+		
+		name += ":" + UUID.randomUUID().toString();
+		
+		if(position != null && position.x < 250 || position.y < 25) {
+			position.x += 250;
+			position.y += 25;
+		}
+		
+		inventories.add(this);
+		
+		if(textures.length == 0)
+			for(int i = 0; i < ItemType.values().length; i++) {
+				textures[i] = UI.loadTexture("/Inventory/Items/" + ItemType.values()[i] + ".png");
+			}
+		
+		for(int y = 0; y < sizeY; y++) {
+			for(int x = 0; x < sizeX; x++) {
+				slots.add(new Slot(slots.size(), new Vector2f(x * slotWidth + (padding * x), y * slotHeight + (padding * y)), this));
+			}
 		}
 	}
 	
@@ -396,7 +400,39 @@ public class Inventory extends Behaviour {
 	public void setItem(int index, int amount, ItemType itemType) {
 		slots.get(index).setItem(new Item(amount, itemType, slots.get(index)));
 	}
+	
+	public boolean removeItem(int index, int amount) {
+		int amountLeft = amount;
+		
+		if(amountLeft <= 0) {
+			return false;
+		}
+		
+		if(slots.get(index).getItem().getAmount() >= amount) {
+			slots.get(index).getItem().removeAmount(amount);
+			
+			return true;
+		}
+		
+		if(slots.get(index).getItem().getAmount() == MAXAMOUNT && amountLeft >= 100) {
+			slots.get(index).setItem(null);
+			amountLeft -= 100;
+			
+			return removeItem(index, amountLeft);
+		}
+		
+		int extra = (slots.get(index).getItem().getAmount() + amountLeft) - MAXAMOUNT;
+		
+		slots.get(index).getItem().removeAmount(amountLeft - extra);
+		
+		amountLeft -= extra;
 
+		if(amountLeft <= 0)
+			return true;
+		else
+			return false;
+	}
+	
 	public void removeItem(ItemType itemType, int amount) {
 		int amountLeft = amount;
 		
@@ -500,7 +536,13 @@ public class Inventory extends Behaviour {
 		this.sizeY = sizeY;
 	}
 	
-	public boolean showInventory() {
+	public boolean toggle() {
+		this.showInventory = !showInventory;
+		
+		return showInventory;
+	}
+	
+	public boolean canShowInventory() {
 		return showInventory;
 	}
 

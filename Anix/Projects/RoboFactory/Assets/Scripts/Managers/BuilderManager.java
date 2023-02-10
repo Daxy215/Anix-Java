@@ -1,5 +1,6 @@
 package Managers;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -10,7 +11,6 @@ import java.util.Map.Entry;
 import com.Anix.Behaviours.Behaviour;
 import com.Anix.Behaviours.Camera;
 import com.Anix.Behaviours.SpriteRenderer;
-import com.Anix.Engine.Editor;
 import com.Anix.GUI.GUI;
 import com.Anix.GUI.Texture;
 import com.Anix.GUI.UI;
@@ -18,17 +18,16 @@ import com.Anix.IO.Application;
 import com.Anix.IO.Input;
 import com.Anix.IO.KeyCode;
 import com.Anix.Math.Vector2f;
-import com.Anix.Math.Vector3f;
 import com.Anix.Objects.GameObject;
 
 import Buildings.BasicGenerator;
 import Buildings.Building;
+import Buildings.Cable;
 import Buildings.Furnace;
 import Buildings.MainBuilding;
 import Buildings.Miner;
 import Buildings.Pole;
 import Enums.ItemType;
-import Player.Player;
 import imgui.ImGui;
 import imgui.ImGuiStyle;
 import imgui.ImVec2;
@@ -62,16 +61,32 @@ public class BuilderManager extends Behaviour {
 		}
 	}
 	
+	public static class PlacementData implements Serializable {
+		private static final long serialVersionUID = 1L;
+		
+		public boolean startedBuilding;
+		public Vector2f startPos;
+		public Vector2f startPosScreenSpace;
+		
+		public PlacementData(boolean startedBuilding, Vector2f startPos, Vector2f startPosScreenSpace) {
+			this.startedBuilding = startedBuilding;
+			this.startPos = startPos;
+			this.startPosScreenSpace = startPosScreenSpace;
+		}
+	}
+	
 	private int currentCategory;
 	
 	public boolean isBuilding, showMenu;
+	public PlacementData placementData;
+	
 	public BuildingData selectedBuilding;
 	
 	private GameObject placeHolder;
 	
 	public static BuilderManager instance;
 	
-	public List<Vector2f> placedBuildings;
+	public static List<Vector2f> placedBuildings;
 	//public List<BuildingData> buildings;
 	public Map<String, BuildingData> buildings;
 	
@@ -80,6 +95,8 @@ public class BuilderManager extends Behaviour {
 		//buildings = new ArrayList<BuildingData>();
 		buildings = new HashMap<>();
 		placedBuildings = new ArrayList<>();
+		
+		placementData = new PlacementData(false, null, null);
 		
 		requestUpdate();
 		requestRender();
@@ -97,6 +114,7 @@ public class BuilderManager extends Behaviour {
 		buildings.put("Furnace", new BuildingData(1, new Furnace()));
 		buildings.put("Miner", new BuildingData(1, new Miner()));
 		buildings.put("Electricity", new BuildingData(2, new Pole()));
+		buildings.put("Cable", new BuildingData(2, new Cable()));
 		
 		/*
 		 *   Iron Plates: 5
@@ -119,33 +137,31 @@ public class BuilderManager extends Behaviour {
 			showMenu = !showMenu;
 		}
 		
+		if(placementData.startedBuilding) {
+			selectedBuilding.building.updatePlacements(placementData);
+		}
+		
 		if(!isBuilding)
 			return;
 		
-		if(selectedBuilding == null)
-			selectedBuilding = buildings.get(0);
-		
-		Vector2f cord = Camera.main.convertScreenToWorldSpace();
+		Vector2f spaceCoord = new Vector2f((float)Input.getMouseX(), (float)Input.getMouseY());
+		Vector2f cord = Camera.main.convertScreenToWorldSpace(Input.getMouseX(), Input.getMouseY());
 		Vector2f pos = new Vector2f(Math.round(cord.x), Math.round(cord.y));
 		placeHolder.setPosition(pos.x, pos.y);
 		
 		if(Input.isMouseButtonDown(KeyCode.Mouse0)) {
 			if(selectedBuilding != null && !placedBuildings.contains(pos)) {
-				System.err.println("Placing..");
+				System.err.println("Started Placing..");
 				
-				GameObject obj = new GameObject(selectedBuilding.building.getName(), new Vector3f(pos.x, pos.y, -2));
-				SpriteRenderer sr = new SpriteRenderer();
-				sr.spriteName = selectedBuilding.building.getName() + "0.png";
-				sr.material = WorldManager.material;
-				//Mesh mesh = new Mesh(new Sprite("", "", selectedBuilding.texture), WorldManager.material);
-				//mesh.create();
-				//obj.setMesh(mesh);
+				placementData = new PlacementData(true, pos, spaceCoord);
+				selectedBuilding.building.startPlacing(placementData);
+			}
+		} else if(Input.isMouseButtonUp(KeyCode.Mouse0)) {
+			if(placementData.startedBuilding) {
+				System.err.println("Ending placing..");
 				
-				obj.addBehaviour(sr);
-				//obj.getMesh().setMaterial(WorldManager.material);
-				obj.addBehaviour(Editor.getBehaviour(selectedBuilding.building.getName()));
-				
-				placedBuildings.add(pos);
+				placementData.startedBuilding = false;
+				selectedBuilding.building.endPlacing(placementData);
 			}
 		}
 	}
@@ -170,7 +186,7 @@ public class BuilderManager extends Behaviour {
 				ImGui.sameLine();
 				if(ImGui.button("Constructors", 120, 32)) { currentCategory = 1; }
 				ImGui.sameLine();
-				if(ImGui.button("Electronics", 120, 32)) { currentCategory = 2; }
+				if(ImGui.button("Electricity", 120, 32)) { currentCategory = 2; }
 			}
 			
 			ImGui.separator();
@@ -184,11 +200,11 @@ public class BuilderManager extends Behaviour {
 				ImGui.setColumnOffset(1, 80);
 				
 				for(Entry<String, BuildingData> entry : buildings.entrySet()) {
-					float y = ImGui.calcTextSize(entry.getKey()).y * 0.5f;
-					separatorWithText(entry.getKey(), startX, startY + y + ImGui.getCursorPosY(),
-							(ImGui.getWindowPosX()) + ImGui.getWindowSizeX(), startY + y + ImGui.getCursorPosY(), 0.5f, 0.5f);
-					
 					if(entry.getValue().category == currentCategory) {
+						float y = ImGui.calcTextSize(entry.getKey()).y * 0.5f;
+						separatorWithText(entry.getKey(), startX, startY + y + ImGui.getCursorPosY(),
+								(ImGui.getWindowPosX()) + ImGui.getWindowSizeX(), startY + y + ImGui.getCursorPosY(), 0.5f, 0.5f);
+						
 						ImGui.pushID("Building of: " + entry.toString());
 						
 						if(ImGui.imageButton(entry.getValue().texture.getId(), 
@@ -202,21 +218,6 @@ public class BuilderManager extends Behaviour {
 					//ImGui.separator();
 					ImGui.nextColumn();
 				}
-				
-				/*for(int i = 0; i < buildings.size(); i++) {
-					if(buildings.get(i).category == currentCategory) {
-						ImGui.pushID("Building of: " + i + buildings.get(i));
-						
-						if(ImGui.imageButton(buildings.get(i).texture.getId(), 
-								64, 64)) {
-							selectedBuilding = buildings.get(i);
-						}
-						
-						ImGui.popID();
-						
-						ImGui.nextColumn();
-					}
-				}*/
 			}
 			
 			ImGui.end();
@@ -229,20 +230,17 @@ public class BuilderManager extends Behaviour {
 		
 		float valuex = (ImGui.getWindowPosX()) + (ImGui.getWindowSizeX() * alignment);
 		
-		float left = valuex - ex;
-		
 		ImVec4 c = style.getColor(ImGuiCol.Separator);
 		
-		ImGui.getWindowDrawList().addLine(sx, sy, valuex - (size.x * textAlignment) - 4, ey, ImGui.colorConvertFloat4ToU32(c.x, c.y, c.y, c.w), 2);
+		ImGui.getWindowDrawList().addLine(sx, sy, valuex - (size.x * textAlignment) - 4/*Idk y but it is 4 pixels offsetted.*/, ey, ImGui.colorConvertFloat4ToU32(c.x, c.y, c.y, c.w), 2);
 		
-		ImGui.setCursorPosX(((Application.getWidth() - (64 * 2)) * alignment) - (size.x * textAlignment));
+		ImGui.setCursorPosX(((Application.getWidth() - (64 * 2))/*Start Offset*/ * alignment) - (size.x * textAlignment));
 		ImGui.text(text);
 		
 		ImGui.getWindowDrawList().addLine(valuex + size.x - (size.x * textAlignment), sy, ex, ey, ImGui.colorConvertFloat4ToU32(c.x, c.y, c.y, c.w), 2);
 	}
 	
 	private void alignForWidth(float width, float alignment) {
-		ImGuiStyle style = ImGui.getStyle();
 		float avail = ImGui.getContentRegionAvailX();
 		float off = (avail - width) * alignment;
 		
@@ -264,8 +262,8 @@ public class BuilderManager extends Behaviour {
 	}
 	
 	public int getCraftAmount(Building building) {
-		if(Player.inventory == null)
-			return -1;
+		//if(Player.inventory == null)
+		//	return -1;
 		
 		if(!building.requirements.isEmpty()) {
 			int smallest = Integer.MAX_VALUE, cur;
@@ -277,7 +275,7 @@ public class BuilderManager extends Behaviour {
 				if(cur == 0)
 					cur = 1;
 				
-				amount[i] = Math.round(Player.inventory.getAmountOfAnItem(ItemType.valueOf(building.requirements.get(0).get(i).type.name())) / cur);
+				//amount[i] = Math.round(Player.inventory.getAmountOfAnItem(ItemType.valueOf(building.requirements.get(0).get(i).type.name())) / cur);
 				
 				if(amount[i] < smallest) {
 					smallest = amount[i];

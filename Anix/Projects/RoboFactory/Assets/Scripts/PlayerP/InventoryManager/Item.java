@@ -1,4 +1,4 @@
-package Player.Inventory;
+package PlayerP.InventoryManager;
 
 import com.Anix.GUI.Texture;
 import com.Anix.GUI.UI;
@@ -8,6 +8,8 @@ import Enums.ItemType;
 
 public class Item implements Cloneable {
 	private int amount = 1;
+	
+	public static int width = 32, height = 32;
 	
 	private ItemType itemType;
 	
@@ -37,7 +39,7 @@ public class Item implements Cloneable {
 	}
 	
 	public void render(Vector2f position) {
-		UI.drawImage(getTexture().getTextureID(), position.x, position.y, 48, 48);
+		UI.drawImage(getTexture().getTextureID(), position.x, position.y, -0.1f, width, height);
 	}
 	
 	@Override

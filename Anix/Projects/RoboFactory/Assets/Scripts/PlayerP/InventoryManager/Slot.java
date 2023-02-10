@@ -1,4 +1,4 @@
-package Player.Inventory;
+package PlayerP.InventoryManager;
 
 import com.Anix.GUI.Texture;
 import com.Anix.GUI.UI;
@@ -31,23 +31,23 @@ public class Slot {
 	public void render() {
 		if(isEmpty)
 			return;
-
+		
 		if(item.getAmount() <= 0) {
 			setItem(null);
-
+			
 			return;
 		}
-
-		int x = 42;
-
+		
+		int x = Item.width;
+		
 		if(item.getAmount() >= 10) {
-			x = 38;
+			x -= 4;
 		} else if(item.getAmount() == 100) {
-			x = 32;
+			x -= 10;
 		}
-
+		
+		UI.drawString("x" + item.getAmount(), inventory.position.x + position.x + x, inventory.position.y + position.y + Item.width, -0.2f, 0.5f, 0.5f, Color.white);
 		item.render(new Vector2f(inventory.position.x + position.x + 12, inventory.position.y + position.y + 12));
-		UI.drawString("x" + item.getAmount(), inventory.position.x + position.x + x, inventory.position.y + position.y + 42, 0.5f, 0.5f, Color.white);
 	}
 
 	public int getNumber() {

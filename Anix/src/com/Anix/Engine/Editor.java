@@ -13,6 +13,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.NotSerializableException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.ObjectStreamClass;
@@ -252,6 +253,8 @@ public final class Editor {
 	        if(data instanceof GameObject) {
 	    		stream.writeUTF((((GameObject)data).hasParent() ? ((GameObject)data).getParent().uuid.toString() : "null"));
 	    	}
+	    } catch(NotSerializableException e) {
+	    	System.err.println("[ERROR] Couldn't save " + e.getMessage() + ". Likely due to no default method?");
 	    } catch(IOException e) {
 	        e.printStackTrace();
 	    }

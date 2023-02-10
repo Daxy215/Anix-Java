@@ -34,7 +34,6 @@ import com.Anix.IO.KeyCode;
 import com.Anix.IO.MeshManager;
 import com.Anix.IO.ProjectSettings;
 import com.Anix.IO.Time;
-import com.Anix.Objects.GameObject;
 import com.Anix.SceneManager.Scene;
 import com.Anix.SceneManager.SceneManager;
 

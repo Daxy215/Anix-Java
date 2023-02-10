@@ -44,7 +44,7 @@ public class SpriteRenderer extends Behaviour {
 			updateSprite();
 		}
 		
-		if(gameObject.getMesh() != null && !gameObject.getMesh().getMaterial().equals(material))
+		if(gameObject.getMesh() != null && gameObject.getMesh().getMaterial() != null && !gameObject.getMesh().getMaterial().equals(material))
 			gameObject.getMesh().setMaterial(material);
 		
 		if(!addedToRenderering && Core.getMasterRenderer() != null && Camera.main != null) {

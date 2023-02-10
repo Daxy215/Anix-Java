@@ -126,119 +126,25 @@ public class Camera extends Behaviour {
 	}
 	
 	public Vector2f convertScreenToWorldSpace() {
-		double mouseX = Input.getMouseX() - (ProjectSettings.isEditor ? Application.getStartX() : 0), 
-			   mosueY = Input.getMouseY() - (ProjectSettings.isEditor ? Application.getStartY() : 0);
-		
-		float width = Application.getWidth(), height = Application.getHeight();
-		
-		float cPosX = 0;
-		float cPosY = gameObject.getPosition().y;
-		
-		Vector4f pos = new Vector4f((float)(mouseX / (width / 2.0f) - 1f), 1 - (float)(mosueY / (height / 2.0f)), 0, 1);
-		
-		Matrix4f model = gameObject.getTransform();
-		Matrix4f projection = Application.getProjectionMatrix();
-		
-		Matrix4f mvp = projection.multiply(viewMatrix).multiply(model);
-		mvp.invert();
-		
-		pos = mvp.multiply(pos);
-		
-		if(pos.w == 0.0f)
-			pos.w = 1;
-		
-		pos.w = (1 - (Camera.main.projectionType.equals(ProjectionType.projection) ? + gameObject.getPosition().z : 0)) / pos.w;
-		pos.x *= pos.w;
-		pos.y *= pos.w;
-		pos.z *= pos.w;
-		
-		if(Camera.main.projectionType.equals(ProjectionType.orthographics)) {
-			cPosX = -cPosX;
-			cPosY = -cPosY;
-		}
-		
-		Vector2f rPos = new Vector2f(pos.x + -cPosX, pos.y + -cPosY);
-		
-		if(Camera.main.projectionType.equals(ProjectionType.projection))
-			return new Vector2f(rPos.x, rPos.y);
-		else
-			return new Vector2f(rPos.x, rPos.y);
+		return convertScreenToWorldSpace(Input.getMouseX(), Input.getMouseY(), Application.getWidth(), Application.getHeight());
 	}
 	
 	public Vector2f convertScreenToWorldSpace(double x, double y) {
-		if(ProjectSettings.isEditor)
-			x -= Application.getStartX(); y -= Application.getStartY();
-		
-		float width = Application.getWidth(), height = Application.getHeight();
-		
-		Vector2f cPos = gameObject.getPosition().getXY();
-		
-		Vector4f pos = new Vector4f((float)(x / (width / 2.0f) - 1f), 1 - (float)(y / (height / 2.0f)), 0, 1);
-		
-		Matrix4f model = gameObject.getTransform();
-		Matrix4f projection = Application.getProjectionMatrix();
-		
-		Matrix4f mvp = projection.multiply(viewMatrix).multiply(model);
-		mvp.invert();
-		
-		pos = mvp.multiply(pos);
-		
-		pos.w = (1f + (Camera.main.projectionType.equals(ProjectionType.projection) ? + gameObject.getPosition().z : 0)) / pos.w;
-		pos.x *= pos.w;
-		pos.y *= pos.w;
-		pos.z *= pos.w;
-		
-		if(Camera.main.projectionType.equals(ProjectionType.orthographics)) {
-			cPos.x = -cPos.x;
-			cPos.y = -cPos.y;
-		}
-		
-		Vector2f rPos = new Vector2f(pos.x + -cPos.x, -pos.y + -cPos.y);
-		
-		if(Camera.main.projectionType.equals(ProjectionType.projection))
-			return new Vector2f(-rPos.x, -rPos.y);
-		else
-			return new Vector2f(rPos.x, rPos.y);
+		return convertScreenToWorldSpace(x, y, Application.getWidth(), Application.getHeight());
 	}
 	
 	public Vector2f convertScreenToWorldSpace(float width, float height) {
-		double mouseX = Input.getMouseX() - (ProjectSettings.isEditor ? Application.getStartX() : 0), mosueY = Input.getMouseY() - (ProjectSettings.isEditor ? Application.getStartY() : 0);
-		
-		Vector2f cPos = gameObject.getPosition().getXY();
-		
-		Vector4f pos = new Vector4f((float)(mouseX / (width / 2.0f) - 1f), 1 - (float)(mosueY / (height / 2.0f)), 0, 1);
-		
-		Matrix4f model = gameObject.getTransform();
-		Matrix4f projection = Application.getProjectionMatrix();
-		
-		Matrix4f mvp = projection.multiply(viewMatrix).multiply(model);
-		mvp.invert();
-		
-		pos = mvp.multiply(pos);
-		
-		pos.w = (1f + (Camera.main.projectionType.equals(ProjectionType.projection) ? + gameObject.getPosition().z : 0)) / pos.w;
-		pos.x *= pos.w;
-		pos.y *= pos.w;
-		pos.z *= pos.w;
-		
-		if(Camera.main.projectionType.equals(ProjectionType.orthographics)) {
-			cPos.x = -cPos.x;
-			cPos.y = -cPos.y;
-		}
-		
-		Vector2f rPos = new Vector2f(pos.x + -cPos.x, -pos.y + -cPos.y);
-		
-		if(Camera.main.projectionType.equals(ProjectionType.projection))
-			return new Vector2f(-rPos.x, -rPos.y);
-		else
-			return new Vector2f(rPos.x, rPos.y);
+		return convertScreenToWorldSpace(Input.getMouseX(), Input.getMouseY(), width, height);
 	}
 	
 	public Vector2f convertScreenToWorldSpace(double x, double y, float width, float height) {
-		if(!ProjectSettings.isEditor)
-			x -= Application.getStartX(); y -= Application.getStartY();
+		if(ProjectSettings.isEditor) {
+			x -= Application.getStartX();
+			y -= Application.getStartY();
+		}
 		
-		Vector2f cPos = gameObject.getPosition().getXY();
+		float cPosX = 0;
+		float cPosY = gameObject.getPosition().y;
 		
 		Vector4f pos = new Vector4f((float)(x / (width / 2.0f) - 1f), 1 - (float)(y / (height / 2.0f)), 0, 1);
 		
@@ -257,11 +163,11 @@ public class Camera extends Behaviour {
 		pos.z *= pos.w;
 		
 		if(Camera.main.projectionType.equals(ProjectionType.orthographics)) {
-			cPos.x = -cPos.x;
-			cPos.y = -cPos.y;
+			cPosX = -cPosX;
+			cPosY = -cPosY;
 		}
 		
-		Vector2f rPos = new Vector2f(pos.x + -cPos.x, -pos.y + -cPos.y);
+		Vector2f rPos = new Vector2f(pos.x + -cPosX, pos.y + -cPosY);
 		
 		if(Camera.main.projectionType.equals(ProjectionType.projection))
 			return new Vector2f(-rPos.x, -rPos.y);

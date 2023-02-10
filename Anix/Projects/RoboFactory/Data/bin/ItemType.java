@@ -10,10 +10,10 @@ public enum ItemType {
 	Gear("", 0, false);
 	
     public String description;
-    public float burnRate;
+    public int burnRate;
     public boolean burnAble;
 	
-    private ItemType(String description, float burnRate, boolean burnAble) {
+    private ItemType(String description, int burnRate, boolean burnAble) {
     	this.description = description;
     	this.burnRate = burnRate;
     	this.burnAble = burnAble;

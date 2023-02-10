@@ -6,6 +6,8 @@ public class Generator extends Building {
 	*/
 	private static final long serialVersionUID = 1L;
 	
+	public float currentElectricity;
+	
 	public float maxCapacity;
 	
 	public Generator() {

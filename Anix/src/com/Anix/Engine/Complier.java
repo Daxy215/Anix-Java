@@ -37,6 +37,7 @@ import com.Anix.Behaviours.SpriteRenderer;
 import com.Anix.GUI.Windows.Console;
 import com.Anix.IO.ProjectSettings;
 
+//https://stackoverflow.com/questions/5830581/getting-a-directory-inside-a-jar
 final class Complier {
 	private File classesDir;
 	private File sourceDir;
@@ -44,12 +45,9 @@ final class Complier {
 	
 	private List<File> files = null;
 	private List<File> directories = new ArrayList<>();
-	//private Map<File, String> files;
-	// private List<String> failers = new ArrayList<String>();
 	
 	public Complier() {
 		files = new ArrayList<File>();
-		//files = new HashMap<File, String>();
 	}
 	
 	public void compile() throws Exception {
@@ -115,16 +113,9 @@ final class Complier {
 			for(Diagnostic<?> diagnostic : diagnostics.getDiagnostics()) {
 				System.err.format("[Error] on line %d in %s", diagnostic.getLineNumber(), diagnostic);
 				Console.LogErr("[Error] on line " + diagnostic.getLineNumber() + " in " + diagnostic + "\n");
-				
-				//String path = diagnostic.getSource().toString().split("\\[")[1].split("\\]")[0];
-				//String[] splitPath = path.split("\\\\");
-				//String name = splitPath[splitPath.length - 1];
-				//failers.add(name);
 			}
 			
 			System.out.println();
-			
-			//return;
 		}
 		
 		URL[] directoryURLs = directories.stream().map(d -> {
@@ -132,7 +123,7 @@ final class Complier {
 				return d.toURI().toURL();
 			} catch (MalformedURLException e1) {
 				e1.printStackTrace();
-			}
+ 			}
 			
 			return null;
 		}).toArray(URL[]::new);
@@ -140,22 +131,14 @@ final class Complier {
 		classLoader = URLClassLoader.newInstance(directoryURLs);
 		Thread.currentThread().setContextClassLoader(classLoader);
 		
-		//Field scl = ClassLoader.class.getDeclaredField("scl"); // Get system class loader
-		//scl.setAccessible(true); // Set accessible scl.set(null, classLoader);
-		
-		//for(Map.Entry<File, String> file : files.entrySet()) {
 		for(File f : files) {
 			try {
 				//TODO: java.lang.ClassFormatError: Truncated class file?????
-				//Class<?> clazz = Class.forName(/*"Scripts.Player." + *//*file.getValue() + */file.getKey().getName().split(".java")[0].trim(), true, classLoader);
-				
 				String packageName = extractPackageNameFromSourceCode(f);
 				String className = f.getName().split(".java")[0].trim();
 				String fullyQualifiedName = packageName + "." + className;
 				
-				System.err.println("Currently loading: " + fullyQualifiedName);
 				Class<?> clazz = Class.forName(fullyQualifiedName, true, classLoader);
-				//addSoftwareLibrary(files.get(i));
 				
 				if(clazz != null && !Modifier.isAbstract(clazz.getModifiers())) {
 					try {
@@ -167,16 +150,13 @@ final class Complier {
 							}
 							
 							System.out.println("Successfully loaded class with the name of: " +  f.getName().split(".java")[0]);
-							//System.out.println("Successfully loaded class with the name of: " +  file.getKey().getName().split(".java")[0]);
 						} catch(Exception e) {
 							System.err.println("[ERROR] " + clazz.getSimpleName() + " : " + e.getMessage());
 						}
 					} catch(NoSuchMethodException e) {
 						System.err.println("[ERROR] Please include a default constructor for the class with the name of: " + f.getName().split(".java")[0]);
-						//System.err.println("[ERROR] Please include a default constructor for the class with the name of: " + file.getKey().getName().split(".java")[0]);
 					} catch(Exception e) {
 						System.err.println("Class name; " + f.getName());
-						//System.err.println("Class name; " + file.getKey().getName());
 						e.printStackTrace();
 					}
 				}
@@ -187,57 +167,10 @@ final class Complier {
 			} catch(Exception | NoClassDefFoundError e) {
 				System.err.println("[ERORR] [TSH] Couldn't load a class with the name of: " +
 						f.getName().split(".java")[0] + " because of " + e.getMessage());
-				
-				//System.err.println("[ERORR] [TSH] Couldn't load a class with the name of: " +
-				//		file.getKey().getName().split(".java")[0] + " because of " + e.getMessage());
 				e.printStackTrace();
 			}
 		}
 	}
-	
-	/*
-	 * private void addSoftwareLibrary(File file) throws Exception { //ClassLoader
-	 * urlClassLoader = ClassLoader.getSystemClassLoader(); //DynamicURLClassLoader
-	 * dynalLoader = new DynamicURLClassLoader(urlClassLoader); Method method =
-	 * URLClassLoader.class.getDeclaredMethod("addURL", new Class[]{URL.class});
-	 * method.setAccessible(true); method.invoke(ClassLoader.getSystemClassLoader(),
-	 * new Object[]{file.toURI().toURL()}); }
-	 */
-	
-	/*public boolean isErrorFree() {
-		JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
-		DiagnosticCollector<JavaFileObject> diagnostics = new DiagnosticCollector<JavaFileObject>();
-		StandardJavaFileManager fileManager = compiler.getStandardFileManager(diagnostics, Locale.getDefault(), null);
-		List<JavaFileObject> javaObjects = null;
-		
-		if(ProjectSettings.isEditor) {
-			javaObjects = scanRecursivelyForJavaObjects(sourceDir, fileManager);
-		} else {
-			javaObjects = scanRecursivelyForJavaObjects(classesDir, fileManager);
-		}
-		
-		if (javaObjects == null || javaObjects.size() == 0) {
-			return true;
-		}
-		
-		String[] compileOptions = new String[]{"-d", classesDir.getAbsolutePath()};
-		Iterable<String> compilationOptions = Arrays.asList(compileOptions);
-		
-		CompilationTask compilerTask = compiler.getTask(null, fileManager, diagnostics, compilationOptions, null, javaObjects);
-		
-		if (!compilerTask.call()) {
-			for(Diagnostic<?> diagnostic : diagnostics.getDiagnostics()) {
-				System.err.format("[Error] on line %d in %s", diagnostic.getLineNumber(), diagnostic);
-				Console.LogErr("[Error] on line " + diagnostic.getLineNumber() + " in " + diagnostic + "\n");
-			}
-			
-			System.out.println();
-			
-			return false;
-		}
-		
-		return true;
-	}*/
 	
 	private static String extractPackageNameFromSourceCode(File javaFile) throws IOException {
 		StringBuilder source = new StringBuilder();
@@ -283,7 +216,7 @@ final class Complier {
 		
 		return filesList;
 	}
-
+	
 	private List<JavaFileObject> scanRecursivelyForJavaObjects(File dir, StandardJavaFileManager fileManager) {
 		List<JavaFileObject> javaObjects = new LinkedList<JavaFileObject>();
 		File[] files = dir.listFiles();
@@ -293,31 +226,11 @@ final class Complier {
 		
 		for (File file : files) {
 			if (file.isDirectory()) {
-				System.err.println("Adding: " + file.getAbsolutePath());
 				directories.add(file);
 				javaObjects.addAll(scanRecursivelyForJavaObjects(file, fileManager));
 			} else if (file.isFile() && file.getName().toLowerCase().endsWith(".java")) {
-				/*String parent = "";
-				
-				if(!file.getParentFile().getParentFile().getName().equalsIgnoreCase("assets")) {
-					File curFile = file.getParentFile();
-					
-					List<File> parents = new ArrayList<>();
-					parents.add(curFile);
-					
-					while(!curFile.getName().equalsIgnoreCase("assets")) {
-						parents.add(curFile);
-						curFile = curFile.getParentFile();
-					}
-					
-					for(int i = parents.size() - 1; i > 0; i--) {
-						parent += parents.get(i).getName() + ".";
-					}
-				}*/
-				
 				javaObjects.add(readJavaObject(file, fileManager));
 				this.files.add(file);
-				//this.files.put(file, parent);
 			}
 		}
 		

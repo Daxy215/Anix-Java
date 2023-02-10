@@ -1,9 +1,12 @@
-package Player;
+package PlayerP;
 
 import com.Anix.Behaviours.Behaviour;
+import com.Anix.IO.Input;
+import com.Anix.IO.KeyCode;
 
+import Enums.ItemType;
 import Managers.WorldManager;
-import Player.Inventory.Inventory;
+import PlayerP.InventoryManager.Inventory;
 
 public class Player extends Behaviour {
 	/*
@@ -13,6 +16,10 @@ public class Player extends Behaviour {
 	
 	public static Inventory inventory;
 	
+	public Player() {
+		
+	}
+	
 	@Override
 	public void awake() {
 		inventory = (Inventory)gameObject.getBehaviour(Inventory.class);
@@ -21,5 +28,17 @@ public class Player extends Behaviour {
 	@Override
 	public void start() {
 		gameObject.getMesh().setMaterial(WorldManager.material);
+		
+		requestUpdate();
+	}
+	
+	@Override
+	public void update() {
+		if(Input.isKeyDown(KeyCode.I)) {
+			inventory.showInventory = !inventory.showInventory;
+		}
+		
+		if(Input.isKey(KeyCode.C))
+			inventory.addItem(ItemType.Log, 1);
 	}
 }
