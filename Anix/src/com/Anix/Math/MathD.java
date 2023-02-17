@@ -20,7 +20,6 @@ public class MathD {
 		return reversed;
 	}
 	
-	
 	public static <T> List<T> reverse(List<T> input) {
 	    var reversed = new ArrayList<T>();
 	    for (int i = input.size() - 1; i >= 0; i--) {
@@ -71,8 +70,13 @@ public class MathD {
 		}
 	}
 	
+	public static double getDistance(Vector2f pos1, Vector3f pos2) {
+		return Math.sqrt(Math.pow(pos1.getX() - pos2.getX(), 2)
+				+ Math.pow(pos1.getY() - pos2.getY(), 2));
+	}
+	
 	public static double distanceBetweenVector2(Vector2f pos1, Vector2f pos2) {
-		return StrictMath.sqrt(Math.pow(pos1.getX() - pos2.getX(), 2)
+		return Math.sqrt(Math.pow(pos1.getX() - pos2.getX(), 2)
 				+ Math.pow(pos1.getY() - pos2.getY(), 2));
 	}
 	
@@ -324,6 +328,10 @@ public class MathD {
 		float result = min + r.nextFloat() * (max - min);
 		
 		return result;
+	}
+	
+	public static Vector3f toRadians(Vector3f vector) {
+		return new Vector3f((float)Math.toRadians(vector.x), (float)Math.toRadians(vector.y), (float)Math.toRadians(vector.z));
 	}
 	
 	public static Vector3f convertVectorIToVectorF(Vector3i vector) {

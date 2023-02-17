@@ -108,8 +108,8 @@ public class Inventory extends Behaviour {
 					
 					slot.setItem(null);
 				}
-			} else if(Input.isMouseButtonDown(KeyCode.Mouse1) && !isDragging) {
-				if(!slot.isEmpty()) {
+			} else if(Input.isMouseButtonDown(KeyCode.Mouse1)) {
+				if(!slot.isEmpty() && !isDragging) {
 					if(slot.getItem().getAmount() > 1) {
 						if(slot.getItem().getAmount() % 2 == 0) {
 							slot.getItem().removeAmount(Math.round(slot.getItem().getAmount() * 0.5f));
@@ -133,6 +133,21 @@ public class Inventory extends Behaviour {
 								e.printStackTrace();
 							}
 						}
+					}
+				} else if(isDragging) {
+					if(!slot.isEmpty() && slot.getItem().getItemType().equals(draggedItem.getItemType())) {
+						if(slot.getItem().getAmount() < MAXAMOUNT) {
+							slot.getItem().addAmount(1);
+							draggedItem.removeAmount(1);
+						}
+					} else {
+						slot.setItem(new Item(1, draggedItem.getItemType(), slot));
+						draggedItem.removeAmount(1);
+					}
+					
+					if(draggedItem.getAmount() <= 0) {
+						isDragging = false;
+						draggedItem = null;
 					}
 				}
 			}
@@ -161,7 +176,7 @@ public class Inventory extends Behaviour {
 		}
 		
 		if(isDragging) {
-			int x = Item.width;
+			int x = (int)(slotWidth * 0.5f);
 			
 			if(draggedItem.getAmount() >= 10) {
 				x -= 4;
@@ -170,7 +185,7 @@ public class Inventory extends Behaviour {
 			}
 			
 			draggedItem.render(new Vector2f((float)Input.getMouseX(), (float)Input.getMouseY()));
-			UI.drawString("x" + draggedItem.getAmount(), (float)Input.getMouseX() + x, (float)Input.getMouseY() + Item.width, -0.2f, 0.5f, 0.5f, Color.white);
+			UI.drawString("x" + draggedItem.getAmount(), (float)Input.getMouseX() + x, (float)Input.getMouseY() + (slotWidth * 0.5f), -0.2f, 0.5f, 0.5f, Color.white);
 		}
 		
 		for(int i = 0; i < slots.size(); i++) {
@@ -195,7 +210,7 @@ public class Inventory extends Behaviour {
 		
 		inventories.add(this);
 		
-		if(textures.length == 0)
+		if(textures[0] == null)
 			for(int i = 0; i < ItemType.values().length; i++) {
 				textures[i] = UI.loadTexture("/Inventory/Items/" + ItemType.values()[i] + ".png");
 			}
@@ -531,7 +546,7 @@ public class Inventory extends Behaviour {
 				slots.add(new Slot(slots.size(), new Vector2f(x * slotWidth + (padding * x), y * slotHeight + (padding * y)), this));
 			}
 		}
-
+		
 		this.sizeX = sizeX;
 		this.sizeY = sizeY;
 	}
@@ -539,17 +554,22 @@ public class Inventory extends Behaviour {
 	public boolean toggle() {
 		this.showInventory = !showInventory;
 		
+		if(!showInventory && isDragging) {
+			isDragging = false;
+			draggedItem = null;
+		}
+		
 		return showInventory;
 	}
 	
 	public boolean canShowInventory() {
 		return showInventory;
 	}
-
+	
 	public void setShowInventory(boolean showInventory) {
 		this.showInventory = showInventory;
 	}
-
+	
 	public void setPosition(Vector2f position) {
 		this.position = position;
 	}

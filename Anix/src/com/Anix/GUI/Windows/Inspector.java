@@ -40,7 +40,7 @@ public final class Inspector {
 	private float startX = 0, startY = 25;
 	private float width = 300, height = 0;
 	private int counter;
-
+	
 	private AutoCorrector autoCorrector;
 	private GUI gui;
 
@@ -60,7 +60,7 @@ public final class Inspector {
 
 		ImGui.setNextWindowPos(startX, startY);
 		ImGui.setNextWindowSize(width, height);
-		ImGui.setNextWindowSizeConstraints(250/*Min width*/, -1.0f, Application.getFullWidth() - gui.getHierachy().getWidth() - /*Distance between screens - Padding*/ 20, -1.0f);
+		ImGui.setNextWindowSizeConstraints(250/*Min width*/, -1.0f, Application.getFullWidth() - gui.getHierarchy().getWidth() - /*Distance between screens - Padding*/ 20, -1.0f);
 
 		ImGui.begin("Inspector", GUI.defaultFlags);
 
@@ -82,7 +82,7 @@ public final class Inspector {
 			ImGui.spacing();
 		}
 
-		if(Hierachy.selectedObject != null) {
+		if(Hierarchy.selectedObject != null) {
 			if(GUI.centeredButton("Add Behaviour", 150, 35, 0.35f)) {
 				//Testing - TODO: Add a search bar.
 				//Hierachy.selectedObject.addBehaviour(new Physics2D());
@@ -90,29 +90,29 @@ public final class Inspector {
 				ImGui.openPopup("addBehaviour");
 			}
 		}
-
+		
 		if (ImGui.beginPopup("addBehaviour")) {
 			ImGui.inputText("##", behName);
-
+			
 			autoCorrector.root.children.clear();
-
+			
 			for(int i = 0; i < Editor.importedClasses.size(); i++) {
 				autoCorrector.root.insert(Editor.importedClasses.get(i).getName());
 			}
-
+			
 			List<String> behaviours = autoCorrector.suggest(behName.get());
-
+			
 			for(int i = 0; i < behaviours.size(); i++) {
 				if(ImGui.button(behaviours.get(i))) {
-					Hierachy.selectedObject.addBehaviour(Editor.getBehaviour(behaviours.get(i)));
-
+					Hierarchy.selectedObject.addBehaviour(Editor.getBehaviour(behaviours.get(i)));
+					
 					ImGui.closeCurrentPopup();
 				}
 			}
-
+			
 			ImGui.endPopup();
 		}
-
+		
 		width = ImGui.getWindowWidth();
 
 		ImGui.end();
@@ -125,9 +125,9 @@ public final class Inspector {
 	float[] pos = new float[3];
 	float[] rot = new float[3];
 	float[] scl = new float[3];
-
+	
 	private void drawObjectInformation() {
-		GameObject obj = Hierachy.selectedObject;
+		GameObject obj = Hierarchy.selectedObject;
 
 		if(obj == null)
 			return;
@@ -202,13 +202,13 @@ public final class Inspector {
 		ImGui.spacing();
 		ImGui.separator();
 	}
-
+	
 	void drawBehaviours() {
-		if(Hierachy.selectedObject == null)
+		if(Hierarchy.selectedObject == null)
 			return;
 
-		for(int i = 0; i < Hierachy.selectedObject.getBehaviours().size(); i++) {
-			Behaviour behaviour = Hierachy.selectedObject.getBehaviours().get(i);
+		for(int i = 0; i < Hierarchy.selectedObject.getBehaviours().size(); i++) {
+			Behaviour behaviour = Hierarchy.selectedObject.getBehaviours().get(i);
 
 			//Checkbox to Enable/Disable Behaviour.
 			ImGui.pushID("jghijogijoerofcef "  + i + " - " + counter);
@@ -263,7 +263,7 @@ public final class Inspector {
 			ImGui.separator();
 		}
 	}
-
+	
 	private void drawFields(Behaviour behaviour) throws IllegalArgumentException, IllegalAccessException {
 		for(int i = 0; i < behaviour.getFields().length; i++) {
 			try {
@@ -274,7 +274,7 @@ public final class Inspector {
 			}
 		}
 	}
-
+	
 	private void drawFields(Object object) {
 		if(object == null)
 			return;
@@ -291,65 +291,67 @@ public final class Inspector {
 			}
 		}
 	}
-
+	
 	//Fields variables
 	ImString sv = new ImString("", 256);
 	int[] iv = new int[1];
 	float[] fv = new float[3];
 	float[] cv = new float[3];
-
+	
 	private void drawField(Field f, Object object) throws IllegalArgumentException, IllegalAccessException, NoSuchMethodException, SecurityException, InvocationTargetException {
+		f.setAccessible(true);
+		
 		Class<?> type = f.getType();
 		String typeName = type.getSimpleName();
-
+		
 		Header header = f.getAnnotation(Header.class);
-
+		
 		if(header != null) {
 			ImDrawList drawList = ImGui.getWindowDrawList();
-
+			
 			float x = ImGui.getCursorScreenPosX();
 			float y = ImGui.getCursorScreenPosY();
-
+			
 			//33.15, 35.7, 43.35 - Window background.
 			drawList.addRectFilled(x, y,
 					width + x, ImGui.getTextLineHeight() + y,
 					ImColor.intToColor(23, 25, 33, 255));
-
+			
 			ImGui.setCursorPosY(ImGui.getCursorPosY() - 1);
 			ImGui.text(header.value());
 		}
-
+		
 		//ImGui.sameLine();
 		ImGui.text(f.getName() + ": ");
 		ImGui.sameLine();
-
+		
 		ImGui.pushID("Field: " + object.hashCode() + counter);
-
+		
 		ImGui.pushItemWidth(width - 100);
-
+		
 		if(type.isPrimitive()) {
 			switch(typeName.toLowerCase()) {
 			case "byte":
 				iv[0] = f.getByte(object);
-
+				
 				if(ImGui.dragInt("", iv, 0.1f))
 					f.set(object, iv[0]);
 				break;
 			case "int":
 				iv[0] = f.getInt(object);
-
+				
 				if(ImGui.dragInt("", iv, 0.1f))
 					f.set(object, iv[0]);
 				break;
 			case "long":
 				iv[0] = (int) f.getLong(object);
-
+				
 				if(ImGui.dragInt("", iv, 0.1f))
 					f.set(object, iv[0]);
 				break;
 			case "float":
 				fv[0] = f.getFloat(object);
-
+				
 				if(ImGui.dragFloat("", fv, 0.1f))
 					f.set(object, fv[0]);
 
@@ -498,7 +500,7 @@ public final class Inspector {
 
 		counter++;
 	}
-
+	
 	private void drawList(Field f, List<Object> list, Object object) throws IllegalArgumentException, IllegalAccessException, NoSuchMethodException, SecurityException, InvocationTargetException {
 		ParameterizedType listType = (ParameterizedType) f.getGenericType();
 		Class<?> listElementType = (Class<?>) listType.getActualTypeArguments()[0];
@@ -636,7 +638,7 @@ public final class Inspector {
 		
 		counter++;
 	}
-
+	
 	public static Consumer<Integer> toConsumer(Object annotated, Method m) {
 		return param -> {
 			try {

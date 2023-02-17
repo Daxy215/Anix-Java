@@ -10,7 +10,6 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import com.Anix.Annotation.HideFromInspector;
-import com.Anix.Behaviours.Collider2D.Collision;
 import com.Anix.Engine.Editor;
 import com.Anix.Main.Core;
 import com.Anix.Math.Vector3f;
@@ -25,7 +24,6 @@ public abstract class Behaviour extends Object implements Cloneable, Serializabl
 	
 	@HideFromInspector
 	public transient GameObject gameObject = null;
-
 	
 	public Behaviour() {}
 	
@@ -59,9 +57,9 @@ public abstract class Behaviour extends Object implements Cloneable, Serializabl
 	
 	public void onButtonClicked(String id, int clickType) {}
 	
-	public void onCollisionEnter(Collision collision) {}
+	public void onCollisionEnter(GameObject other) {}
 	
-	public void onCollisionStay(Collision collision) {}
+	public void onCollisionStay(GameObject other) {}
 	
 	public void onCollisionExit(GameObject other) {}
 	
@@ -216,21 +214,66 @@ public abstract class Behaviour extends Object implements Cloneable, Serializabl
 		return gameObject;
 	}
 	
-	public Field[] getFields() {
+	public Field[] getAllFields() {
 		List<Field> fields = new ArrayList<Field>();
 		
-		if(getClass().getSuperclass() != null)
-			for(int i = 0; i < getClass().getSuperclass().getDeclaredFields().length; i++) {
-				Field f = getClass().getSuperclass().getDeclaredFields()[i];
+		Class<?> superClazz = getClass().getSuperclass();
+		
+		while(superClazz != null) {
+			for(int i = 0; i < superClazz.getDeclaredFields().length; i++) {
+				Field f = superClazz.getDeclaredFields()[i];
 				
-				if(f.getAnnotation(HideFromInspector.class) != null)
-					continue;
-				
-				if(Modifier.isProtected(f.getModifiers()) || Modifier.isFinal(f.getModifiers()) || Modifier.isStatic(f.getModifiers()))
+				if(f.getName().equalsIgnoreCase("serialversionuid"))
 					continue;
 				
 				fields.add(f);
 			}
+			
+			superClazz = superClazz.getSuperclass();
+		}
+		
+		for(int i = 0; i < getClass().getDeclaredFields().length; i++) {
+			Field f = getClass().getDeclaredFields()[i];
+			
+			if(f.getName().equalsIgnoreCase("serialversionuid"))
+				continue;
+			
+			fields.add(f);
+		}
+		
+		Field[] returnField = new Field[fields.size()];
+		
+		for(int i = 0; i < fields.size(); i++) {
+			fields.get(i).setAccessible(true);
+			returnField[i] = fields.get(i);
+		}
+		
+		return returnField;
+	}
+	
+	public Field[] getFields() {
+		List<Field> fields = new ArrayList<Field>();
+		
+		Class<?> superClazz = getClass().getSuperclass();
+		
+		while(superClazz != null) {
+			for(int i = 0; i < superClazz.getDeclaredFields().length; i++) {
+				Field f = superClazz.getDeclaredFields()[i];
+				
+				if(f.getAnnotation(HideFromInspector.class) != null)
+					continue;
+				
+				if(f.getName().equalsIgnoreCase("serialversionuid"))
+					continue;
+				
+				//if(/*Modifier.isProtected(f.getModifiers()) || */Modifier.isFinal(f.getModifiers()) || Modifier.isStatic(f.getModifiers()))
+					//continue;
+				
+				fields.add(f);
+			}
+			
+			superClazz = superClazz.getSuperclass();
+		}
 		
 		for(int i = 0; i < getClass().getFields().length; i++) {
 			Field f = getClass().getFields()[i];
@@ -239,6 +282,9 @@ public abstract class Behaviour extends Object implements Cloneable, Serializabl
 				continue;
 			
 			if(Modifier.isFinal(f.getModifiers()) || Modifier.isStatic(f.getModifiers()))
+				continue;
+			
+			if(f.getName().equalsIgnoreCase("serialversionuid"))
 				continue;
 			
 			fields.add(f);

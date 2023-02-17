@@ -59,7 +59,6 @@ import java.util.function.Consumer;
 
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
-import org.lwjgl.stb.STBImage;
 import org.lwjgl.system.MemoryStack;
 
 import com.Anix.IO.Input;
@@ -92,26 +91,26 @@ public final class UI {
 			return isRightClicked;
 		}
 	}*/
-
+	
 	public static class Popup {
 		private String ID;
-
+		
 		/*
 		 * Menus.length * size.y.<br>
 		 * Used to detect whether the mouse is hovering over the popup or not.
 		 */
 		private float height = -1;
 		private byte lastPopup = -1, generated = 0;
-
+		
 		private Vector2f size;
 		private Vector3f position;
 		private Color color, textColor;
-
+		
 		private String[] menus;
 		private Consumer<String> func;
-
+		
 		private List<Popup> supPopups = new ArrayList<Popup>();
-
+		
 		public Popup(String ID, Vector2f size, Vector3f position, Color color, Color textColor, String[] menus, Consumer<String> func) {
 			this.ID = ID;
 			this.size = size;
@@ -120,34 +119,34 @@ public final class UI {
 			this.textColor = textColor;
 			this.menus = menus;
 			this.func = func;
-
+			
 			height = (menus.length * size.y);
 		}
-
+		
 		public void update() {
 			renderPopup(this);
 		}
-
+		
 		public void renderPopup(Popup popup) {
 			boolean isHovering = drawButton(position.x, position.y, size.x * (supPopups.isEmpty() ? 1 : 2), size.y * menus.length);
 			
 			if(isHovering) {
 				for(byte i = 0; i < popup.menus.length; i++) {
 					boolean isHoveringP = drawButtonWithOutline(popup.position.x, popup.position.y + (i * size.y), popup.position.z, popup.size.x, popup.size.y, 1, 1, popup.menus[i].contains("<") ? popup.menus[i].split("<")[0] : popup.menus[i], 0, 0, -0.1f, 0.5f, 0.5f, popup.textColor, popup.color, Color.black);
-
+					
 					if(isHoveringP) {
 						if(popup.menus[i].contains("<")) {
 							if(popup.lastPopup != -1 && popup.lastPopup != i && popup.menus[popup.lastPopup].contains("<")) {//Is on another parent
 								popup.generated = 0;
 								popup.supPopups.clear();
 							}
-
+							
 							popup.lastPopup = i;
-
+							
 							if(popup.generated == 0) {
 								String[] subMenu = popup.menus[i].split("<")[1].split(";");
 								subMenu[subMenu.length - 1] = subMenu[subMenu.length - 1].split(">")[0];
-
+								
 								popup.supPopups.add(new Popup(popup.ID + i, popup.size, new Vector3f(popup.position.x + popup.size.x, popup.position.y, popup.position.z), popup.color, popup.textColor, subMenu, popup.func));
 								popup.generated = 1;
 							}
@@ -199,7 +198,7 @@ public final class UI {
 			return func;
 		}
 	}
-
+	
 	public static class Toggle {
 		private boolean value, isHovering;
 
@@ -216,7 +215,7 @@ public final class UI {
 			return isHovering;
 		}
 	}
-
+	
 	public static final class DropDown {
 		public class DropDownClickEvent {
 			private String id, buttonId;
@@ -309,7 +308,7 @@ public final class UI {
 			}
 		}
 	}
-
+	
 	//Textures
 	/**
 	 * This texture will be used when a popup menu has a child.<br>
@@ -328,7 +327,7 @@ public final class UI {
 		defaultFont = new Font(defaultFontName, style, size);
 		fontMatrices = new FontMetrics(defaultFont) {private static final long serialVersionUID = 1L;};
 	}
-
+	
 	public static void update() {
 		for(int i = popups.size() - 1; i >= 0; i--) {
 			Popup popup = popups.get(i);
@@ -364,7 +363,7 @@ public final class UI {
 			popups.add(new Popup(ID, size, new Vector3f((float)Input.getMouseX() - 2, (float)Input.getMouseY() - 2, z), color, textColor, menus, func));
 		}
 	}
-
+	
 	public static Toggle toggle(Texture off, Texture on, float x, float y, float z, float width, float height, boolean value) {
 		Texture texture = value ? on : off;
 		
@@ -376,7 +375,7 @@ public final class UI {
 
 		return new Toggle(value, isHovering);
 	}
-
+	
 	public static Toggle toggle(Texture off, Texture on, float x, float y, float z, float width, float height, boolean value, String text, float textOffsetX, float textOffsetY, float textOffsetZ, float textSizeX, float textSizeY, Color textColor) {
 		Texture texture = value ? on : off;
 
@@ -389,7 +388,7 @@ public final class UI {
 
 		return new Toggle(value, isHovering);
 	}
-
+	
 	public static Toggle toggle(Texture off, Texture on, float x, float y, float z, float width, float height, boolean value, String text, float textOffsetX, float textOffsetY, float textOffsetZ, float textSizeX, float textSizeY, Color textColor, Vector2f offset, Color backgroundColor) {
 		Texture texture = value ? on : off;
 
@@ -402,7 +401,7 @@ public final class UI {
 
 		return new Toggle(value, isHovering);
 	}
-
+	
 	public static Toggle toggle(Texture off, Texture on, float x, float y, float z, float width, float height, boolean value, String text, float textOffsetX, float textOffsetY, float textOffsetZ, float textSizeX, float textSizeY, Color textColor, Vector2f offset, Vector3f backgroundOffset, Color backgroundColor) {
 		Texture texture = value ? on : off;
 
@@ -415,11 +414,11 @@ public final class UI {
 
 		return new Toggle(value, isHovering);
 	}
-
+	
 	public void addDropDown() {
 
 	}
-
+	
 	public static boolean drawButton(float x, float y, float width, float height, Color color) {
 		drawBox(x, y, width, height, color);
 
@@ -428,7 +427,7 @@ public final class UI {
 
 		return mouseX >= x && mouseX <= x + width && mouseY >= y && mouseY <= y + height;
 	}
-
+	
 	public static boolean drawButton(String text, float width, float height, float x, float y, float sizeX, float sizeY, Color textColor, Color boxColor) {
 		drawBox(x, y, width, height, boxColor);
 		drawString(text, x, y, 0, sizeX, sizeY, textColor);
@@ -438,7 +437,7 @@ public final class UI {
 
 		return mouseX >= x && mouseX <= x + width && mouseY >= y && mouseY <= y + height;
 	}
-
+	
 	public static boolean drawButton(float x, float y, float width, float height, String text, float textOffsetX, float textOffsetY, float textSizeX, float textSizeY, Color textColor) {
 		drawString(text, x + textOffsetX, y + textOffsetY, textSizeX, textSizeY, textColor);
 		
@@ -447,7 +446,7 @@ public final class UI {
 
 		return mouseX >= x && mouseX <= x + width && mouseY >= y && mouseY <= y + height;
 	}
-
+	
 	public static boolean drawButton(float x, float y, float z, float width, float height, String text, float textOffsetX, float textOffsetY, float textOffsetZ, float textSizeX, float textSizeY, Color textColor) {
 		drawString(text, x + textOffsetX, y + textOffsetY, z + textOffsetZ, textSizeX, textSizeY, textColor);
 
@@ -465,7 +464,7 @@ public final class UI {
 
 		return mouseX >= x && mouseX <= x + width && mouseY >= y && mouseY <= y + height;
 	}
-
+	
 	public static boolean drawButton(String text, float width, float height, float x, float y, float z, float sizeX, float sizeY, Color textColor) {
 		drawString(text, x, y, z, sizeX, sizeY, textColor);
 
@@ -474,7 +473,7 @@ public final class UI {
 
 		return mouseX >= x && mouseX <= x + width && mouseY >= y && mouseY <= y + height;
 	}
-
+	
 	public static boolean drawButton(float x, float y, float z, float width, float height, String text, float textOffsetX, float textOffsetY, float textOffsetZ, float textSizeX, float textSizeY, Color textColor, Texture texture) {
 		drawImage(texture.getTextureID(), x, y, z, width, height);
 		drawString(text, x + textOffsetX, y + textOffsetY, z + textOffsetZ, textSizeX, textSizeY, textColor);
@@ -503,7 +502,7 @@ public final class UI {
 
 		return mouseX >= x && mouseX <= x + width && mouseY >= y && mouseY <= y + height;
 	}
-
+	
 	public static boolean drawButton(float x, float y, float width, float height, String text, float textOffsetX, float textOffsetY, float textOffsetZ, float textSizeX, float textSizeY, Color textColor, Color color) {
 		drawBox(x, y, width, height, color);
 		drawString(text, x + textOffsetX, y + textOffsetY, textSizeX, textSizeY, textColor);
@@ -513,7 +512,7 @@ public final class UI {
 
 		return mouseX >= x && mouseX <= x + width && mouseY >= y && mouseY <= y + height;
 	}
-
+	
 	public static boolean drawButton(float x, float y, float z, float width, float height, String text, float textOffsetX, float textOffsetY, float textOffsetZ, float textSizeX, float textSizeY, Color textColor, Color color) {
 		drawBox(x, y, z, width, height, color);
 		drawString(text, x + textOffsetX, y + textOffsetY, z + textOffsetZ, textSizeX, textSizeY, textColor);
@@ -523,7 +522,7 @@ public final class UI {
 		
 		return mouseX >= x && mouseX <= x + width && mouseY >= y && mouseY <= y + height;
 	}
-
+	
 	public static boolean drawButton(float x, float y, float z, float width, float height, Color color) {
 		drawBox(x, y, z, width, height, color);
 
@@ -1200,10 +1199,9 @@ public final class UI {
 	}
 
 	public static void drawline(float startX, float startY, float startZ, float endX, float endY, float endZ, Color color, float lineWidth) {
-		//float[] currentColor = new float[4];
-		//GL11.glGetFloatv(GL11.GL_CURRENT_COLOR, currentColor);
-
 		GL13.glPushMatrix();
+		GL11.glPushAttrib(GL11.GL_CURRENT_BIT);
+		
 		GL11.glLineWidth(lineWidth);
 		
 		GL11.glBegin(GL11.GL_LINES);
@@ -1211,9 +1209,9 @@ public final class UI {
 		GL11.glVertex3f(startX, startY, startZ);
 		GL11.glVertex3f(endX, endY, endZ);
 		GL11.glEnd();
-		GL13.glPopMatrix();
 		
-		//GL11.glColor4f(currentColor[0], currentColor[1], currentColor[2], currentColor[3]);
+		GL11.glPopAttrib();
+		GL13.glPopMatrix();
 	}
 
 	public static boolean drawlineButton(float startX, float startY, float startZ, float endX, float endY, float endZ, Color color, float lineWidth) {

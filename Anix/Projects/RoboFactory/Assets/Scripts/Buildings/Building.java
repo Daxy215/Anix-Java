@@ -5,15 +5,14 @@ import java.util.List;
 
 import com.Anix.Behaviours.Behaviour;
 import com.Anix.Behaviours.SpriteRenderer;
-import com.Anix.Engine.Editor;
 import com.Anix.Math.Vector2f;
 import com.Anix.Math.Vector3f;
 import com.Anix.Objects.GameObject;
 
 import Enums.ItemType;
 import Managers.BuilderManager;
-import Managers.WorldManager;
 import Managers.BuilderManager.PlacementData;
+import Managers.WorldManager;
 
 public abstract class Building extends Behaviour {
 	private static final long serialVersionUID = 1L;	
@@ -34,8 +33,8 @@ public abstract class Building extends Behaviour {
 	
 	public int currentLevel = 0;
 	
-	public float health;
-	public float electricityRequired, currentElectricity;
+	protected float health;
+	protected float electricityRequired, currentElectricity, maxElectricity;
 	
 	public boolean isRotateable;
 	public boolean isUnlocked = true;
@@ -47,9 +46,13 @@ public abstract class Building extends Behaviour {
 	}
 	
 	public void updatePlacements(PlacementData placementData) {}
-	public void startPlacing(PlacementData placementData) {}
-	public void endPlacing(PlacementData placementData) {}
-	public void placeBuilding(Vector2f pos) {
+	
+	public void startPlacing(PlacementData placementData) {
+		placeBuilding(placementData.startPos, this);
+		placementData.cancel();
+	}
+	
+	public Building placeBuilding(Vector2f pos, Building b) {
 		GameObject obj = new GameObject(getName(), new Vector3f(pos.x, pos.y, -2));
 		SpriteRenderer sr = new SpriteRenderer();
 		sr.spriteName = getName() + "0.png";
@@ -57,9 +60,11 @@ public abstract class Building extends Behaviour {
 		
 		obj.addBehaviour(sr);
 		obj.getMesh().setMaterial(WorldManager.material);
-		obj.addBehaviour(Editor.getBehaviour(getName()));
+		Building bu = (Building)obj.addBehaviour(b);
 		
-		BuilderManager.placedBuildings.add(pos);
+		BuilderManager.addToPositions(pos.copy());
+		
+		return bu;
 	}
 	
  	public String getName() {

@@ -9,7 +9,7 @@ import Enums.ItemType;
 public class Item implements Cloneable {
 	private int amount = 1;
 	
-	public static int width = 32, height = 32;
+	//public static int width = 32, height = 32;
 	
 	private ItemType itemType;
 	
@@ -35,11 +35,11 @@ public class Item implements Cloneable {
 			}
 		}
 		
-		texture = parent.inventory.textures[index];
+		texture = Inventory.textures[index];
 	}
 	
 	public void render(Vector2f position) {
-		UI.drawImage(getTexture().getTextureID(), position.x, position.y, -0.1f, width, height);
+		UI.drawImage(getTexture().getTextureID(), position.x, position.y, -0.1f, parent.inventory.slotWidth * 0.5f, parent.inventory.slotHeight * 0.5f);
 	}
 	
 	@Override

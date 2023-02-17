@@ -1,7 +1,6 @@
 package com.Anix.Behaviours;
 
 import com.Anix.Annotation.HideFromInspector;
-import com.Anix.Behaviours.Collider2D.Collision;
 import com.Anix.Engine.PhysicsEngine;
 import com.Anix.Math.Vector2f;
 import com.Anix.Objects.GameObject;
@@ -102,7 +101,7 @@ public class Physics2D extends Behaviour {
 	}
 	
 	@Override
-	public void onCollisionEnter(Collision collision) {
+	public void onCollisionEnter(GameObject other) {
 		/*if(collision.getDirection() == 0) {
 			force.y = 0;
 			

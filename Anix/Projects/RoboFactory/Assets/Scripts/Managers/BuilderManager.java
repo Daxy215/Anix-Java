@@ -17,12 +17,14 @@ import com.Anix.GUI.UI;
 import com.Anix.IO.Application;
 import com.Anix.IO.Input;
 import com.Anix.IO.KeyCode;
+import com.Anix.Math.MathD;
 import com.Anix.Math.Vector2f;
 import com.Anix.Objects.GameObject;
 
 import Buildings.BasicGenerator;
 import Buildings.Building;
 import Buildings.Cable;
+import Buildings.ConveyorBelt;
 import Buildings.Furnace;
 import Buildings.MainBuilding;
 import Buildings.Miner;
@@ -45,11 +47,13 @@ public class BuilderManager extends Behaviour {
 	/*
 	 * Please ignore this tyvm :)
 	 */
-	private static final long serialVersionUID = 1L;	
+	private static final long serialVersionUID = 1L;
 	
 	public static class BuildingData {
 		public int category;
 		
+		//TODO: Make this to be a list instead,
+		//for levels.
 		public Building building;
 		public Texture texture;
 		
@@ -65,6 +69,7 @@ public class BuilderManager extends Behaviour {
 		private static final long serialVersionUID = 1L;
 		
 		public boolean startedBuilding;
+		private boolean cancelled;
 		public Vector2f startPos;
 		public Vector2f startPosScreenSpace;
 		
@@ -73,20 +78,41 @@ public class BuilderManager extends Behaviour {
 			this.startPos = startPos;
 			this.startPosScreenSpace = startPosScreenSpace;
 		}
+		
+		public void cancel() {
+			cancelled = true;
+		}
+	}
+	
+	public static class ElectricityProduceData {
+		public boolean canBeSource;
+		public Building building;
+		
+		public ElectricityProduceData() {
+			
+		}
+		
+		public ElectricityProduceData(boolean canBeSource, Building building) {
+			this.canBeSource = canBeSource;
+			this.building = building;
+		}
 	}
 	
 	private int currentCategory;
 	
 	public boolean isBuilding, showMenu;
-	public PlacementData placementData;
 	
+	public PlacementData placementData;
 	public BuildingData selectedBuilding;
 	
 	private GameObject placeHolder;
 	
 	public static BuilderManager instance;
 	
-	public static List<Vector2f> placedBuildings;
+	public static List<Cable> cables;
+	public static List<ElectricityProduceData> electricityProcedurable;
+	
+	private static List<Vector2f> placedBuildingsPositions;
 	//public List<BuildingData> buildings;
 	public Map<String, BuildingData> buildings;
 	
@@ -94,9 +120,13 @@ public class BuilderManager extends Behaviour {
 	public void awake() {
 		//buildings = new ArrayList<BuildingData>();
 		buildings = new HashMap<>();
-		placedBuildings = new ArrayList<>();
+		placedBuildingsPositions = new ArrayList<>();
+		
+		cables = new ArrayList<>();
+		electricityProcedurable = new ArrayList<>();
 		
 		placementData = new PlacementData(false, null, null);
+		placementData.cancel();
 		
 		requestUpdate();
 		requestRender();
@@ -112,16 +142,17 @@ public class BuilderManager extends Behaviour {
 		
 		buildings.put("Speical", new BuildingData(0, new MainBuilding()));
 		buildings.put("Furnace", new BuildingData(1, new Furnace()));
-		buildings.put("Miner", new BuildingData(1, new Miner()));
-		buildings.put("Electricity", new BuildingData(2, new Pole()));
-		buildings.put("Cable", new BuildingData(2, new Cable()));
+		buildings.put("Miner", new BuildingData(1, new Miner(2.5f, 15)));
+		buildings.put("Bro?", new BuildingData(2, new Pole(5)));
+		buildings.put("Cable", new BuildingData(2, new Cable(2)));
+		buildings.put("Yoo", new BuildingData(2, new ConveyorBelt()));
 		
 		/*
 		 *   Iron Plates: 5
   		 *   Copper Wires: 5
 		 *   Gears: 2
 		 */
-		addBuilding("Electricity", 2, new BasicGenerator(), Arrays.asList(Arrays.asList(new Building.Requirement(5, ItemType.IronBar),
+		addBuilding("Electricity", 2, new BasicGenerator(25), Arrays.asList(Arrays.asList(new Building.Requirement(5, ItemType.IronBar),
 				new Building.Requirement(5, ItemType.CopperWire), new Building.Requirement(2, ItemType.Gear))));
 	}
 	
@@ -141,6 +172,9 @@ public class BuilderManager extends Behaviour {
 			selectedBuilding.building.updatePlacements(placementData);
 		}
 		
+		for(int i = 0; i < cables.size(); i++)
+			cables.get(i).update();
+		
 		if(!isBuilding)
 			return;
 		
@@ -150,19 +184,18 @@ public class BuilderManager extends Behaviour {
 		placeHolder.setPosition(pos.x, pos.y);
 		
 		if(Input.isMouseButtonDown(KeyCode.Mouse0)) {
-			if(selectedBuilding != null && !placedBuildings.contains(pos)) {
-				System.err.println("Started Placing..");
+			if(selectedBuilding != null && !placedBuildingsPositions.contains(pos)) {
+				if(placementData != null && placementData.cancelled) {
+					placementData = new PlacementData(true, pos, spaceCoord);
+				}
 				
-				placementData = new PlacementData(true, pos, spaceCoord);
 				selectedBuilding.building.startPlacing(placementData);
 			}
-		} else if(Input.isMouseButtonUp(KeyCode.Mouse0)) {
-			if(placementData.startedBuilding) {
-				System.err.println("Ending placing..");
-				
-				placementData.startedBuilding = false;
-				selectedBuilding.building.endPlacing(placementData);
-			}
+		}
+		
+		if(placementData.startedBuilding && placementData.cancelled) {
+			placementData = new PlacementData(false, null, null);
+			placementData.cancel();
 		}
 	}
 	
@@ -200,20 +233,20 @@ public class BuilderManager extends Behaviour {
 				ImGui.setColumnOffset(1, 80);
 				
 				for(Entry<String, BuildingData> entry : buildings.entrySet()) {
-					if(entry.getValue().category == currentCategory) {
-						float y = ImGui.calcTextSize(entry.getKey()).y * 0.5f;
-						separatorWithText(entry.getKey(), startX, startY + y + ImGui.getCursorPosY(),
-								(ImGui.getWindowPosX()) + ImGui.getWindowSizeX(), startY + y + ImGui.getCursorPosY(), 0.5f, 0.5f);
+					//if(entry.getValue().category == currentCategory) {
+						//float y = ImGui.calcTextSize(entry.getKey()).y * 0.5f;
+						//separatorWithText(entry.getKey(), startX, startY + y + ImGui.getCursorPosY(),
+								//(ImGui.getWindowPosX()) + ImGui.getWindowSizeX(), startY + y + ImGui.getCursorPosY(), 0.5f, 0.5f);
 						
 						ImGui.pushID("Building of: " + entry.toString());
 						
-						if(ImGui.imageButton(entry.getValue().texture.getId(), 
+						if(ImGui.imageButton(entry.getValue().texture.getId(),
 								64, 64)) {
 							selectedBuilding = entry.getValue();
 						}
 						
 						ImGui.popID();
-					}
+					//}
 					
 					//ImGui.separator();
 					ImGui.nextColumn();
@@ -222,6 +255,10 @@ public class BuilderManager extends Behaviour {
 			
 			ImGui.end();
 		}
+	}
+	
+	public static void addToPositions(Vector2f pos) {
+		placedBuildingsPositions.add(pos);
 	}
 	
 	private void separatorWithText(String text, float sx, float sy, float ex, float ey, float alignment, float textAlignment) {
@@ -248,7 +285,7 @@ public class BuilderManager extends Behaviour {
 			ImGui.setCursorPosX(ImGui.getCursorPosX() + off);
 	}
 	
-	private boolean centeredButton(String label, float sizeX, float sizeY, float alignment) {
+	/*private boolean centeredButton(String label, float sizeX, float sizeY, float alignment) {
 		ImGuiStyle style = ImGui.getStyle();
 		
 		float size = ImGui.calcTextSize(label).x + style.getFramePaddingX() * 2.0f;
@@ -259,7 +296,7 @@ public class BuilderManager extends Behaviour {
 			ImGui.setCursorPosX(ImGui.getCursorPosX() + off);
 		
 		return ImGui.button(label, sizeX, sizeY);
-	}
+	}*/
 	
 	public int getCraftAmount(Building building) {
 		//if(Player.inventory == null)
@@ -291,5 +328,34 @@ public class BuilderManager extends Behaviour {
 	private void addBuilding(String categoryType, int category, Building building, List<List<Building.Requirement>> requirements) {
 		building.requirements = requirements;
 		buildings.put(categoryType, new BuildingData(category, building));
+	}
+	
+	public static Building get(Building b) {
+		for(Entry<String, BuildingData> entry : BuilderManager.instance.buildings.entrySet()) {
+			if(entry.getValue().building.getName().equals(b.getName())) {
+				return (Building) entry.getValue().building.clone();
+			}
+		}
+		
+		return null;
+	}
+	
+	public static ElectricityProduceData getNearest(Vector2f pos, float max, List<ElectricityProduceData> buildings) {
+		int index = 0;
+		float closest = Float.MAX_VALUE;
+		
+		if(buildings.isEmpty())
+			return null;
+		
+		for(int i = 0; i < buildings.size(); i++) {
+			float dis = (float) MathD.distanceBetweenVector2(pos, buildings.get(i).building.gameObject.getPosition().getXY());
+			
+			if(dis < closest) {
+				closest = dis;
+				index = i;
+			}
+		}
+		
+		return closest < max ? buildings.get(index) : null;
 	}
 }

@@ -67,9 +67,9 @@ public final class SceneViewer {
 							
 							selectedObject = obj;
 							
-							core.getGUI().getHierachy().setSelectedObject(obj);
+							core.getGUI().getHierarchy().setSelectedObject(obj);
 						} else {
-							core.getGUI().getHierachy().setSelectedObject(null);
+							core.getGUI().getHierarchy().setSelectedObject(null);
 						}
 					} else if(Input.isMouseButtonUp(KeyCode.Mouse0)) {
 						selectedObject = null;
@@ -94,7 +94,7 @@ public final class SceneViewer {
 						GameObject hit = RayCast.rayCast(10);
 						
 						if(hit != null) {
-							core.getGUI().getHierachy().setSelectedObject(hit);
+							core.getGUI().getHierarchy().setSelectedObject(hit);
 						}
 					}
 					

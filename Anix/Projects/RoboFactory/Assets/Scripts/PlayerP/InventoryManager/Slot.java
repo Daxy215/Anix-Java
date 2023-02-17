@@ -27,7 +27,7 @@ public class Slot {
 
 		texture = UI.loadTexture("resources/textures/Inventory/slotImage.png");
 	}
-
+	
 	public void render() {
 		if(isEmpty)
 			return;
@@ -38,7 +38,7 @@ public class Slot {
 			return;
 		}
 		
-		int x = Item.width;
+		int x = (int) (inventory.slotWidth * 0.5f);
 		
 		if(item.getAmount() >= 10) {
 			x -= 4;
@@ -46,36 +46,36 @@ public class Slot {
 			x -= 10;
 		}
 		
-		UI.drawString("x" + item.getAmount(), inventory.position.x + position.x + x, inventory.position.y + position.y + Item.width, -0.2f, 0.5f, 0.5f, Color.white);
+		UI.drawString("x" + item.getAmount(), inventory.position.x + position.x + x, inventory.position.y + position.y + (int) (inventory.slotWidth * 0.5f), -0.2f, 0.5f, 0.5f, Color.white);
 		item.render(new Vector2f(inventory.position.x + position.x + 12, inventory.position.y + position.y + 12));
 	}
-
+	
 	public int getNumber() {
 		return number;
 	}
-
+	
 	public boolean isEmpty() {
 		return isEmpty;
 	}
-
+	
 	public Item getItem() {
 		return item;
 	}
-
+	
 	public void setItem(Item item) {
 		this.item = item;
-
+		
 		isEmpty = item == null;
 	}
-
+	
 	public Texture getTexture() {
 		return texture;
 	}
-
+	
 	public Vector2f getPosition() {
 		return position;
 	}
-
+	
 	public void setPosition(Vector2f position) {
 		this.position = position;
 	}

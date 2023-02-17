@@ -84,6 +84,12 @@ import imgui.flag.ImGuiConfigFlags;
  * <br>
  * Make the compiler to check for errors first AND then compile<br>
  * Done :)<br>
+ * TODO: Make a compile button that allows the game engine to compile during play mode.<br>
+ * Done-ish, still some errors. It cannot update values of classes that are created within a behaviour class.<br>
+ * <br>
+ * TODO: Make the "updateAble and renderAble", to be a type, that asks if the update/render,<br>
+ * should be through a thread or not. For optimisation.<br>
+ * TODO: Update the parenting system and make it work with the hierarchy<br>
  */
 public final class Core implements Runnable {
 	private String projectName = "";

@@ -6,7 +6,6 @@ import java.util.List;
 import com.Anix.Behaviours.Behaviour;
 
 import Buildings.Building;
-import Enums.ItemType;
 
 public class BuildingLoaderManager extends Behaviour {
 	/*
@@ -217,8 +216,8 @@ public class BuildingLoaderManager extends Behaviour {
 				List<Building.Requirement> requirements = new ArrayList<Building.Requirement>();
 				
 				for(int l = 0; l < types.length; l++) {
-					ItemType type = ItemType.valueOf(types[l].split(":")[0]);
-					int amount = Integer.parseInt(types[l].split(":")[1]);
+					//ItemType type = ItemType.valueOf(types[l].split(":")[0]);
+					//int amount = Integer.parseInt(types[l].split(":")[1]);
 					
 					//requirements.add(new Building.Requirement(amount, type));
 				}

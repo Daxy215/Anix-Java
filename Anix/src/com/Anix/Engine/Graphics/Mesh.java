@@ -323,7 +323,6 @@ public class Mesh implements Serializable, Cloneable {
 		this.sprite = sprite;
 	}
 	
-	
 	/*public Texture getTexture() {
 		return texture;
 	}
@@ -331,7 +330,6 @@ public class Mesh implements Serializable, Cloneable {
 	public void setTexture(Texture texture) {
 		this.texture = texture;
 	}*/
-	
 	
 	/*public Sprite getSprite() {
 		return sprite;

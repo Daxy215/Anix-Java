@@ -45,6 +45,7 @@ public class GameObject /*extends Entity*/ implements Cloneable, Serializable {
 	
 	private transient List<GameObject> children = new ArrayList<GameObject>();
 	private List<Behaviour> behaviours = new ArrayList<Behaviour>();
+    private List<GameObject> collidingObjects = new ArrayList<GameObject>();
 	
 	public GameObject() {
 		uuid = UUID.randomUUID();
@@ -230,7 +231,7 @@ public class GameObject /*extends Entity*/ implements Cloneable, Serializable {
 		
 		this.transform = Matrix4f.transform(this);
 	}
-
+	
 	public GameObject(String name, Vector3f position, Vector3f rotation, Vector3f scale, Mesh mesh, boolean addToScene) {
 		this.name = name;
 		this.position = position;
@@ -500,12 +501,10 @@ public class GameObject /*extends Entity*/ implements Cloneable, Serializable {
 		}
 		
 		this.behaviours.remove(behaviour);
+		Core.updateAble.remove(behaviour);
+		Core.renderAble.remove(behaviour);
 		
-		if(behaviours.isEmpty()) {
-			//Core.updateAbleObjects.remove(this);
-			Core.updateAble.remove(behaviour);
-			Core.renderAble.remove(behaviour);
-		}
+		System.err.println("removed: " + behaviour.getName());
 	}
 	
 	public boolean isEnabled() {
@@ -546,6 +545,16 @@ public class GameObject /*extends Entity*/ implements Cloneable, Serializable {
 	
 	public Vector3f getPosition() {
 		return position;
+	}
+	
+	public Vector2f getForward() {
+		double rZ = Math.toRadians(rotation.z);
+		return new Vector2f((float) Math.cos(rZ), (float) Math.sin(rZ));
+	}
+	
+	public Vector2f getRight() {
+		double rZ = Math.toRadians(rotation.z + 90);
+		return new Vector2f((float) Math.cos(rZ), (float) Math.sin(rZ));
 	}
 	
 	public void setPosition(Vector2f position) {
@@ -740,4 +749,28 @@ public class GameObject /*extends Entity*/ implements Cloneable, Serializable {
 	public void updateTransform() {
 		transform = Matrix4f.transform(this);
 	}
+	
+	public boolean isColliding(GameObject other) {
+		if(other == null)
+			return false;
+		
+		if(collidingObjects == null)
+    		collidingObjects = new ArrayList<>();
+		
+        return collidingObjects.contains(other);
+    }
+
+    public void addCollidingObject(GameObject other) {
+    	if(collidingObjects == null)
+    		collidingObjects = new ArrayList<>();
+    	
+        collidingObjects.add(other);
+    }
+    
+    public void removeCollidingObject(GameObject other) {
+    	if(collidingObjects == null)
+    		collidingObjects = new ArrayList<>();
+    	
+        collidingObjects.remove(other);
+    }
 }

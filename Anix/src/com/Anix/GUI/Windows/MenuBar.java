@@ -7,6 +7,9 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.net.URISyntaxException;
 import java.util.Enumeration;
 import java.util.jar.JarEntry;
@@ -20,9 +23,13 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 import org.lwjgl.glfw.GLFW;
 
+import com.Anix.Behaviours.Behaviour;
+import com.Anix.Engine.Editor;
 import com.Anix.IO.Application;
 import com.Anix.IO.ProjectSettings;
 import com.Anix.Main.Core;
+import com.Anix.Objects.GameObject;
+import com.Anix.SceneManager.SceneManager;
 
 import imgui.ImGui;
 import imgui.flag.ImGuiStyleVar;
@@ -111,6 +118,7 @@ public class MenuBar {
 	        
 			ImGui.popStyleVar();
 	        
+			//TODO: Center them.
 	        //68 Button width - 88 idk :D
 			ImGui.dummy(Application.getFullWidth() * 0.5f - (88*2) + (88*0.25f), 0);
 			
@@ -122,7 +130,95 @@ public class MenuBar {
 	        	core.getEditor().setIsPlaying(false);
 	        }
 	        
+	        if(ImGui.button("Compile", 64, height)) {
+	        	try {
+					Editor.complier.compile();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+	        	
+	        	for(int i = 0; i < SceneManager.currentScene.getGameObjects().size(); i++) {
+	        		GameObject obj = SceneManager.currentScene.getGameObjects().get(i);
+	        		
+	        		for(int j = obj.getBehaviours().size() - 1; j > 0; j--) {
+	        			Behaviour b = obj.getBehaviours().get(j);
+	        			
+	        			obj.removeBehaviour(b);
+	        			
+	        			Behaviour nb = Editor.getBehaviour(b.getName());
+	        			
+	        			Field[] fields = b.getAllFields();
+	        			for(int k = 0; k < fields.length; k++) {
+	        				try {
+	        					Field f = nb.getClass().getDeclaredField(fields[k].getName());
+	        					f.setAccessible(true); // make private fields accessible
+	        					Object value = fields[k].get(b);
+	        					
+	        					if(value == null)
+	        						continue;
+	        					
+	        					copyProperty(nb, f.getName(), value);
+	        					
+	        					//Field f = nb.getClass().getField(fields[k].getName());
+								//f.setAccessible(true);
+								
+								//copyProperty(nb, f.getName(), fields[k].get(obj));
+								//f.set(nb, fields[k].get(obj));
+							} catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException | InvocationTargetException e) {
+								System.err.println("found: " + e.getMessage());
+								//e.printStackTrace(System.err);
+								continue;
+							}
+	        			}
+	        			
+	        			obj.addBehaviour(nb);
+	        		}
+	        	}
+	        }
+	        
 	        ImGui.endMainMenuBar();
+	    }
+	}
+	
+	private static void copyProperty(Object dest, String propName, Object value) throws IllegalAccessException, InvocationTargetException, NoSuchFieldException {
+	    Class<?> clazz = dest.getClass();
+	    Method setter = findSetter(clazz, propName, value.getClass());
+	    if (setter != null) {
+	        setter.invoke(dest, value);
+	    } else {
+	        Field field = findField(clazz, propName);
+	        
+	        if (field != null) {
+	            field.setAccessible(true);
+	            field.set(dest, value);
+	        } else {
+	            throw new NoSuchFieldException("Could not find property " + propName + " in class " + clazz.getName());
+	        }
+	    }
+	}
+
+	private static Method findSetter(Class<?> clazz, String propName, Class<?> valueType) {
+	    String setterName = "set" + propName.substring(0, 1).toUpperCase() + propName.substring(1);
+	    Method[] methods = clazz.getMethods();
+	    for (Method method : methods) {
+	        if (method.getName().equals(setterName) && method.getParameterCount() == 1 && method.getParameterTypes()[0].isAssignableFrom(valueType)) {
+	            return method;
+	        }
+	    }
+	    return null;
+	}
+	
+	private static Field findField(Class<?> clazz, String propName) {
+	    try {
+	        return clazz.getDeclaredField(propName);
+	    } catch (NoSuchFieldException e) {
+	        Class<?> superClass = clazz.getSuperclass();
+	        
+	        if (superClass != null) {
+	            return findField(superClass, propName);
+	        } else {
+	            return null;
+	        }
 	    }
 	}
 	

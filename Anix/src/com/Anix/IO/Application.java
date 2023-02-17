@@ -383,7 +383,7 @@ public final class Application {
 	}
 	
 	public static int getStartX() {
-		return (int) (gui.getHierachy().getStartX() + gui.getHierachy().getWidth());
+		return (int) (gui.getHierarchy().getStartX() + gui.getHierarchy().getWidth());
 	}
 	
 	public static int getStartY() {
@@ -392,7 +392,7 @@ public final class Application {
 	
 	public static int getWidth() {
 		if(ProjectSettings.isEditor) {
-			return (int) (getFullWidth() - (gui.getHierachy().getWidth() + gui.getInspector().getWidth()));
+			return (int) (getFullWidth() - (gui.getHierarchy().getWidth() + gui.getInspector().getWidth()));
 		}
 		
 		return getFullWidth();

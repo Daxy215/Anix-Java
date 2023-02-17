@@ -153,6 +153,19 @@ public class World extends Behaviour {
         	}
         }*/
 	}
+
+	public Terrain getTerrainAt(Vector2f pos) {
+		int x = (int)(Math.round(pos.x / terrainWidth) * terrainWidth);
+        int y = (int)(Math.round(pos.y / terrainHeight) * terrainHeight);
+		
+		for(int i = 0; i < terrains.size(); i++) {
+			if(terrains.get(i).position.x == x && terrains.get(i).position.y == y) {
+				return terrains.get(i);
+			}
+		}
+		
+		return null;
+	}
 	
 	public Block getBlock(String name) {
 		for(int i = 0; i < blocks.size(); i++)

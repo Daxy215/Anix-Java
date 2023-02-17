@@ -175,7 +175,7 @@ public class WorldManager extends Behaviour {
 			time.addSecond(false);
         };
         
-        executor.scheduleAtFixedRate(task, 0, 1, TimeUnit.MILLISECONDS);
+        executor.scheduleAtFixedRate(task, 0, 20, TimeUnit.MILLISECONDS);
         //executor.shutdown();
 	}
 	
@@ -186,7 +186,7 @@ public class WorldManager extends Behaviour {
 				+ (WorldManager.time.getDays() > 0 ? WorldManager.time.getDays() + ":" : "")
 				+ WorldManager.time.getHours() + ":" + WorldManager.time.getMinutes() + ":" + WorldManager.time.getSeconds();
 		
-		UI.drawString(time, 300, 25, 0.02f, 1.0f, 1.0f, Color.red);
+		UI.drawString(time, 250, 25, 0.02f, 1.0f, 1.0f, Color.white);
 	}
 	
 	@Override

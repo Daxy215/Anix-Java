@@ -6,7 +6,7 @@ public class Ore extends Behaviour {
 	/*
 	* Please ignore this tyvm :)
 	*/
-	private static final long serialVersionUID = 1L;	
+	private static final long serialVersionUID = 1L;
 	
 	@Override
 	//Will be called on game start

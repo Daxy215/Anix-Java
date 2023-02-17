@@ -11,10 +11,10 @@ import com.Anix.Objects.GameObject;
 public class Matrix4f implements Serializable {
 	private static final long serialVersionUID = 8084349867192902726L;
 	
-	private float m00, m01, m02, m03;
-    private float m10, m11, m12, m13;
-    private float m20, m21, m22, m23;
-    private float m30, m31, m32, m33;
+	public float m00, m01, m02, m03;
+    public float m10, m11, m12, m13;
+    public float m20, m21, m22, m23;
+    public float m30, m31, m32, m33;
     
     /**
      * Creates a 4x4 identity matrix.
@@ -473,17 +473,17 @@ public class Matrix4f implements Serializable {
 	public static Vector4f transform(Matrix4f left, Vector4f right, Vector4f dest) {
 		if (dest == null)
 			dest = new Vector4f();
-
+		
 		float x = left.m00 * right.x + left.m01 * right.y + left.m02 * right.z + left.m03 * right.w;
 		float y = left.m10 * right.x + left.m11 * right.y + left.m12 * right.z + left.m13 * right.w;
 		float z = left.m20 * right.x + left.m21 * right.y + left.m22 * right.z + left.m23 * right.w;
 		float w = left.m30 * right.x + left.m31 * right.y + left.m32 * right.z + left.m33 * right.w;
-
+		
 		dest.x = x;
 		dest.y = y;
 		dest.z = z;
 		dest.w = w;
-
+		
 		return dest;
 	}
     

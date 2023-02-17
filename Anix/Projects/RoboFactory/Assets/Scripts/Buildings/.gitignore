@@ -16,3 +16,7 @@
 /BiomassGenerator.class
 /BasicGenerator.class
 /Cable.class
+/Pole$CableData.class
+/SourceAble.class
+/SourceAble$CableData.class
+/ConveyorBelt.class

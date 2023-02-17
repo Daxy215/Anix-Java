@@ -5,7 +5,7 @@ import com.Anix.GUI.Windows.AssetsMenuBar;
 import com.Anix.GUI.Windows.AssetsMenuBar.MenuType;
 import com.Anix.GUI.Windows.AssetsStore;
 import com.Anix.GUI.Windows.Console;
-import com.Anix.GUI.Windows.Hierachy;
+import com.Anix.GUI.Windows.Hierarchy;
 import com.Anix.GUI.Windows.Inspector;
 import com.Anix.GUI.Windows.MenuBar;
 import com.Anix.GUI.Windows.SceneViewer;
@@ -26,7 +26,7 @@ public final class GUI {
 	
 	//Windows
 	private MenuBar menuBar;
-	private Hierachy hierachy;
+	private Hierarchy hierarchy;
 	private SceneViewer sceneViewer;
 	private Inspector inspector;
 	private Assets assets;
@@ -48,7 +48,7 @@ public final class GUI {
 	
 	public void init() {
 		menuBar = new MenuBar(core);
-		hierachy = new Hierachy(core);
+		hierarchy = new Hierarchy(core);
 		sceneViewer = new SceneViewer(core);
 		inspector = new Inspector(this);
 		assetsMenuBar = new AssetsMenuBar();
@@ -56,7 +56,7 @@ public final class GUI {
 		console = new Console(this);
 		
 		inspector.init();
-		hierachy.init();
+		hierarchy.init();
 		assetsStore.init();
 	}
 	
@@ -71,7 +71,7 @@ public final class GUI {
 	public void render() {
 		sceneViewer.update();
 		sceneViewer.render(); //TODO: MEMROY LEAKAGE
-		hierachy.render();
+		hierarchy.render();
 		inspector.render();
 		assetsMenuBar.render();
 		
@@ -79,7 +79,7 @@ public final class GUI {
 			assets.render();
 		else if(assetsMenuBar.getSelectedMenu() == MenuType.Console)
 			console.render();
-			
+		
 		menuBar.render();
 	}
 	
@@ -147,8 +147,8 @@ public final class GUI {
 		return menuBar;
 	}
 	
-	public Hierachy getHierachy() {
-		return hierachy;
+	public Hierarchy getHierarchy() {
+		return hierarchy;
 	}
 	
 	public SceneViewer getSceneViewer() {

@@ -80,8 +80,8 @@ public final class MeshManager {
 		}
 		
 		for(int i = 0; i < meshesToBeRemoved.size(); i++) {
-			if(meshesToBeRemoved.get(i) != null)
-				meshesToBeRemoved.get(i).destroy();
+			//if(meshesToBeRemoved.get(i) != null)
+				//meshesToBeRemoved.get(i).destroy();
 			
 			meshesToBeRemoved.remove(i);
 		}

@@ -102,6 +102,10 @@ public class Vector2f implements Serializable {
 		return new Vector2f(vector1.getX() / value, vector1.getY() / value);
 	}
 	
+	public float length() {
+		return (float)Math.sqrt(getX() * getX() + getY() * getY());
+	}
+	
 	public static float length(Vector2f vector) {
 		return (float)Math.sqrt(vector.getX() * vector.getX() + vector.getY() * vector.getY());
 	}
@@ -120,6 +124,21 @@ public class Vector2f implements Serializable {
 		float result = (float) Math.sqrt(a.x * a.x + a.y * a.y);
 		
 		return result;
+	}
+	
+	public static Vector2f moveTowards(Vector2f from, Vector2f to, float speed) {
+	    // Find the direction and distance from 'from' to 'to'
+		Vector2f direction = Vector2f.sub(to, from);
+	    float distance = (float) direction.magnitude();
+	    
+	    // If the distance is already less than or equal to the speed, just return 'to'
+	    if (distance <= speed) {
+	        return to;
+	    }
+	    
+	    // Otherwise, move towards 'to' by the specified speed
+	    Vector2f movement = direction.normalize().mul(speed);
+	    return from.add(movement);
 	}
 	
 	public Vector2f copy() {

@@ -143,7 +143,7 @@ public class Camera extends Behaviour {
 			y -= Application.getStartY();
 		}
 		
-		float cPosX = 0;
+		float cPosX = gameObject.getPosition().x;
 		float cPosY = gameObject.getPosition().y;
 		
 		Vector4f pos = new Vector4f((float)(x / (width / 2.0f) - 1f), 1 - (float)(y / (height / 2.0f)), 0, 1);
@@ -163,11 +163,10 @@ public class Camera extends Behaviour {
 		pos.z *= pos.w;
 		
 		if(Camera.main.projectionType.equals(ProjectionType.orthographics)) {
-			cPosX = -cPosX;
 			cPosY = -cPosY;
 		}
 		
-		Vector2f rPos = new Vector2f(pos.x + -cPosX, pos.y + -cPosY);
+		Vector2f rPos = new Vector2f(pos.x + cPosX, pos.y + -cPosY);
 		
 		if(Camera.main.projectionType.equals(ProjectionType.projection))
 			return new Vector2f(-rPos.x, -rPos.y);
@@ -175,54 +174,44 @@ public class Camera extends Behaviour {
 			return new Vector2f(rPos.x, rPos.y);
 	}
 	
-	public Vector3f convertWorldToScreenSpace(Matrix4f transform, Vector3f position) {
-		Matrix4f projection = Application.getProjectionMatrix();
-		
-		Vector4f point4 = new Vector4f(position.x, position.y, position.z, 1);
-		point4 = Matrix4f.transform(viewMatrix, point4, null);
-		point4 = Matrix4f.transform(projection, point4, null);
-		
-		float pointx = point4.x;
-		float pointy = -point4.y;
-		float pointz = -point4.z;
-		
-		pointx /= point4.w;
-		pointy /= point4.w;
-		pointz /= point4.w;
-		
-		pointx = (pointx + 1) * (Application.getWidth() * 0.5f);
-		pointy = (pointy + 1) * (Application.getHeight() * 0.5f);
-		
-		return new Vector3f(pointx + (ProjectSettings.isEditor ? Application.getStartX() : 0), pointy + (ProjectSettings.isEditor ? Application.getStartY() : 0), pointz);
-	
-		
-		/*Matrix4f MVP = Matrix4f.multiply(Application.getProjectionMatrix(), viewMatrix).multiply(transform);
-		Vector4f point4 = new Vector4f(position.x, position.y, position.z, 1);
-		
-		Vector4f point = MVP.multiply(point4);
-		
-		return new Vector3f(point.x / point.w * (Application.getFullWidth() / 2.0f + Application.getFullWidth() / 2.0f),
-				point.y / point.w * (Application.getFullHeight() / 2.0f + Application.getFullHeight() / 2.0f),
-				point.z / point.w);*/
+	public Vector3f convertWorldToScreenSpace(Vector3f position) {
+		return this.convertWorldToScreenSpace(position.x, position.y, position.z);
 	}
 	
 	public Vector3f convertWorldToScreenSpace(Vector3f position, Vector2f size) {
+		return this.convertWorldToScreenSpace(position, size.x, size.y);
+	}
+	
+	public Vector3f convertWorldToScreenSpace(Vector3f position, float width, float height) {
+		return this.convertWorldToScreenSpace(position.x, position.y, position.z, width, height);
+	}
+	
+	public Vector3f convertWorldToScreenSpace(float x, float y, float z) {
+		return this.convertWorldToScreenSpace(x, y, z, Application.getWidth(), Application.getHeight());
+	}
+	
+	public Vector3f convertWorldToScreenSpace(float x, float y, float z, float width, float height) {
 		Matrix4f projection = Application.getProjectionMatrix();
 		
-		Vector4f point4 = new Vector4f(position.x, position.y, position.z, 1);
+		Vector4f point4 = new Vector4f(x, y, z, 1);
 		point4 = Matrix4f.transform(viewMatrix, point4, null);
 		point4 = Matrix4f.transform(projection, point4, null);
 		
 		float pointx = point4.x;
 		float pointy = -point4.y;
 		float pointz = -point4.z;
-				
+		
 		pointx /= point4.w;
 		pointy /= point4.w;
 		pointz /= point4.w;
 		
-		pointx = (pointx + 1) * (size.x * 0.5f);
-		pointy = (pointy + 1) * (size.y * 0.5f);
+		pointx = (pointx + 1) * (width * 0.5f);
+		pointy = (pointy + 1) * (height * 0.5f);
+		
+		if(ProjectSettings.isEditor) {
+			pointx += Application.getStartX();
+			pointy += Application.getStartY();
+		}
 		
 		return new Vector3f(pointx, pointy, pointz);
 	}

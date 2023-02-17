@@ -3,8 +3,9 @@ package Buildings;
 import com.Anix.IO.Input;
 import com.Anix.IO.KeyCode;
 import com.Anix.IO.Time;
-import com.Anix.Math.Vector2f;
 
+import Managers.BuilderManager;
+import Managers.BuilderManager.ElectricityProduceData;
 import Managers.BuilderManager.PlacementData;
 import PlayerP.InventoryManager.Inventory;
 
@@ -22,8 +23,8 @@ public class BasicGenerator extends Generator {
 		super();
 	}
 	
-	public BasicGenerator(float maxCapcity) {
-		super(maxCapcity);
+	public BasicGenerator(float maxElectricity) {
+		super(maxElectricity);
 	}
 	
 	@Override
@@ -39,6 +40,8 @@ public class BasicGenerator extends Generator {
 	
 	@Override
 	public void update() {
+		super.update();
+		
 		if(Input.isKeyDown(KeyCode.J))
 			inventory.toggle();
 		
@@ -50,14 +53,17 @@ public class BasicGenerator extends Generator {
 		if(timer > 1.0f) {
 			timer = 0;
 			
-			if(inventory.removeItem(0, inventory.slots.get(0).getItem().getItemType().burnRate)) {
-				currentElectricity = maxCapacity;
+			if(currentElectricity < maxElectricity && inventory.removeItem(0, inventory.slots.get(0).getItem().getItemType().burnRate)) {
+				currentElectricity = maxElectricity;
 			}
 		}
 	}
 	
 	@Override
 	public void startPlacing(PlacementData placementData) {
-		placeBuilding(placementData.startPos);
+		BasicGenerator g = (BasicGenerator) placeBuilding(placementData.startPos, BuilderManager.get(this));
+		placementData.cancel();
+		
+		BuilderManager.electricityProcedurable.add(new ElectricityProduceData(true, g));
 	}
 }

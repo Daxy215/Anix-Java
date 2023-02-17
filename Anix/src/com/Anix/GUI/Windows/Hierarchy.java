@@ -25,7 +25,7 @@ import imgui.flag.ImGuiHoveredFlags;
 import imgui.flag.ImGuiStyleVar;
 import imgui.flag.ImGuiTreeNodeFlags;
 
-public final class Hierachy {
+public final class Hierarchy {
 	private int selectedObjectIndex;
 	private final float startX = 0, startY = 25;
 	private float width = 250, height;
@@ -33,7 +33,7 @@ public final class Hierachy {
 	public static GameObject selectedObject, draggedObject;
 	private Core core;
 	
-	public Hierachy(Core core) {
+	public Hierarchy(Core core) {
 		this.core = core;
 	}
 	

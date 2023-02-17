@@ -163,6 +163,9 @@ public final class Input {
 	}
 	
 	public static boolean doubleClicked() {
+		if(ImGui.getIO().getWantCaptureMouse())
+			return false;
+		
 		return doubleClicked;
 	}
 	
@@ -192,10 +195,16 @@ public final class Input {
 	}
 
 	public static float getScrollX() {
+		if(ImGui.getIO().getWantCaptureMouse())
+			return 0;
+		
 		return scrollX;
 	}
 
 	public static float getScrollY() {
+		if(ImGui.getIO().getWantCaptureMouse())
+			return 0;
+		
 		return scrollY;
 	}
 

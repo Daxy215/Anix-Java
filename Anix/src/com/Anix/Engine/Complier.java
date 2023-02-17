@@ -38,7 +38,7 @@ import com.Anix.GUI.Windows.Console;
 import com.Anix.IO.ProjectSettings;
 
 //https://stackoverflow.com/questions/5830581/getting-a-directory-inside-a-jar
-final class Complier {
+public final class Complier {
 	private File classesDir;
 	private File sourceDir;
 	private URLClassLoader classLoader;

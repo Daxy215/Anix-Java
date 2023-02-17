@@ -3,6 +3,7 @@ package WorldGeneration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Random;
 
 import com.Anix.Engine.Graphics.Mesh;
 import com.Anix.Engine.Graphics.Vertex;
@@ -16,15 +17,11 @@ import com.Anix.Objects.GameObject;
 import Managers.WorldManager;
 
 public class Terrain {
-	/*
-	* Please ignore this tyvm :)
-	*/
-	private static final long serialVersionUID = 1L;
-	
 	public static enum MaterialType {
 		Tree, Metal, Lithium, Stone
 	}
 	
+	private Random random;
 	public Vector3f position;
 	public Mesh mesh;
 	
@@ -41,14 +38,12 @@ public class Terrain {
     public Terrain(Vector3f position) {
     	this.position = position;
     	
+    	random = new Random((int)(World.SEED * position.x + position.y));
     	materials = new MaterialType[World.terrainWidth][World.terrainWidth];
     }
 	
 	public void generate() {
-		float stoneBuff = 1, lithiumBuff = 1, ironBuff = 1;
-        int treeChanceMin = 0, treeChanceMax = 0;
-        
-        List<Vertex> vertices = new ArrayList<>();
+		List<Vertex> vertices = new ArrayList<>();
         List<Integer> indices = new ArrayList<>();
         
         for(int x = 0; x < World.terrainWidth; x++) {
@@ -65,11 +60,6 @@ public class Terrain {
     				vertices.add(new Vertex(new Vector3f(-0.5f+x, -0.5f+y, 0), World.normal, grass.uvs[1]));
     				vertices.add(new Vertex(new Vector3f( 0.5f+x, -0.5f+y, 0), World.normal, grass.uvs[2]));
     				vertices.add(new Vertex(new Vector3f( 0.5f+x,  0.5f+y, 0), World.normal, grass.uvs[3]));
-					
-					treeChanceMin = 50;
-					treeChanceMax = 70;
-					
-					lithiumBuff = 2;
 				} else if(type.equals(BiomeGenerator.BiomeType.OCEAN) || type.equals(BiomeGenerator.BiomeType.BEACH)) {
 					World.Block water = World.instance.getBlock("water");
                 	
@@ -89,11 +79,7 @@ public class Terrain {
 					
 					//treeChanceMin = 10;
 					//treeChanceMax = 20;
-					
-					treeChanceMin = 20;
-					treeChanceMax = 30;
-					
-					ironBuff = 2;
+
 				} else if(type.equals(BiomeGenerator.BiomeType.DESERT)) {
 					World.Block sand = World.instance.getBlock("sand");
                 	
@@ -104,11 +90,7 @@ public class Terrain {
 					
 					//treeChanceMin = 10;
 					//treeChanceMax = 20;
-					
-					treeChanceMin = 0;
-					treeChanceMax = 0;
-					
-					stoneBuff = 2;
+
 				} else if(type.equals(BiomeGenerator.BiomeType.SNOW)) {
 					World.Block snow = World.instance.getBlock("snow");
                 	
@@ -116,9 +98,6 @@ public class Terrain {
     				vertices.add(new Vertex(new Vector3f(-0.5f+x, -0.5f+y, 0), World.normal, snow.uvs[1]));
     				vertices.add(new Vertex(new Vector3f( 0.5f+x, -0.5f+y, 0), World.normal, snow.uvs[2]));
     				vertices.add(new Vertex(new Vector3f( 0.5f+x,  0.5f+y, 0), World.normal, snow.uvs[3]));
-					
-					treeChanceMin = 10;
-					treeChanceMax = 20;
 				} else if(type.equals(BiomeGenerator.BiomeType.JUNGLE)) {
 					World.Block jungle = World.instance.getBlock("jungle");
                 	
@@ -126,9 +105,6 @@ public class Terrain {
     				vertices.add(new Vertex(new Vector3f(-0.5f+x, -0.5f+y, 0), World.normal, jungle.uvs[1]));
     				vertices.add(new Vertex(new Vector3f( 0.5f+x, -0.5f+y, 0), World.normal, jungle.uvs[2]));
     				vertices.add(new Vertex(new Vector3f( 0.5f+x,  0.5f+y, 0), World.normal, jungle.uvs[3]));
-					
-					treeChanceMin = 10;
-					treeChanceMax = 20;
 				} else {
 					System.err.println("[ERROR] Couldn't find biometype of " + type.name());
 				}
@@ -139,7 +115,7 @@ public class Terrain {
                 double metalProbability = Math.pow((noiseValue + 1) / 16, 2);
                 double lithiumProbability = Math.pow((noiseValue + 1) / 8, 2);
                 double stoneProbability = Math.pow((noiseValue + 1) / 12, 2);
-                double coalProbability = Math.pow((noiseValue + 1) / 20, 2);
+                Math.pow((noiseValue + 1) / 20, 2);
                 
                 if(Math.random() < treeProbability) {
                 	materials[x][y] = MaterialType.Tree;
@@ -203,8 +179,6 @@ public class Terrain {
                 if(materials[x][y] == null)
                 	continue;
                 
-                int xx = (int)(x + position.x);
-                int yy = (int)(y + position.y);
                 int zz = -1;
                 
                 switch(materials[x][y]) {
@@ -277,31 +251,26 @@ public class Terrain {
 	}
 	
 	private void generateMaterialBlob(MaterialType type, int x, int y) {
-		Vector3f center = generateBlob(type);
+		Vector3f center = generateBlob((int) MathD.getRandomNumberBetweenI(5, 25, random));
     	
     	if(center == null)
     		return;
     	
-        int mx = (int) center.x;
-        int my = (int) center.y;
-        
         int BLOB_SIZE = (int) center.z;
 		
 		for (int i = x - BLOB_SIZE / 2; i < x + BLOB_SIZE / 2; i++) {
 			for (int j = y - BLOB_SIZE / 2; j < y + BLOB_SIZE / 2; j++) {
 				if (i < 0 || j < 0 || i >= World.terrainWidth || j >= World.terrainHeight) continue;
 				
-				if(Math.random() < 0.7f)
+				if(Math.random() < 0.7f && MathD.distanceBetweenVector2(new Vector2f(i, j), new Vector2f(x, y)) < BLOB_SIZE / 2)
 					materials[i][j] = type;
 			}
 		}
 	}
 	
-	private Vector3f generateBlob(MaterialType type) {
-		int BLOB_SIZE = (int) (Math.random() * 25) + 10;
-		
-		int x = MathD.getRandomNumberBetweenI(0, World.terrainWidth);
-		int y = MathD.getRandomNumberBetweenI(0, World.terrainHeight);
+	private Vector3f generateBlob(int BLOB_SIZE) {
+		int x = MathD.getRandomNumberBetweenI(0, World.terrainWidth, random);
+		int y = MathD.getRandomNumberBetweenI(0, World.terrainHeight, random);
 		
 		// Check if the generated position is within bounds
 		if (x < BLOB_SIZE / 2 || x >= World.terrainWidth - (BLOB_SIZE / 2) ||
@@ -315,36 +284,9 @@ public class Terrain {
 			int dx = (int) (existingBlob.x - x);
 			int dy = (int) (existingBlob.y - y);
 			double distance = Math.sqrt(dx * dx + dy * dy);
-			if (distance < (Math.random() * 25) + 5) { //Blob Separation
+			if (distance < BLOB_SIZE * 0.1f) { //Blob Separation
 				// This location is too close to an existing blob, so try again
 				return generateBlob(BLOB_SIZE - 1);
-			}
-		}
-		
-		// This location is far enough away from existing blobs, so return it
-		materialsPositions.add(new Vector2f(x, y));
-		return new Vector3f(x, y, BLOB_SIZE);
-	}
-	
-	private Vector3f generateBlob(int BLOB_SIZE) {
-		int x = MathD.getRandomNumberBetweenI(0, World.terrainWidth);
-		int y = MathD.getRandomNumberBetweenI(0, World.terrainHeight);
-		
-		// Check if the generated position is within bounds
-		if (x < BLOB_SIZE / 2 || x >= World.terrainWidth - BLOB_SIZE / 2 ||
-				y < BLOB_SIZE / 2 || y >= World.terrainHeight - BLOB_SIZE / 2) {
-			// The generated position is out of bounds, so try again
-			return generateBlob(BLOB_SIZE - 1);
-		}
-		
-		// Check if the location is too close to any existing blobs
-		for (Vector2f existingBlob : materialsPositions) {
-			int dx = (int) (existingBlob.x - x);
-			int dy = (int) (existingBlob.y - y);
-			double distance = Math.sqrt(dx * dx + dy * dy);
-			if (distance < (Math.random() * 25) + 5) { //Blob Separation
-				// This location is too close to an existing blob, so try again
-				return null;
 			}
 		}
 		

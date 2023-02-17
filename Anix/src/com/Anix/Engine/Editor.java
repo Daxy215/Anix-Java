@@ -76,7 +76,7 @@ public final class Editor {
 	private Path classesPath;
 	
 	private Scene startedScene;
-	private Complier complier = new Complier();
+	public static Complier complier = new Complier();
 	
 	private Core core;
 	
@@ -336,8 +336,8 @@ public final class Editor {
 		
 		currentScene.getGameObjects().clear();
 		
-		UUID lastSelectedUUID = core.getGUI().getHierachy().getSelectedObject() != null ? core.getGUI().getHierachy().getSelectedObject().uuid : null;
-		core.getGUI().getHierachy().setSelectedObject(null);
+		UUID lastSelectedUUID = core.getGUI().getHierarchy().getSelectedObject() != null ? core.getGUI().getHierarchy().getSelectedObject().uuid : null;
+		core.getGUI().getHierarchy().setSelectedObject(null);
 		
 		InputStream is = null;
 		try {
@@ -426,7 +426,7 @@ public final class Editor {
 			}
 			
 			if(lastSelectedUUID != null) {
-				core.getGUI().getHierachy().setSelectedObject(currentScene.getGameObjectByUUID(lastSelectedUUID));
+				core.getGUI().getHierarchy().setSelectedObject(currentScene.getGameObjectByUUID(lastSelectedUUID));
 			}
 			
 			stream.close();
@@ -795,7 +795,7 @@ public final class Editor {
 			
 			if(Editor.importedClasses.get(i).getName().contains("\\")) {
 				String[] fullName = Editor.importedClasses.get(i).getName().split("\\\\");
-
+				
 				name = fullName[fullName.length - 1];
 			} else {
 				name = Editor.importedClasses.get(i).getName();
