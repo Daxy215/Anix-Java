@@ -35,6 +35,12 @@ public class ConveyorBelt extends Building {
 	@Override
 	public void update() {
 		for(int i = 0; i < ores.size(); i++) {
+			if(ores.get(i).shouldBeRemoved) {
+				ores.remove(i);
+				i--;
+				continue;
+			}
+			
 			ores.get(i).addPosition(gameObject.getForward().x * speed * Time.deltaTime, gameObject.getForward().y * speed * Time.deltaTime);
 		}
 		
@@ -47,7 +53,7 @@ public class ConveyorBelt extends Building {
 	
 	@Override
 	public void onCollisionStay(GameObject other) {
-		if(!globalOres.contains(other) && !ores.contains(other) && other.getBehaviour(ConveyorBelt.class) == null) {
+		if(!globalOres.contains(other) && !ores.contains(other) && other.getBehaviour(ConveyorBelt.class) == null && other.getBehaviour(Spelter.class) == null) {
 			ores.add(other);
 			globalOres.add(other);
 		}

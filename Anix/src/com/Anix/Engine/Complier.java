@@ -138,6 +138,13 @@ public final class Complier {
 				String className = f.getName().split(".java")[0].trim();
 				String fullyQualifiedName = packageName + "." + className;
 				
+				//TODO:
+				//if(FileUtils.isJavaClassFile(Paths.get(f.getAbsolutePath()))) {
+					//System.err.println("[Complier] Skipping over " + f.getName() + " as it isn't a type of class.");
+					
+					//continue;
+				//}
+				
 				Class<?> clazz = Class.forName(fullyQualifiedName, true, classLoader);
 				
 				if(clazz != null && !Modifier.isAbstract(clazz.getModifiers())) {

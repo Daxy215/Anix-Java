@@ -16,14 +16,16 @@ public class MeshRenderer extends Behaviour {
 	@Override
 	public void awake() {
 		Mesh mesh = null;
-		Sprite sprite = null;
+		Sprite sprite = Sprite.getSprite(spriteName);
 		
-		for(int i = 0; i < Core.getSprites().size(); i++) {
-			if(Core.getSprites().get(i).getName().equalsIgnoreCase(spriteName.toLowerCase())) {
-				sprite = Core.getSprites().get(i);
-				mesh = Core.meshManager.getMeshByPath(sprite.getPath());
+		if(sprite != null) {
+			mesh = Core.meshManager.getMeshByPath(sprite.getPath());
+			
+			if(mesh == null) {
+				mesh = new Mesh(sprite);
 				
-				break;
+				Core.meshManager.addMesh(mesh);
+				Core.meshManager.update();
 			}
 		}
 		

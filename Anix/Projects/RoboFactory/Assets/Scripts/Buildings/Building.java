@@ -53,7 +53,7 @@ public abstract class Building extends Behaviour {
 	}
 	
 	public Building placeBuilding(Vector2f pos, Building b) {
-		GameObject obj = new GameObject(getName(), new Vector3f(pos.x, pos.y, -2));
+		GameObject obj = new GameObject(getName(), new Vector3f(pos.x, pos.y, -2), BuilderManager.placeHolder.getRotation().copy(), new Vector3f(1));
 		SpriteRenderer sr = new SpriteRenderer();
 		sr.spriteName = getName() + "0.png";
 		sr.material = WorldManager.material;

@@ -12,6 +12,7 @@ import com.Anix.IO.ProjectSettings;
 import com.Anix.IO.ProjectSettings.ProjectType;
 import com.Anix.IO.Time;
 import com.Anix.Main.Core;
+import com.Anix.Math.Color;
 import com.Anix.Math.RayCast;
 import com.Anix.Math.Vector2f;
 import com.Anix.Math.Vector3f;
@@ -76,11 +77,11 @@ public final class SceneViewer {
 					}
 					
 					if(selectedObject != null) {
-						//Vector3f wPos = Camera.main.convertWorldToScreenSpace(selectedObject.getPosition());
+						Vector3f wPos = Camera.main.convertWorldToScreenSpace(selectedObject.getPosition());
 						
-						//float s = (64 * selectedObject.getScale().x) * 0.5f;
+						float s = (64 * selectedObject.getScale().x) * 0.5f;
 						
-						//UI.drawline(wPos.x - s, wPos.y - s, -0.5f, wPos.x + s, wPos.y - s, 0.5f, Color.green, 5);
+						UI.drawline(wPos.x - s, wPos.y - s, -0.5f, wPos.x + s, wPos.y - s, 0.5f, Color.green, 5);
 						
 						if(Input.isMouseButton(KeyCode.Mouse0)) {
 							selectedObject.setPosition(pos.x, pos.y);

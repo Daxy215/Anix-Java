@@ -27,7 +27,7 @@ import com.Anix.SceneManager.SceneManager;
 public class GameObject /*extends Entity*/ implements Cloneable, Serializable {
 	private static final long serialVersionUID = 1L;
 	
-	private String name = "null";
+	private String name = "null", tag = "";
 	private boolean isEnabled = true;
 	public boolean isStatic, shouldBeRemoved;
 	private byte isDirty;
@@ -452,7 +452,7 @@ public class GameObject /*extends Entity*/ implements Cloneable, Serializable {
 			if(behaviours.get(i).getName().equals(behaviour.getName())) {
 				System.err.println("[ERROR] This behaviour already exists in this GameObject!");
 				
-				return null;
+				return behaviours.get(i);
 			}
 		}
 		
@@ -773,4 +773,15 @@ public class GameObject /*extends Entity*/ implements Cloneable, Serializable {
     	
         collidingObjects.remove(other);
     }
+
+    public String getTag() {
+    	if(tag == null)
+    		tag = "";
+    	
+		return tag;
+	}
+    
+	public void setTag(String tag) {
+		this.tag = tag;
+	}
 }

@@ -19,7 +19,7 @@ import java.nio.file.Paths;
 import org.lwjgl.BufferUtils;
 
 import com.Anix.Engine.Editor;
-import com.Anix.Main.Core;
+import com.Anix.GUI.Sprite;
 
 public class ResourceLoader {
 	//TODO: In this UI, use this instead.
@@ -73,11 +73,15 @@ public class ResourceLoader {
 			String actualName = name[name.length - 1];
 			
 			//TODO: Use getName instead.
-			for(int i = 0; i < Core.getSprites().size(); i++) {
+			/*for(int i = 0; i < Core.getSprites().size(); i++) {
 				if(Core.getSprites().get(i).getName().equalsIgnoreCase(actualName.toLowerCase())) {
 					resource = Core.getSprites().get(i).getPath();
 				}
-			}
+			}*/
+			Sprite s = Sprite.getSprite(actualName);
+			
+			if(s != null)
+				resource = s.getPath();
 		}
 		
 		path = Paths.get(resource);

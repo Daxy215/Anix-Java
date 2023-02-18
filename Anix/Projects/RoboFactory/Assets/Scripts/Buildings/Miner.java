@@ -1,7 +1,6 @@
 package Buildings;
 
 import com.Anix.Behaviours.BoxCollider2D;
-import com.Anix.Behaviours.Physics2D;
 import com.Anix.Behaviours.SpriteRenderer;
 import com.Anix.IO.Time;
 import com.Anix.Main.Core;
@@ -83,13 +82,11 @@ public class Miner extends SourceAble {
 				MaterialType type = terrain.materials[oreX][oreY];
 				
 				GameObject obj = new GameObject(type.name(), gameObject.getPosition().copy().add(0, -1, -1), new Vector3f(), new Vector3f(0.5f));
+				obj.setTag("ore");
 				SpriteRenderer sr = new SpriteRenderer();
 				sr.spriteName = type.name() + ".png";
-				//Physics2D p = new Physics2D();
-				//p.useGravity = false;
 				
 				obj.addBehaviour(sr);
-				//obj.addBehaviour(p);
 				obj.addBehaviour(new BoxCollider2D(true));
 				
 				Core.getMasterRenderer().addEntity(obj);

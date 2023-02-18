@@ -29,6 +29,7 @@ import Buildings.Furnace;
 import Buildings.MainBuilding;
 import Buildings.Miner;
 import Buildings.Pole;
+import Buildings.Spelter;
 import Enums.ItemType;
 import imgui.ImGui;
 import imgui.ImGuiStyle;
@@ -105,7 +106,7 @@ public class BuilderManager extends Behaviour {
 	public PlacementData placementData;
 	public BuildingData selectedBuilding;
 	
-	private GameObject placeHolder;
+	public static GameObject placeHolder;
 	
 	public static BuilderManager instance;
 	
@@ -146,6 +147,7 @@ public class BuilderManager extends Behaviour {
 		buildings.put("Bro?", new BuildingData(2, new Pole(5)));
 		buildings.put("Cable", new BuildingData(2, new Cable(2)));
 		buildings.put("Yoo", new BuildingData(2, new ConveyorBelt()));
+		buildings.put("HO", new BuildingData(2, new Spelter()));
 		
 		/*
 		 *   Iron Plates: 5
@@ -177,6 +179,10 @@ public class BuilderManager extends Behaviour {
 		
 		if(!isBuilding)
 			return;
+		
+		if(Input.isKeyDown(KeyCode.R)) {
+			placeHolder.rotate(0, 0, 90);
+		}
 		
 		Vector2f spaceCoord = new Vector2f((float)Input.getMouseX(), (float)Input.getMouseY());
 		Vector2f cord = Camera.main.convertScreenToWorldSpace(Input.getMouseX(), Input.getMouseY());

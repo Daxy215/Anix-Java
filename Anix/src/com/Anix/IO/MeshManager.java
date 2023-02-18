@@ -80,8 +80,8 @@ public final class MeshManager {
 		}
 		
 		for(int i = 0; i < meshesToBeRemoved.size(); i++) {
-			//if(meshesToBeRemoved.get(i) != null)
-				//meshesToBeRemoved.get(i).destroy();
+			if(meshesToBeRemoved.get(i) != null)
+				meshesToBeRemoved.get(i).destroy();
 			
 			meshesToBeRemoved.remove(i);
 		}
@@ -106,6 +106,13 @@ public final class MeshManager {
 	
 	public Mesh getMeshByPath(String path) {
 		for(int i = 0; i < meshes.size(); i++) {
+			if(meshes.get(i).hasBeenDestoried()) {
+				meshes.remove(i);
+				i--;
+				
+				continue;
+			}
+			
 			if(meshes.get(i).getPath().equals(path)) {
 				return meshes.get(i);
 			}

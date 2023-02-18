@@ -50,6 +50,7 @@ import static org.lwjgl.system.MemoryUtil.memFree;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.nio.ByteBuffer;
+import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -57,9 +58,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
+import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
 import org.lwjgl.system.MemoryStack;
+import org.lwjglx.util.glu.GLU;
 
 import com.Anix.IO.Input;
 import com.Anix.IO.KeyCode;
@@ -1202,7 +1205,24 @@ public final class UI {
 		GL13.glPushMatrix();
 		GL11.glPushAttrib(GL11.GL_CURRENT_BIT);
 		
-		GL11.glLineWidth(lineWidth);
+		FloatBuffer modelview = BufferUtils.createFloatBuffer(16);
+		FloatBuffer projection = BufferUtils.createFloatBuffer(16);
+		IntBuffer viewport = BufferUtils.createIntBuffer(16);
+		
+		GL11.glGetFloatv(GL11.GL_MODELVIEW_MATRIX, modelview);
+		GL11.glGetFloatv(GL11.GL_PROJECTION_MATRIX, projection);
+		GL11.glGetIntegerv(GL11.GL_VIEWPORT, viewport);
+		
+		FloatBuffer winStart = BufferUtils.createFloatBuffer(3);
+		FloatBuffer winEnd = BufferUtils.createFloatBuffer(3);
+		
+		GLU.gluProject(startX, startY, startZ, modelview, projection, viewport, winStart);
+		GLU.gluProject(endX, endY, endZ, modelview, projection, viewport, winEnd);
+		
+		float distance = (float) Math.sqrt(Math.pow(endX - startX, 2) + Math.pow(endY - startY, 2) + Math.pow(endZ - startZ, 2));
+		float lineWidthWorldSpace = distance * 0.005f; // adjust this multiplier to change the line width in world space
+		
+		GL11.glLineWidth(lineWidthWorldSpace);
 		
 		GL11.glBegin(GL11.GL_LINES);
 		GL11.glColor3f(color.getRed(), color.getGreen(), color.getBlue());
@@ -1276,7 +1296,7 @@ public final class UI {
 				    				
 				    				imageBuffer = ResourceLoader.ioResourceToByteBuffer(temp, 8 * 1024);
 				    			} catch(Exception x) {
-				    				//x.printStackTrace();
+				    				x.printStackTrace();
 				    				imageBuffer = null;
 				    			}
 				    		}

@@ -55,6 +55,12 @@ public final class Collider2D extends BoxCollider2D {
 			if(!colliders.get(i).isEnabled)
 				continue;
 			
+			if(colliders.get(i).gameObject.shouldBeRemoved) {
+				colliders.remove(i);
+				i--;
+				continue;
+			}
+			
 			BoxCollider2D bc1 = colliders.get(i);
 			GameObject obj1 = colliders.get(i).gameObject;
 			
@@ -62,6 +68,12 @@ public final class Collider2D extends BoxCollider2D {
 			for (int j = i + 1; j < colliders.size(); j++) {
 				if(!colliders.get(j).isEnabled)
 					continue;
+				
+				if(colliders.get(j).gameObject.shouldBeRemoved) {
+					colliders.remove(j);
+					j--;
+					continue;
+				}
 				
 				BoxCollider2D bc2 = colliders.get(j);
 				GameObject obj2 = colliders.get(j).gameObject;

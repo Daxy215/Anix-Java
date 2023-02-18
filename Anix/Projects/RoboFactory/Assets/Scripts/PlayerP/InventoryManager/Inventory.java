@@ -228,6 +228,9 @@ public class Inventory extends Behaviour {
 		float x = position.x, y = position.y;
 		
 		for(int i = 0; i < inventories.size(); i++) {
+			if(!inventories.get(i).showInventory)
+				continue;
+			
 			float ix = inventories.get(i).position.x, iy = inventories.get(i).position.y;
 			
 			if(x >= ix && x <= ix + (inventories.get(i).sizeX * inventories.get(i).slotWidth + (inventories.get(i).sizeX * inventories.get(i).padding))) {
@@ -258,7 +261,7 @@ public class Inventory extends Behaviour {
 
 		return null;
 	}
-
+	
 	public int getAmountOfAnItem(ItemType itemType) {
 		int amount = 0;
 		

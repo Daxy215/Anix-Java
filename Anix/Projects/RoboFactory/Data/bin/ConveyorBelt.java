@@ -47,7 +47,7 @@ public class ConveyorBelt extends Building {
 	
 	@Override
 	public void onCollisionStay(GameObject other) {
-		if(!globalOres.contains(other) && !ores.contains(other) && other.getBehaviour(ConveyorBelt.class) == null) {
+		if(!globalOres.contains(other) && !ores.contains(other) && other.getBehaviour(ConveyorBelt.class) == null && other.getBehaviour(Spelter.class) == null) {
 			ores.add(other);
 			globalOres.add(other);
 		}

@@ -117,7 +117,7 @@ public final class Core implements Runnable {
 	private Thread thread;
 	
 	private String[] args;
-	private static List<Sprite> sprites = new ArrayList<Sprite>();
+	//private static List<Sprite> sprites = new ArrayList<Sprite>();
 	//public static List<GameObject> updateAbleObjects = new ArrayList<GameObject>();
 	public static List<Behaviour> updateAble = new ArrayList<>();
 	public static List<Behaviour> renderAble = new ArrayList<>();
@@ -601,9 +601,9 @@ public final class Core implements Runnable {
 		this.draggedObject = draggedObject;
 	}
 	
-	public static List<Sprite> getSprites() {
-		return sprites;
-	}
+	//public static List<Sprite> getSprites() {
+	//	return sprites;
+	//}
 	
 	public FrameBuffer getFrameBuffer() {
 		return frameBuffer;

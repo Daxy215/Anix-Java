@@ -88,31 +88,26 @@ public class SpriteRenderer extends Behaviour {
 		}
 		
 		Mesh mesh = null;
-		Sprite sprite = null;
 		
-		for(int i = 0; i < Core.getSprites().size(); i++) {
-			if(Core.getSprites().get(i).getName().equalsIgnoreCase(spriteName.toLowerCase())) {
-				sprite = Core.getSprites().get(i);
-				mesh = Core.meshManager.getMeshByPath(sprite.getPath());
-				break;
+		if(SpriteRenderer.class.getResource("/textures/" + spriteName) != null) {
+			//System.err.println("[ERROR] [SpriteRenderer] Couldn't locate a texture with the name of: " + spriteName);
+			mesh = Core.meshManager.getMeshByPath("/textures/" + spriteName);
+			
+			if(mesh == null) {
+				mesh = new Mesh(new Sprite(spriteName, "/textures/" + spriteName, null));
+				Core.meshManager.addMesh(mesh);
 			}
 		}
 		
-		//Either doesn't exists
-		//or uses a default path.
-		if(mesh == null) {
-			if(SpriteRenderer.class.getResource("/textures/" + spriteName) == null) {
-				System.err.println("[ERROR] [SpriteRenderer] Couldn't locate a texture with the name of: " + spriteName);
+		Sprite sprite = Sprite.getSprite(spriteName);
+		
+		if(sprite != null) {
+			mesh = Core.meshManager.getMeshByPath(sprite.getPath());
+			
+			if(mesh == null) {
+				mesh = new Mesh(sprite);
 				
-				return;
-			} else {
-				mesh = Core.meshManager.getMeshByPath("/textures/" + spriteName);
-				
-				if(mesh == null) {
-					System.err.println("creating new mesh for: " + spriteName);
-					mesh = new Mesh(new Sprite(spriteName, "/textures/" + spriteName, null));
-					Core.meshManager.addMesh(mesh);
-				}
+				Core.meshManager.addMesh(mesh);
 			}
 		}
 		

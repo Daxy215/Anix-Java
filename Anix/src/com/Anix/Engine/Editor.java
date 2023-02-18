@@ -622,7 +622,7 @@ public final class Editor {
 		core.getGUI().getConsole().clear();
 		Core.meshManager.clear();
 		LightSource.lights.clear();
-		Core.getSprites().clear();
+		Sprite.sprites.clear();
 		//TODO: This will cause a problem with the meshes. Fix it
 		//Core.getMasterRenderer().destroy();
 		Application.setFOV(70);
@@ -888,7 +888,6 @@ public final class Editor {
 								File file = new File(texturesPath + "\\" + actualName.split("[.]")[0] + "." + extension);
 								
 								Sprite s = new Sprite(file.getName(), file.getAbsolutePath(), UI.loadTexture(file.getAbsolutePath()));
-								Core.getSprites().add(s);
 								Mesh mesh = new Mesh(s);
 								Core.meshManager.addMesh(mesh);
 								
@@ -1073,7 +1072,6 @@ public final class Editor {
 				File f = new File(texturesPath + "\\" + folder.getName().split("[.]")[0] + "." + extension);
 				
 				Sprite s = new Sprite(f.getName(), f.getAbsolutePath(), UI.loadTexture(f.getAbsolutePath()));
-				Core.getSprites().add(s);
 				Mesh mesh = new Mesh(s);
 				
 				Core.meshManager.addMesh(mesh);

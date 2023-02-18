@@ -321,13 +321,15 @@ public final class Inspector {
 			ImGui.text(header.value());
 		}
 		
-		//ImGui.sameLine();
+		ImGui.pushItemWidth(25);
 		ImGui.text(f.getName() + ": ");
+		ImGui.popItemWidth();
+		
 		ImGui.sameLine();
 		
-		ImGui.pushID("Field: " + object.hashCode() + counter);
+		ImGui.pushItemWidth(ImGui.getWindowWidth() * 0.65f);
 		
-		ImGui.pushItemWidth(width - 100);
+		ImGui.pushID("Field: " + object.hashCode() + counter);
 		
 		if(type.isPrimitive()) {
 			switch(typeName.toLowerCase()) {

@@ -111,7 +111,7 @@ public class Mesh implements Serializable, Cloneable {
 	}*/
 	
 	public void create() {
-		if(vertices == null || vertices.length == 0)
+		if(vertices == null || vertices.length == 0 || hasBeenCreated && !hasBeenDestoried)
 			return;
 		
 		if(GLFW.glfwGetCurrentContext() != Application.getWindow()) {

@@ -35,7 +35,7 @@ public class Cable extends Building {
 			Vector3f sPos = Camera.main.convertWorldToScreenSpace(source.gameObject.getPosition());
 			Vector3f tPos = Camera.main.convertWorldToScreenSpace(target.gameObject.getPosition());
 			
-			UI.drawline(sPos.x, sPos.y, 0.01f, tPos.x, tPos.y, 0.01f, currentElectricity > 0 ? Color.red : Color.black, 4);
+			UI.drawline(sPos.x, sPos.y, 0.01f, tPos.x, tPos.y, 0.01f, currentElectricity > 0 ? Color.red : Color.black, 10);
 		}
 	}
 	
@@ -44,7 +44,11 @@ public class Cable extends Building {
 		if(source != null && target == null) {
 			Vector3f bPos = Camera.main.convertWorldToScreenSpace(source.gameObject.getPosition());
 			
-			UI.drawline(bPos.x, bPos.y, 0.01f, (float)Input.getMouseX(), (float)Input.getMouseY(), 0.01f, Color.red, 5);
+			UI.drawline(bPos.x, bPos.y, 0.01f, (float)Input.getMouseX(), (float)Input.getMouseY(), 0.01f, Color.red, 10);
+		} else if(source == null && target != null) {
+			Vector3f bPos = Camera.main.convertWorldToScreenSpace(target.gameObject.getPosition());
+			
+			UI.drawline(bPos.x, bPos.y, 0.01f, (float)Input.getMouseX(), (float)Input.getMouseY(), 0.01f, Color.red, 10);
 		} else if(source != null && target != null) {
 			Cable c = (Cable) BuilderManager.get(this);
 			c.source = source;
@@ -85,7 +89,7 @@ public class Cable extends Building {
 		
 		if(source == null && data.canBeSource) {
 			source = b;
-		} else if(source != null && source != b) {
+		} else if(source != null && source != b || !data.canBeSource) {
 			target = b;
 		} else {
 			//Rest everything.
