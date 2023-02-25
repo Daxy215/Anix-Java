@@ -250,11 +250,12 @@ public final class Editor {
 	    try {
 	        stream.writeObject(data);
 	        
-	        if(data instanceof GameObject) {
-	    		stream.writeUTF((((GameObject)data).hasParent() ? ((GameObject)data).getParent().uuid.toString() : "null"));
-	    	}
+	        //TODO:
+	        //if(data instanceof GameObject) {
+	    	//	stream.writeUTF((((GameObject)data).hasParent() ? ((GameObject)data).getParent().uuid.toString() : "null"));
+	    	//}
 	    } catch(NotSerializableException e) {
-	    	System.err.println("[ERROR] Couldn't save " + e.getMessage() + ". Likely due to no default method?");
+	    	System.err.println("[ERROR] Couldn't save " + e.getMessage() + ". Object isn't serialized.");
 	    } catch(IOException e) {
 	        e.printStackTrace();
 	    }
@@ -379,7 +380,7 @@ public final class Editor {
 					continue;
 				}
 				
-				GameObject parent = SceneManager.getCurrentScene().getGameObjectByUUID(UUID.fromString(parentsToLoad.get(i).split(";")[1]));
+				/*GameObject parent = SceneManager.getCurrentScene().getGameObjectByUUID(UUID.fromString(parentsToLoad.get(i).split(";")[1]));
 				
 				if(parent == null) {
 					obj.setParent(null);
@@ -393,7 +394,7 @@ public final class Editor {
 					continue;
 				}
 				
-				obj.setParent(parent);
+				obj.setParent(parent);*/
 			}
 			
 			for(int i = 0; i < currentScene.getGameObjects().size(); i++) {
@@ -446,12 +447,12 @@ public final class Editor {
 		for(int i = 0; i < size; i++) {
 			GameObject obj = (GameObject)readObjectFromFile(stream);
 			
-			String parentInfo = "";
-			try {
-				parentInfo = stream.readUTF();
-			} catch(Exception e) {
-				continue;
-			}
+			//String parentInfo = "";
+			//try {
+			//	parentInfo = stream.readUTF();
+			//} catch(Exception e) {
+			//	continue;
+			//}
 			
 			if(obj == null) {
 				System.err.println("[ERROR] [TSH] #546 Couldn't load gameobject..");
@@ -465,9 +466,9 @@ public final class Editor {
 			
 			obj.updateTransform();
 			
-			if(!parentInfo.equals("null")) {
-				parentsToLoad.add(obj.uuid + ";" + parentInfo);
-			}
+			//if(!parentInfo.equals("null")) {
+			//	parentsToLoad.add(obj.uuid + ";" + parentInfo);
+			//}
 			
 			//if(!obj.getBehaviours().isEmpty())
 			//	Core.updateAbleObjects.add(obj);
@@ -578,6 +579,8 @@ public final class Editor {
 					} catch (Exception e) {
 						if(!desc.getName().equals("[F")) { //Float
 							System.err.println("[ERROR] [TSH] Couldn't find a class with the name of " + desc.getName() + "\n" + e.getMessage());
+						} else {
+							e.printStackTrace(System.err);
 						}
 					}
 					

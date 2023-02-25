@@ -278,12 +278,12 @@ public final class Inspector {
 	private void drawFields(Object object) {
 		if(object == null)
 			return;
-
+		
 		for(int i = 0; i < object.getClass().getFields().length; i++) {
 			try {
 				if(Modifier.isStatic(object.getClass().getFields()[i].getModifiers()) || Modifier.isFinal((object.getClass().getFields()[i].getModifiers())))
 					continue;
-				System.err.println("drawing: " + object.getClass().getFields()[i].getName());
+				
 				drawField(object.getClass().getFields()[i], object);
 			} catch (IllegalArgumentException | IllegalAccessException | NoSuchMethodException | SecurityException
 					| InvocationTargetException e) {

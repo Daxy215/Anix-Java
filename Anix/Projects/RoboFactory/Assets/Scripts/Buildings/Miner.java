@@ -99,6 +99,6 @@ public class Miner extends SourceAble {
 		Miner m = (Miner) placeBuilding(placementData.startPos, BuilderManager.get(this));
 		placementData.cancel();
 		
-		BuilderManager.electricityProcedurable.add(new ElectricityProduceData(false, m));
+		BuilderManager.electricityProcedurable.add(new ElectricityProduceData(1, false, m));
 	}
 }

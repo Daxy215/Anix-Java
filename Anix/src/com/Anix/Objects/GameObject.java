@@ -41,9 +41,9 @@ public class GameObject /*extends Entity*/ implements Cloneable, Serializable {
 	private transient Mesh mesh;
 	private transient Matrix4f transform;
 	
-	private GameObject parent;
+	//private GameObject parent;
 	
-	private transient List<GameObject> children = new ArrayList<GameObject>();
+	//private transient List<GameObject> children = new ArrayList<GameObject>();
 	private List<Behaviour> behaviours = new ArrayList<Behaviour>();
     private List<GameObject> collidingObjects = new ArrayList<GameObject>();
 	
@@ -114,7 +114,7 @@ public class GameObject /*extends Entity*/ implements Cloneable, Serializable {
 		this.transform = Matrix4f.transform(this);
 	}
 	
-	public GameObject(String name, Vector3f position, Vector3f rotation, Vector3f scale, GameObject parent) {
+	/*public GameObject(String name, Vector3f position, Vector3f rotation, Vector3f scale, GameObject parent) {
 		this.position = position;
 		this.rotation = rotation;
 		this.scale = scale;
@@ -134,7 +134,7 @@ public class GameObject /*extends Entity*/ implements Cloneable, Serializable {
 		scene.addObject(this);
 		
 		this.transform = Matrix4f.transform(this);
-	}
+	}*/
 	
 	public GameObject(String name, Vector3f position, Vector3f rotation, Vector3f scale, boolean addToScene) {
 		this.position = position;
@@ -188,7 +188,7 @@ public class GameObject /*extends Entity*/ implements Cloneable, Serializable {
 		this.transform = Matrix4f.transform(this);
 	}
 	
-	public GameObject(Vector3f position, Vector3f rotation, Vector3f scale, GameObject parent) {
+	/*public GameObject(Vector3f position, Vector3f rotation, Vector3f scale, GameObject parent) {
 		this.name = "";
 		this.position = position;
 		this.rotation = rotation;
@@ -208,7 +208,7 @@ public class GameObject /*extends Entity*/ implements Cloneable, Serializable {
 		scene.addObject(this);
 		
 		this.transform = Matrix4f.transform(this);
-	}
+	}*/
 	
 	public GameObject(String name, Vector3f position, Vector3f rotation, Vector3f scale, Mesh mesh) {
 		this.name = name;
@@ -255,7 +255,7 @@ public class GameObject /*extends Entity*/ implements Cloneable, Serializable {
 		this.transform = Matrix4f.transform(this);
 	}
 	
-	public GameObject(String name, Vector3f position, Vector3f rotation, Vector3f scale, Mesh mesh, GameObject parent) {
+	/*public GameObject(String name, Vector3f position, Vector3f rotation, Vector3f scale, Mesh mesh, GameObject parent) {
 		this.name = name;
 		this.position = position;
 		this.rotation = rotation;
@@ -276,7 +276,7 @@ public class GameObject /*extends Entity*/ implements Cloneable, Serializable {
 		scene.addObject(this);
 		
 		this.transform = Matrix4f.transform(this);
-	}
+	}*/
 	
 	public static GameObject find(String name) {
 		for(int i = 0; i < SceneManager.getCurrentScene().getGameObjects().size(); i++) {
@@ -306,10 +306,10 @@ public class GameObject /*extends Entity*/ implements Cloneable, Serializable {
 			clone.rotation = rotation.copy();
 			clone.scale = scale.copy();
 			
-			List<GameObject> children = new ArrayList<>();
+			//List<GameObject> children = new ArrayList<>();
 			
-			if(this.children == null)
-				this.children = new ArrayList<>();
+			//if(this.children == null)
+			//	this.children = new ArrayList<>();
 			
 			clone.setBehaviours(getBehaviours().stream().map(d -> {
 				try {
@@ -322,24 +322,22 @@ public class GameObject /*extends Entity*/ implements Cloneable, Serializable {
 				return null;
 			}).collect(Collectors.toCollection(ArrayList::new)));
 			
-			for(int i = 0; i < behaviours.size() || i < this.children.size(); i++) {
-				if(clone.getBehaviours().size() > i) {
-					clone.getBehaviours().get(i).gameObject = clone;
-					
-					if(clone.getBehaviours().get(i).isEnabled)
-						clone.getBehaviours().get(i).awake();
-					
-					if(Editor.isPlaying()) {
-						clone.getBehaviours().get(i).start();
-					}
+			for(int i = 0; i < behaviours.size(); i++) {// || i < this.children.size(); i++) {
+				clone.getBehaviours().get(i).gameObject = clone;
+
+				if(clone.getBehaviours().get(i).isEnabled)
+					clone.getBehaviours().get(i).awake();
+
+				if(Editor.isPlaying()) {
+					clone.getBehaviours().get(i).start();
 				}
-				
-				if(this.children.size() > i)
-					children.add(this.children.get(i));
+					
+				//if(this.children.size() > i)
+					//children.add(this.children.get(i));
 			}
 			
 			clone.uuid = UUID.randomUUID();
-			clone.children = children;
+			//clone.children = children;
 			
 			return clone;
 		} catch(Exception e) {
@@ -359,12 +357,12 @@ public class GameObject /*extends Entity*/ implements Cloneable, Serializable {
 			Camera.main = null;
 		}
 		
-		if(children != null) {
-			for(int i = 0; i < children.size(); i++) {
-				if(children.get(i) != null)
-					children.get(i).destroy();
-			}
-		}
+		//if(children != null) {
+			//for(int i = 0; i < children.size(); i++) {
+				//if(children.get(i) != null)
+					//children.get(i).destroy();
+			//}
+		//}
 		
 		isEnabled = false;
 		shouldBeRemoved = true;
@@ -389,7 +387,7 @@ public class GameObject /*extends Entity*/ implements Cloneable, Serializable {
 		
 		behaviours.clear();
 		
-		setParent(null);
+		//setParent(null);
 		
 		if(mesh != null && destoryMesh)
 			mesh.destroy();
@@ -669,6 +667,7 @@ public class GameObject /*extends Entity*/ implements Cloneable, Serializable {
 		updateTransformation();
 	}
 	
+	/*
 	public boolean hasParent() {
 		return parent != null;
 	}
@@ -696,12 +695,6 @@ public class GameObject /*extends Entity*/ implements Cloneable, Serializable {
 			
 			parent.addChild(this);
 		}
-		
-		/*if(parent != null && !parent.children.contains(this)) {
-			System.err.println("?? " + name);
-			
-			parent.children.add(this);
-		}*/
 	}
 	
 	public boolean hasChildren() {
@@ -733,7 +726,7 @@ public class GameObject /*extends Entity*/ implements Cloneable, Serializable {
 			children.add(obj);
 		}
 	}
-	
+	*/
 	public Mesh getMesh() {
 		return mesh;	
 	}

@@ -18,7 +18,7 @@ import Managers.WorldManager;
 
 public class Terrain {
 	public static enum MaterialType {
-		Tree, Metal, Lithium, Stone
+		Tree, Metal, Coal, Copper, LimeStone, Stone
 	}
 	
 	private Random random;
@@ -28,9 +28,6 @@ public class Terrain {
 	public MaterialType[][] materials;
 	
 	public static List<Vector2f> materialsPositions = new ArrayList<>();
-	
-    //public List<GameObject> gameObjects = new ArrayList<GameObject>();
-	
     public Terrain() {
     	
     }
@@ -52,63 +49,33 @@ public class Terrain {
                 int yy = (int)(y + position.y);
                 
                 BiomeGenerator.BiomeType type = BiomeGenerator.getBiomeAt(xx, yy);
+                World.Block block = null;
                 
                 if(type.equals(BiomeGenerator.BiomeType.FOREST)) {
-                	World.Block grass = World.instance.getBlock("grass");
-                	
-                	vertices.add(new Vertex(new Vector3f(-0.5f+x,  0.5f+y, 0), World.normal, grass.uvs[0]));
-    				vertices.add(new Vertex(new Vector3f(-0.5f+x, -0.5f+y, 0), World.normal, grass.uvs[1]));
-    				vertices.add(new Vertex(new Vector3f( 0.5f+x, -0.5f+y, 0), World.normal, grass.uvs[2]));
-    				vertices.add(new Vertex(new Vector3f( 0.5f+x,  0.5f+y, 0), World.normal, grass.uvs[3]));
+                	block = World.instance.getBlock("grass");
 				} else if(type.equals(BiomeGenerator.BiomeType.OCEAN) || type.equals(BiomeGenerator.BiomeType.BEACH)) {
-					World.Block water = World.instance.getBlock("water");
-                	
-                	vertices.add(new Vertex(new Vector3f(-0.5f+x,  0.5f+y, 0), World.normal, water.uvs[0]));
-    				vertices.add(new Vertex(new Vector3f(-0.5f+x, -0.5f+y, 0), World.normal, water.uvs[1]));
-    				vertices.add(new Vertex(new Vector3f( 0.5f+x, -0.5f+y, 0), World.normal, water.uvs[2]));
-    				vertices.add(new Vertex(new Vector3f( 0.5f+x,  0.5f+y, 0), World.normal, water.uvs[3]));
-					
-					continue;
+					block = World.instance.getBlock("water");
+					//continue;
 				} else if(type.equals(BiomeGenerator.BiomeType.SAVANNAH)) {
-					World.Block savanna = World.instance.getBlock("savanna");
-                	
-                	vertices.add(new Vertex(new Vector3f(-0.5f+x,  0.5f+y, 0), World.normal, savanna.uvs[0]));
-    				vertices.add(new Vertex(new Vector3f(-0.5f+x, -0.5f+y, 0), World.normal, savanna.uvs[1]));
-    				vertices.add(new Vertex(new Vector3f( 0.5f+x, -0.5f+y, 0), World.normal, savanna.uvs[2]));
-    				vertices.add(new Vertex(new Vector3f( 0.5f+x,  0.5f+y, 0), World.normal, savanna.uvs[3]));
-					
-					//treeChanceMin = 10;
-					//treeChanceMax = 20;
-
+					block = World.instance.getBlock("savanna");
 				} else if(type.equals(BiomeGenerator.BiomeType.DESERT)) {
-					World.Block sand = World.instance.getBlock("sand");
-                	
-                	vertices.add(new Vertex(new Vector3f(-0.5f+x,  0.5f+y, 0), World.normal, sand.uvs[0]));
-    				vertices.add(new Vertex(new Vector3f(-0.5f+x, -0.5f+y, 0), World.normal, sand.uvs[1]));
-    				vertices.add(new Vertex(new Vector3f( 0.5f+x, -0.5f+y, 0), World.normal, sand.uvs[2]));
-    				vertices.add(new Vertex(new Vector3f( 0.5f+x,  0.5f+y, 0), World.normal, sand.uvs[3]));
-					
-					//treeChanceMin = 10;
-					//treeChanceMax = 20;
-
+					block = World.instance.getBlock("sand");
 				} else if(type.equals(BiomeGenerator.BiomeType.SNOW)) {
-					World.Block snow = World.instance.getBlock("snow");
-                	
-                	vertices.add(new Vertex(new Vector3f(-0.5f+x,  0.5f+y, 0), World.normal, snow.uvs[0]));
-    				vertices.add(new Vertex(new Vector3f(-0.5f+x, -0.5f+y, 0), World.normal, snow.uvs[1]));
-    				vertices.add(new Vertex(new Vector3f( 0.5f+x, -0.5f+y, 0), World.normal, snow.uvs[2]));
-    				vertices.add(new Vertex(new Vector3f( 0.5f+x,  0.5f+y, 0), World.normal, snow.uvs[3]));
+					block = World.instance.getBlock("snow");
 				} else if(type.equals(BiomeGenerator.BiomeType.JUNGLE)) {
-					World.Block jungle = World.instance.getBlock("jungle");
-                	
-                	vertices.add(new Vertex(new Vector3f(-0.5f+x,  0.5f+y, 0), World.normal, jungle.uvs[0]));
-    				vertices.add(new Vertex(new Vector3f(-0.5f+x, -0.5f+y, 0), World.normal, jungle.uvs[1]));
-    				vertices.add(new Vertex(new Vector3f( 0.5f+x, -0.5f+y, 0), World.normal, jungle.uvs[2]));
-    				vertices.add(new Vertex(new Vector3f( 0.5f+x,  0.5f+y, 0), World.normal, jungle.uvs[3]));
+					block = World.instance.getBlock("jungle");
 				} else {
 					System.err.println("[ERROR] Couldn't find biometype of " + type.name());
 				}
                 
+            	vertices.add(new Vertex(new Vector3f(-0.5f+x,  0.5f+y, 0), World.normal, block.uvs[0]));
+				vertices.add(new Vertex(new Vector3f(-0.5f+x, -0.5f+y, 0), World.normal, block.uvs[1]));
+				vertices.add(new Vertex(new Vector3f( 0.5f+x, -0.5f+y, 0), World.normal, block.uvs[2]));
+				vertices.add(new Vertex(new Vector3f( 0.5f+x,  0.5f+y, 0), World.normal, block.uvs[3]));
+                
+				if(block.name.equalsIgnoreCase("water"))
+					continue;
+				
                 //Ores
                 float noiseValue = World.fs.GetNoise(xx, yy);
                 float treeProbability = (float) Math.pow((noiseValue + 1) / 16, 2);
@@ -119,27 +86,16 @@ public class Terrain {
                 
                 if(Math.random() < treeProbability) {
                 	materials[x][y] = MaterialType.Tree;
-                	//continue;
                 }
                 
-                //float r = MathD.getRandomNumberBetweenF(0, 100, World.SEED + (x * 1000 + y));
-                
-                //if(r > treeChanceMin && r < treeChanceMax) {
-                	//materials[x][y] = MaterialType.Tree;
-                	//continue;
-                //}
-                
-                //if(r > 0.01f * ironBuff) {
                 if(Math.random() < metalProbability) {
                 	generateMaterialBlob(MaterialType.Metal, x, y);
                 }
                 
-                //if(r > 0.02f * lithiumBuff) {
                 if(Math.random() < lithiumProbability) {
-                	generateMaterialBlob(MaterialType.Lithium, x, y);
+                	//generateMaterialBlob(MaterialType.Lithium, x, y);
                 }
                 
-                //if(r > 0.04f * stoneBuff) {
                 if(Math.random() < stoneProbability) {
                 	generateMaterialBlob(MaterialType.Stone, x, y);
                 }
@@ -181,48 +137,12 @@ public class Terrain {
                 
                 int zz = -1;
                 
-                switch(materials[x][y]) {
-                case Tree:
-                	World.Block tree = World.instance.getBlock("tree");
-                	
-                	vertices.add(new Vertex(new Vector3f(-0.5f+x,  0.5f+y, zz), World.normal, tree.uvs[0]));
-    				vertices.add(new Vertex(new Vector3f(-0.5f+x, -0.5f+y, zz), World.normal, tree.uvs[1]));
-    				vertices.add(new Vertex(new Vector3f( 0.5f+x, -0.5f+y, zz), World.normal, tree.uvs[2]));
-    				vertices.add(new Vertex(new Vector3f( 0.5f+x,  0.5f+y, zz), World.normal, tree.uvs[3]));
-                	
-                	break;
-                case Metal:
-                	World.Block metal = World.instance.getBlock("metal");
-                	
-                	vertices.add(new Vertex(new Vector3f(-0.5f+x,  0.5f+y, zz), World.normal, metal.uvs[0]));
-    				vertices.add(new Vertex(new Vector3f(-0.5f+x, -0.5f+y, zz), World.normal, metal.uvs[1]));
-    				vertices.add(new Vertex(new Vector3f( 0.5f+x, -0.5f+y, zz), World.normal, metal.uvs[2]));
-    				vertices.add(new Vertex(new Vector3f( 0.5f+x,  0.5f+y, zz), World.normal, metal.uvs[3]));
-                	
-                	break;
-                case Lithium:
-                	World.Block lithium = World.instance.getBlock("lithium");
-                	
-                	vertices.add(new Vertex(new Vector3f(-0.5f+x,  0.5f+y, zz), World.normal, lithium.uvs[0]));
-    				vertices.add(new Vertex(new Vector3f(-0.5f+x, -0.5f+y, zz), World.normal, lithium.uvs[1]));
-    				vertices.add(new Vertex(new Vector3f( 0.5f+x, -0.5f+y, zz), World.normal, lithium.uvs[2]));
-    				vertices.add(new Vertex(new Vector3f( 0.5f+x,  0.5f+y, zz), World.normal, lithium.uvs[3]));
-                	
-                	break;
-                case Stone:
-                	World.Block stone = World.instance.getBlock("stone");
-                	
-                	vertices.add(new Vertex(new Vector3f(-0.5f+x,  0.5f+y, zz), World.normal, stone.uvs[0]));
-    				vertices.add(new Vertex(new Vector3f(-0.5f+x, -0.5f+y, zz), World.normal, stone.uvs[1]));
-    				vertices.add(new Vertex(new Vector3f( 0.5f+x, -0.5f+y, zz), World.normal, stone.uvs[2]));
-    				vertices.add(new Vertex(new Vector3f( 0.5f+x,  0.5f+y, zz), World.normal, stone.uvs[3]));
-                	
-                	break;
-				default:
-					System.err.println("[IG-ERROR] [TERRAIN] Couldn't find a material with the name of: " + materials[x][y]);
-					
-					break;
-                }
+                World.Block tree = World.instance.getBlock(materials[x][y].name());
+            	
+            	vertices.add(new Vertex(new Vector3f(-0.5f+x,  0.5f+y, zz), World.normal, tree.uvs[0]));
+				vertices.add(new Vertex(new Vector3f(-0.5f+x, -0.5f+y, zz), World.normal, tree.uvs[1]));
+				vertices.add(new Vertex(new Vector3f( 0.5f+x, -0.5f+y, zz), World.normal, tree.uvs[2]));
+				vertices.add(new Vertex(new Vector3f( 0.5f+x,  0.5f+y, zz), World.normal, tree.uvs[3]));
 			}
         }
         
@@ -281,12 +201,11 @@ public class Terrain {
 		
 		// Check if the location is too close to any existing blobs
 		for (Vector2f existingBlob : materialsPositions) {
-			int dx = (int) (existingBlob.x - x);
-			int dy = (int) (existingBlob.y - y);
-			double distance = Math.sqrt(dx * dx + dy * dy);
-			if (distance < BLOB_SIZE * 0.1f) { //Blob Separation
+			double distance = MathD.getDistance(existingBlob.x, x, existingBlob.y, y);
+			if (distance < BLOB_SIZE * 5) { //Blob Separation
 				// This location is too close to an existing blob, so try again
-				return generateBlob(BLOB_SIZE - 1);
+				return null;
+				//return generateBlob(BLOB_SIZE - 1);
 			}
 		}
 		

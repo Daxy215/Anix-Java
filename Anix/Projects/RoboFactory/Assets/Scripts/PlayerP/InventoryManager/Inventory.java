@@ -374,6 +374,7 @@ public class Inventory extends Behaviour {
 		}
 		
 		ChatManager.addText("[INVENTORY MANAGER] Inventory is full!", Color.red);
+		System.err.println("[INVENTORY MANAGER] Inventory is full! " + name);
 	}
 
 	private void addItem(ItemType itemType, int amount, int startIndex) {

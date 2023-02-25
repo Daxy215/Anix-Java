@@ -19,7 +19,7 @@ public class BiomeGenerator extends Behaviour {
 			   + 0.09f * noiseE(8 * nx, 8 * ny)
 			   + 0.09f * noiseE(16 * nx, 16 * ny)
 			   + 0.03f * noiseE(32 * nx, 32 * ny));
-		e = e / (1.00f + 1.00f + 0.00f + 0.00f + 0.00f + 0.00f);
+		e = e / (1.00f + 0.00f + 0.00f + 0.00f + 0.00f + 0.00f);
 		e = (float) Math.pow(e, 0.5f);
 		
 		return getBiome(e);
@@ -30,20 +30,12 @@ public class BiomeGenerator extends Behaviour {
 	}
 	
 	private static BiomeType getBiome(double e) {
-		/*if     (e < 0.1) return BiomeType.OCEAN;
-		else if(e < 0.2) return BiomeType.BEACH;
+		//if     (e < 0.1) return BiomeType.SNOW;
+	    if(e < 0.2) return BiomeType.BEACH;
 		else if(e < 0.3) return BiomeType.FOREST;//Forest
 		else if(e < 0.5) return BiomeType.JUNGLE;
 		else if(e < 0.7) return BiomeType.SAVANNAH;
 		else if(e < 0.9) return BiomeType.DESERT;//Desert
-		else return BiomeType.SNOW;*/
-		
-		if     (e < 0.1) return BiomeType.OCEAN;
-		else if(e < 0.2) return BiomeType.BEACH;
-		else if(e < 0.3) return BiomeType.FOREST;//Forest
-		else if(e < 0.5) return BiomeType.JUNGLE;
-		else if(e < 0.7) return BiomeType.SAVANNAH;
-		else if(e < 0.9) return BiomeType.DESERT;//Desert
-		else return BiomeType.SNOW;
+		else return BiomeType.OCEAN;
 	}
 }

@@ -1,5 +1,6 @@
 package Managers;
 
+import java.io.Serializable;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -17,7 +18,9 @@ public class WorldManager extends Behaviour {
 	*/
 	private static final long serialVersionUID = 1L;	
 	
-	public static class Time {
+	public class Time implements Serializable {
+		private static final long serialVersionUID = 1L;
+		
 		public int years, months, days, hours, minutes, seconds;
 		
 		public Time() {
@@ -150,14 +153,17 @@ public class WorldManager extends Behaviour {
 		}
 	}
 	
-	public static Time time = new Time();
+	public static float lightStrength = 1;
+	
+	public Time time = new Time();
 	public static Material material;
 	private static Shader shader;
 	
-	public static float lightStrength = 1;
+	public static WorldManager instance;
 	
 	@Override
 	public void awake() {
+		time = new Time();
 		shader = Shader.getShader("GameShader");
 		material = new Material(shader);
 		
@@ -167,6 +173,8 @@ public class WorldManager extends Behaviour {
 	
 	@Override
 	public void start() {
+		instance = this;
+		
 		updateLighting();
 		
 		ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
@@ -175,16 +183,21 @@ public class WorldManager extends Behaviour {
 			time.addSecond(false);
         };
         
-        executor.scheduleAtFixedRate(task, 0, 20, TimeUnit.MILLISECONDS);
-        //executor.shutdown();
+        int time = 50;
+        
+        if(instance.time.isDay()) {
+        	time = 100;
+        }
+        
+        executor.scheduleAtFixedRate(task, 0, time, TimeUnit.MILLISECONDS);
 	}
 	
 	@Override
 	public void update() {
-		String time = "Time: " + (WorldManager.time.getYears() > 0 ? WorldManager.time.getYears() + ":" : "")
-				+ (WorldManager.time.getMonths() > 0 ? WorldManager.time.getMonths() + ":" : "")
-				+ (WorldManager.time.getDays() > 0 ? WorldManager.time.getDays() + ":" : "")
-				+ WorldManager.time.getHours() + ":" + WorldManager.time.getMinutes() + ":" + WorldManager.time.getSeconds();
+		String time = "Time: " + (instance.time.getYears() > 0 ? instance.time.getYears() + ":" : "")
+				+ (instance.time.getMonths() > 0 ? instance.time.getMonths() + ":" : "")
+				+ (instance.time.getDays() > 0 ? instance.time.getDays() + ":" : "")
+				+ instance.time.getHours() + ":" + instance.time.getMinutes() + ":" + instance.time.getSeconds();
 		
 		UI.drawString(time, 250, 25, 0.02f, 1.0f, 1.0f, Color.white);
 	}
@@ -204,43 +217,42 @@ public class WorldManager extends Behaviour {
 	}
 	
 	public static void updateLighting() {
-		int hours = time.getHours();
+		int hours = instance.time.getHours();
 		
 		if(hours >= 8 && hours <= 13) {
-			WorldManager.setLight(0.8f);
+			WorldManager.setLight(0.9f);
 		} else if(hours == 14) {
-			WorldManager.setLight(0.7f);
+			WorldManager.setLight(0.8f);
 		} else if(hours == 15) {
-			WorldManager.setLight(0.6f);
-		} else if(hours >= 17 && hours <= 19) {
-			WorldManager.setLight(0.5f);
-		} else if(hours >= 20 && hours <= 21) {
-			WorldManager.setLight(0.4f);
-		} else if(hours == 22) {
-			WorldManager.setLight(0.3f);
-		} else if(hours == 23) {
-			WorldManager.setLight(0.2f);
-		} else if(hours == 24) {
-			WorldManager.setLight(0.1f);
-		} else if(hours == 1) {
-			WorldManager.setLight(0.1f);
-		} else if(hours == 2) {
-			WorldManager.setLight(0.2f);
-		} else if(hours == 3) {
-			WorldManager.setLight(0.3f);
-		} else if(hours == 4) {
-			WorldManager.setLight(0.4f);
-		} else if(hours == 5) {
-			WorldManager.setLight(0.5f);
-		} else if(hours == 6) {
-			WorldManager.setLight(0.6f);
-		} else if(hours == 7) {
 			WorldManager.setLight(0.7f);
+		} else if(hours >= 17 && hours <= 19) {
+			WorldManager.setLight(0.6f);
+		} else if(hours >= 20 && hours <= 21) {
+			WorldManager.setLight(0.5f);
+		} else if(hours == 22) {
+			WorldManager.setLight(0.4f);
+		} else if(hours == 23) {
+			WorldManager.setLight(0.3f);
+		} else if(hours == 24) {
+			WorldManager.setLight(0.3f);
+		} else if(hours == 1) {
+			WorldManager.setLight(0.4f);
+		} else if(hours == 2) {
+			WorldManager.setLight(0.5f);
+		} else if(hours == 3) {
+			WorldManager.setLight(0.6f);
+		} else if(hours == 4) {
+			WorldManager.setLight(0.7f);
+		} else if(hours == 5) {
+			WorldManager.setLight(0.8f);
+		} else if(hours == 6) {
+			WorldManager.setLight(0.9f);
+		} else if(hours == 7) {
+			WorldManager.setLight(1.0f);
 		}
 	}
-
+	
 	public static void setLight(float value) {
-		//Anix.getLight().setStrength(value);
 		WorldManager.lightStrength = value;
 	}
 }

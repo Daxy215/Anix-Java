@@ -89,7 +89,7 @@ public class SpriteRenderer extends Behaviour {
 		
 		Mesh mesh = null;
 		
-		if(SpriteRenderer.class.getResource("/textures/" + spriteName) != null) {
+		/*if(SpriteRenderer.class.getResource("/textures/" + spriteName) != null) {
 			//System.err.println("[ERROR] [SpriteRenderer] Couldn't locate a texture with the name of: " + spriteName);
 			mesh = Core.meshManager.getMeshByPath("/textures/" + spriteName);
 			
@@ -98,7 +98,7 @@ public class SpriteRenderer extends Behaviour {
 				Core.meshManager.addMesh(mesh);
 			}
 		}
-		
+		*/
 		Sprite sprite = Sprite.getSprite(spriteName);
 		
 		if(sprite != null) {
@@ -111,8 +111,25 @@ public class SpriteRenderer extends Behaviour {
 			}
 		}
 		
-		mesh.setHasBeenDestroied(false);
-		mesh.setMaterial(material);
+		if(sprite == null) {
+			if(SpriteRenderer.class.getResourceAsStream("/textures/" + spriteName) == null) {
+				System.err.println("[ERROR] [SpriteRenderer] Couldn't locate a texture with the name of: " + spriteName);
+				
+				return;
+			} else {
+				mesh = Core.meshManager.getMeshByPath("/textures/" + spriteName);
+				
+				if(mesh == null) {
+					mesh = new Mesh(new Sprite(spriteName, "/textures/" + spriteName, null));
+					Core.meshManager.push(mesh);
+				}
+			}
+		}
+		
+		if(mesh != null) {
+			mesh.setHasBeenDestroied(false);
+			mesh.setMaterial(material);
+		}
 		
 		gameObject.setMesh(mesh);
 	}

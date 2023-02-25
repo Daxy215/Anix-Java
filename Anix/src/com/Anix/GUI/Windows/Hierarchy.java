@@ -20,7 +20,6 @@ import com.Anix.SceneManager.SceneManager;
 
 import imgui.ImGui;
 import imgui.flag.ImGuiCol;
-import imgui.flag.ImGuiDragDropFlags;
 import imgui.flag.ImGuiHoveredFlags;
 import imgui.flag.ImGuiStyleVar;
 import imgui.flag.ImGuiTreeNodeFlags;
@@ -30,7 +29,7 @@ public final class Hierarchy {
 	private final float startX = 0, startY = 25;
 	private float width = 250, height;
 	
-	public static GameObject selectedObject, draggedObject;
+	public static GameObject selectedObject;//, draggedObject;
 	private Core core;
 	
 	public Hierarchy(Core core) {
@@ -153,16 +152,15 @@ public final class Hierarchy {
 			if(object.uuid == null)
 				continue;
 			
-			int flags = ImGuiTreeNodeFlags.OpenOnArrow;
-			flags |= ImGuiTreeNodeFlags.FramePadding;
+			int flags = ImGuiTreeNodeFlags.OpenOnArrow | ImGuiTreeNodeFlags.FramePadding;
 			
 			if(selectedObject == object) {
 				flags |= ImGuiTreeNodeFlags.Selected;
 			}
 			
-			if(!object.hasChildren()) {
+			//if(!object.hasChildren()) {
 				flags |= ImGuiTreeNodeFlags.Leaf | ImGuiTreeNodeFlags.NoTreePushOnOpen;
-			}
+			//}
 			
 			boolean didIt = false;
 			
@@ -171,17 +169,17 @@ public final class Hierarchy {
 				didIt = true;
 			}
 			
-			boolean canDraw = object.getParent() != null && index == 0;
+			boolean canDraw = false;//object.getParent() != null && index == 0;
 			
 			if(!canDraw) {
 				String name = object.getName().isEmpty() ? "##" : object.getName();
 				
 				if(ImGui.treeNodeEx(name, flags)) {
-					if(object.hasChildren()) {
+					/*if(object.hasChildren()) {
 						drawObjects(object.getChildren(), index + 1);
 						
 						ImGui.treePop();
-					}
+					}*/
 				}
 				
 				//Single click - Select object
@@ -198,7 +196,7 @@ public final class Hierarchy {
 			}
 			
 			//Dragging and dropping handling.
-			if(ImGui.beginDragDropTarget()) {
+			/*if(ImGui.beginDragDropTarget()) {
 				Object o = ImGui.acceptDragDropPayload("GameObject", ImGuiDragDropFlags.None);
 				
 				if(o != null) {
@@ -207,20 +205,20 @@ public final class Hierarchy {
 				}
 				
 				ImGui.endDragDropTarget();
-			}
+			}*/
 			
-			int src_flags = ImGuiDragDropFlags.SourceNoDisableHover; // Keep the source displayed as hovered
-			src_flags |= ImGuiDragDropFlags.SourceNoHoldToOpenOthers; // Because our dragging is local, we disable the feature of opening foreign treenodes/tabs while dragging
+			//int src_flags = ImGuiDragDropFlags.SourceNoDisableHover; // Keep the source displayed as hovered
+			//src_flags |= ImGuiDragDropFlags.SourceNoHoldToOpenOthers; // Because our dragging is local, we disable the feature of opening foreign treenodes/tabs while dragging
 
-			if(ImGui.beginDragDropSource(src_flags)) {
+			/*if(ImGui.beginDragDropSource(src_flags)) {
 				ImGui.text(object.getName());
 				
 				ImGui.setDragDropPayload("GameObject", object.uuid);
-				draggedObject = object;
+				//draggedObject = object;
 				core.setDraggedObject(object);
 				
 				ImGui.endDragDropSource();
-			}
+			}*/
 			//End dragging and dropping handling.
 			
 			ImGui.pushID(object.uuid.toString());

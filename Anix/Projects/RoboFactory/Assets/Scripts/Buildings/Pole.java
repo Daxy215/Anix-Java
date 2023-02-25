@@ -33,6 +33,6 @@ public class Pole extends SourceAble {
 		Pole p = (Pole) placeBuilding(placementData.startPos, BuilderManager.get(this));
 		placementData.cancel();
 		
-		BuilderManager.electricityProcedurable.add(new ElectricityProduceData(true, p));
+		BuilderManager.electricityProcedurable.add(new ElectricityProduceData(4, true, p));
 	}
 }

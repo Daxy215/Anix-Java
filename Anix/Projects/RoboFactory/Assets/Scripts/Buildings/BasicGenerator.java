@@ -29,13 +29,12 @@ public class BasicGenerator extends Generator {
 	
 	@Override
 	public void start() {
-		requestUpdate();
-		
 		inventory = (Inventory) gameObject.addBehaviour(new Inventory());
 		inventory.sizeX = 1;
 		inventory.sizeY = 1;
 		
 		inventory.updateSlots();
+		requestUpdate();
 	}
 	
 	@Override
@@ -64,6 +63,6 @@ public class BasicGenerator extends Generator {
 		BasicGenerator g = (BasicGenerator) placeBuilding(placementData.startPos, BuilderManager.get(this));
 		placementData.cancel();
 		
-		BuilderManager.electricityProcedurable.add(new ElectricityProduceData(true, g));
+		BuilderManager.electricityProcedurable.add(new ElectricityProduceData(1, true, g));
 	}
 }

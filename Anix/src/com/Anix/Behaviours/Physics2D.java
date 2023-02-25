@@ -114,6 +114,7 @@ public class Physics2D extends Behaviour {
 			
 			collidedObject = collision.other;
 		}*/
+		isGrounded = true;
 	}
 	
 	@Override
@@ -124,6 +125,8 @@ public class Physics2D extends Behaviour {
 				isGrounded = false;
 			}
 		}*/
+		
+		isGrounded = false;
 	}
 	
 	public boolean isGrounded() {

@@ -23,7 +23,6 @@ import com.Anix.Engine.Graphics.Material;
 import com.Anix.Engine.Graphics.Shader;
 import com.Anix.GUI.GUI;
 import com.Anix.GUI.Panel;
-import com.Anix.GUI.Sprite;
 import com.Anix.GUI.UI;
 import com.Anix.GUI.Windows.Assets.Folder;
 import com.Anix.GUI.Windows.Console;
@@ -112,6 +111,7 @@ public final class Core implements Runnable {
 	private static MasterRenderer masterRenderer;
 	private GUI gui = new GUI(this);
 	private Editor editor = new Editor(this);
+	private UI ui = new UI();
 	
 	private Object draggedObject;
 	private Thread thread;
@@ -209,13 +209,17 @@ public final class Core implements Runnable {
 	public void run() {
 		application = new Application(gui, 1280, 720, "Anix " + editor.getVersion());
 		application.create();
+		
+		//Runnable initUI = () -> ui.init("Serif", Font.BOLD, 32);
+		//initUI.run();
+		ui.init("Serif", Font.BOLD, 32);
+		
 		masterRenderer = new MasterRenderer();
 		
 		ImGui.styleColorsDark();
 		redDarkTheme();
 		
 		init();
-		UI.init("Serif", Font.BOLD, 32);
 		Time.init();
 		
 		Editor.canAddObjects = true;
@@ -283,6 +287,8 @@ public final class Core implements Runnable {
 				
 				render();
 				renderBehaviours();
+				
+				//UI.render();
 				
 				frameBuffer.unbindCurrentFrameBuffer();
 				
@@ -444,7 +450,8 @@ public final class Core implements Runnable {
 		}
 		
 		/*if(Input.isKeyDown(KeyCode.W)) {
-			generateApkThroughAnt("C:\\Users\\smsmk\\OneDrive\\Eclipse\\DaxyEngine-UIMaker\\build.xml");
+			//generateApkThroughAnt("C:\\Users\\smsmk\\OneDrive\\Eclipse\\DaxyEngine-UIMaker\\build.xml");
+			ui.init("Serif", Font.BOLD, 32);
 		}*/
 		
 		if(Input.isKey(KeyCode.LeftControl) && Input.isKeyDown(KeyCode.S)) {

@@ -75,6 +75,10 @@ public class MathD {
 				+ Math.pow(pos1.getY() - pos2.getY(), 2));
 	}
 	
+	public static double getDistance(float x1, float y1, float x2, float y2) {
+		return Math.sqrt(Math.pow(x1 - x2, 2) + Math.pow(y1 - y2, 2));
+	}
+	
 	public static double distanceBetweenVector2(Vector2f pos1, Vector2f pos2) {
 		return Math.sqrt(Math.pow(pos1.getX() - pos2.getX(), 2)
 				+ Math.pow(pos1.getY() - pos2.getY(), 2));

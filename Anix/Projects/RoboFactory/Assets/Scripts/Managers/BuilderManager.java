@@ -86,6 +86,7 @@ public class BuilderManager extends Behaviour {
 	}
 	
 	public static class ElectricityProduceData {
+		public int maxConnections;
 		public boolean canBeSource;
 		public Building building;
 		
@@ -93,7 +94,8 @@ public class BuilderManager extends Behaviour {
 			
 		}
 		
-		public ElectricityProduceData(boolean canBeSource, Building building) {
+		public ElectricityProduceData(int maxConnections, boolean canBeSource, Building building) {
+			this.maxConnections = maxConnections;
 			this.canBeSource = canBeSource;
 			this.building = building;
 		}

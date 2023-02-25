@@ -5,6 +5,7 @@ import com.Anix.GUI.UI;
 import com.Anix.IO.Input;
 import com.Anix.IO.KeyCode;
 import com.Anix.Math.Color;
+import com.Anix.Math.Vector2f;
 import com.Anix.Math.Vector3f;
 
 import Managers.BuilderManager;
@@ -35,7 +36,7 @@ public class Cable extends Building {
 			Vector3f sPos = Camera.main.convertWorldToScreenSpace(source.gameObject.getPosition());
 			Vector3f tPos = Camera.main.convertWorldToScreenSpace(target.gameObject.getPosition());
 			
-			UI.drawline(sPos.x, sPos.y, 0.01f, tPos.x, tPos.y, 0.01f, currentElectricity > 0 ? Color.red : Color.black, 10);
+			UI.drawline(sPos.x, sPos.y, 0.01f, tPos.x, tPos.y, 0.01f, currentElectricity > 0 ? Color.red : Color.black, 50);
 		}
 	}
 	
@@ -44,11 +45,13 @@ public class Cable extends Building {
 		if(source != null && target == null) {
 			Vector3f bPos = Camera.main.convertWorldToScreenSpace(source.gameObject.getPosition());
 			
-			UI.drawline(bPos.x, bPos.y, 0.01f, (float)Input.getMouseX(), (float)Input.getMouseY(), 0.01f, Color.red, 10);
+			UI.drawline(bPos.x, bPos.y, 0.01f, (float)Input.getMouseX(), (float)Input.getMouseY(), 0.01f, Color.red, 50);
 		} else if(source == null && target != null) {
 			Vector3f bPos = Camera.main.convertWorldToScreenSpace(target.gameObject.getPosition());
+			//Vector2f p = Camera.main.convertScreenToWorldSpace();
 			
-			UI.drawline(bPos.x, bPos.y, 0.01f, (float)Input.getMouseX(), (float)Input.getMouseY(), 0.01f, Color.red, 10);
+			//UI.addLine(target.gameObject.getPosition().x, target.gameObject.getPosition().y, p.x, p.y, Color.red);
+			UI.drawline(bPos.x, bPos.y, 0.01f, (float)Input.getMouseX(), (float)Input.getMouseY(), 0.01f, Color.red, 50);
 		} else if(source != null && target != null) {
 			Cable c = (Cable) BuilderManager.get(this);
 			c.source = source;
@@ -71,6 +74,8 @@ public class Cable extends Building {
 		}
 		
 		if(Input.isMouseButtonDown(KeyCode.Mouse1)) {
+			source = null;
+			target = null;
 			placementData.cancel();
 		}
 	}

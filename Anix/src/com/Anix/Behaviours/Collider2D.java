@@ -1,57 +1,64 @@
 package com.Anix.Behaviours;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import com.Anix.IO.Input;
+import com.Anix.IO.KeyCode;
 import com.Anix.Math.Rect;
+import com.Anix.Math.Vector2f;
 import com.Anix.Math.Vector3f;
 import com.Anix.Objects.GameObject;
 
-public final class Collider2D extends BoxCollider2D {
-	private static final long serialVersionUID = -4525044150700190954L;
+public final class Collider2D {
+	static final int borderWidth = 6, borderHeight = 6;
 	
-	/*public static class Collision {
-		private byte dir;
-
-		public GameObject other;
-
-		public Collision(GameObject other, byte dir) {
-			this.other = other;
-			this.dir = dir;
-		}
-
-		/**
-		 * 0 - Up<br>
-		 * 1 - Bottom<br>
-		 * 2 - Left<br>
-		 * 3 - Right<br>
-		 *//*
-		public byte getDirection() {
-			return dir;
+	public static int size = 0;
+	
+	public static Map<Vector2f, List<BoxCollider2D>> collidersM = new HashMap<>();
+	static List<BoxCollider2D> colliders = new ArrayList<>();
+	
+	public static void updateColliders(List<BoxCollider2D> c) {
+		for (int i = 0; i < c.size(); i++) {
+			if(!c.get(i).isEnabled)
+				continue;
+			
+			if(c.get(i).gameObject.shouldBeRemoved) {
+				c.remove(i);
+				i--;
+				continue;
+			}
+			
+			BoxCollider2D bc1 = c.get(i);
+			GameObject obj1 = c.get(i).gameObject;
+			
+			// check for collisions with other game objects
+			for (int j = i + 1; j < c.size(); j++) {
+				if(!c.get(j).isEnabled)
+					continue;
+				
+				if(c.get(j).gameObject.shouldBeRemoved) {
+					c.remove(j);
+					j--;
+					continue;
+				}
+				
+				BoxCollider2D bc2 = c.get(j);
+				GameObject obj2 = c.get(j).gameObject;
+				
+				checkCollisionBetween(bc1, bc2, obj1, obj2);
+			}
 		}
 	}
 	
-	private static class Collider {
-		public BoxCollider2D bx;
-		public GameObject collisionObject;
-
-		public Collider() {
-
-		}
-
-		public Collider(BoxCollider2D boxCollider) {
-			this.bx = boxCollider;
-		}
-	}*/
-	
-	static List<BoxCollider2D> colliders = new ArrayList<>();
-	
-	//private static List<Collider> movers = new ArrayList<>();
-	//private static List<Collider> solids = new ArrayList<>();
-	
 	public static void updateColliders() {
+		if(Input.isKeyDown(KeyCode.Z))
+			System.err.println("ypdating: " + collidersM.size() + " -  " + size);
+		
 		// loop through all game objects
-		for (int i = 0; i < colliders.size(); i++) {
+		/*for (int i = 0; i < colliders.size(); i++) {
 			if(!colliders.get(i).isEnabled)
 				continue;
 			
@@ -78,39 +85,32 @@ public final class Collider2D extends BoxCollider2D {
 				BoxCollider2D bc2 = colliders.get(j);
 				GameObject obj2 = colliders.get(j).gameObject;
 				
-				// calculate distance between the two objects
-				//Vector2f obj1Pos = obj1.getPosition().getXY();
-				//Vector2f obj2Pos = obj2.getPosition().getXY();
-				//float distance = (float) MathD.distanceBetweenVector2(obj1Pos, obj2Pos) * 1.5f;
-				
-				// calculate sum of the scales of the two objects
-				//Vector2f obj1Scale = obj1.getScale().getXY().mul(0.5f);
-				//Vector2f obj2Scale = obj2.getScale().getXY().mul(0.5f);
-				//float scaleSum = obj1Scale.length() + obj2Scale.length();
-				
-				// check if the distance is less than the scale sum
-				//if (distance < scaleSum) {
-				if(checkCollision(bc1, bc2)) {
-					// the two objects are colliding
-					OnCollisionStay(obj1, obj2);
-					OnCollisionStay(obj2, obj1);
-					
-					// check if this is the first frame of collision
-					if (!obj1.isColliding(obj2)) {
-						OnCollisionEnter(obj1, obj2);
-						OnCollisionEnter(obj2, obj1);
-						obj1.addCollidingObject(obj2);
-						obj2.addCollidingObject(obj1);
-					}
-				} else {
-					// the two objects are not colliding
-					if (obj1.isColliding(obj2)) {
-						OnCollisionExit(obj1, obj2);
-						OnCollisionExit(obj2, obj1);
-						obj1.removeCollidingObject(obj2);
-						obj2.removeCollidingObject(obj1);
-					}
-				}
+				checkCollisionBetween(bc1, bc2, obj1, obj2);
+			}
+		}*/
+	}
+	
+	private static void checkCollisionBetween(BoxCollider2D bc1, BoxCollider2D bc2, GameObject obj1, GameObject obj2) {
+		// check if the distance is less than the scale sum
+		if(checkCollision(bc1, bc2)) {
+			// the two objects are colliding
+			OnCollisionStay(obj1, obj2);
+			OnCollisionStay(obj2, obj1);
+			
+			// check if this is the first frame of collision
+			if (!obj1.isColliding(obj2)) {
+				OnCollisionEnter(obj1, obj2);
+				OnCollisionEnter(obj2, obj1);
+				obj1.addCollidingObject(obj2);
+				obj2.addCollidingObject(obj1);
+			}
+		} else {
+			// the two objects are not colliding
+			if (obj1.isColliding(obj2)) {
+				OnCollisionExit(obj1, obj2);
+				OnCollisionExit(obj2, obj1);
+				obj1.removeCollidingObject(obj2);
+				obj2.removeCollidingObject(obj1);
 			}
 		}
 	}
@@ -133,69 +133,6 @@ public final class Collider2D extends BoxCollider2D {
         }
     }
     
-	//public static void updateColliders() {
-	/*for(int i = 0; i < colliders.size(); i++) {
-			if(colliders.get(i).bx.gameObject.shouldBeRemoved) {
-				colliders.remove(i);
-
-				continue;
-			}
-
-			Collider c = new Collider(colliders.get(i).bx);
-			c.collisionObject = colliders.get(i).collisionObject;
-
-			if(colliders.get(i).bx.gameObject.isDirty()) {
-				movers.add(c);
-			} else {
-				solids.add(c);
-			}
-
-			colliders.get(i).bx.gameObject.resetDirty();
-		}
-
-		for(int i = 0; i < movers.size() - 1; i++) {
-			for(int j = 0; j < solids.size() - 1; j++) {
-				checkCollision(movers.get(i), solids.get(j));
-				checkCollision(movers.get(i + 1), solids.get(j));
-				checkCollision(movers.get(i), movers.get(i + 1));
-				checkCollision(solids.get(j), solids.get(j + 1));
-			}
-		}*/
-
-	/*for(int i = 0; i < movers.size(); i++) {
-			for(int j = 0; j < movers.size(); j++) {
-				if(i == j)
-					continue;
-
-				checkCollision(movers.get(i), movers.get(j));
-			}
-		}
-
-		for(int i = 0; i < movers.size(); i++) {
-			for(int j = 0; j < solids.size(); j++) {
-				checkCollision(movers.get(i), solids.get(j));
-			}
-		}
-
-		for(int i = 0; i < solids.size(); i++) {
-			for(int j = 0; j < solids.size(); j++) {
-				if(i == j)
-					continue;
-
-				checkCollision(solids.get(i), solids.get(j));
-			}
-		}
-
-		for(int i = 0; i < solids.size(); i++) {
-			for(int j = 0; j < movers.size(); j++) {
-				checkCollision(movers.get(j), solids.get(i));
-			}
-		}*/
-
-	//movers.clear();
-	//solids.clear();
-	//}
-    
 	private static boolean checkCollision(BoxCollider2D bc1, BoxCollider2D bc2) {
 		GameObject obj1 = bc1.gameObject;
 		GameObject obj2 = bc2.gameObject;
@@ -211,34 +148,86 @@ public final class Collider2D extends BoxCollider2D {
 			return false;
 		}
 		
+		int invert = 1;
+		GameObject obj1ToEdit = obj1;
+		
+		if(obj1.getName().equals("NO")) {
+			obj1ToEdit = obj2;
+			invert = -1;
+		}
+		
 		if(overlap.width < overlap.height) { //Left | Right
 			if(rect1.x < overlap.x) { //Left
 				if(!bc1.isTrigger)
-					obj1.addPosition(overlap.width, 0, 0);
+					obj1ToEdit.addPosition(overlap.width * invert, 0, 0);
 				
 				return true;
 			} else { //Right
 				if(!bc1.isTrigger)
-					obj1.addPosition(-overlap.width, 0, 0);
+					obj1ToEdit.addPosition(-overlap.width * invert, 0, 0);
 				
 				return true;
 			}
 		} else { //Top | Bottom
 			if(rect1.y < overlap.y) { //Bottom
 				if(!bc1.isTrigger)
-					obj1.addPosition(0, overlap.height, 0);
+					obj1ToEdit.addPosition(0, overlap.height * invert, 0);
 				
 				return true;
 			} else { //Top
 				if(!bc1.isTrigger)
-					obj1.addPosition(0, -overlap.height, 0);
+					obj1ToEdit.addPosition(0, -overlap.height * invert, 0);
 				
 				return true;
 			}
 		}
 	}
     
+    public static void updateObject(BoxCollider2D b) {
+		Vector2f pos = getXY(b.gameObject.getPosition().getXY());
+		
+		 List<BoxCollider2D> bs = collidersM.get(pos);
+		 
+		 if(bs != null) {
+			 System.err.println("updating");
+			 
+			 if(collidersM.get(pos).remove(b)) {
+				 //size--;
+				 addCollider(b);
+			 }
+		 }
+    }
+	
 	public static void addCollider(BoxCollider2D b) {
 		colliders.add(b);
+		
+		Vector2f pos = getXY(b.gameObject.getPosition().getXY());
+		List<BoxCollider2D> batch = collidersM.get(pos);
+		
+		if(batch != null) {
+			batch.add(b);
+			size++;
+		} else {
+			List<BoxCollider2D> newBatch = new ArrayList<BoxCollider2D>();
+			newBatch.add(b);
+			collidersM.put(pos, newBatch);
+		}
+	}
+	
+	public static Vector2f getXY(Vector2f v) {
+		int x = (int) v.x;
+		int y = (int) v.y;
+		//int tx = (int)(Math.round(x / borderWidth) * borderWidth);
+        //int ty = (int)(Math.round(y / borderHeight) * borderHeight);
+        
+		int gx = (int) Math.round(x / borderWidth);
+		int gy = (int) Math.round(y / borderHeight);
+		
+		/*
+		 * obj.position.x = (gridX + 0.5f) * cellWidth;
+    	 * obj.position.y = (gridY + 0.5f) * cellHeight;   
+		 */
+		
+		return new Vector2f(gx, gy);
 	}
 }

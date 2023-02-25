@@ -6,6 +6,9 @@ public class Generator extends SourceAble {
 	*/
 	private static final long serialVersionUID = 1L;
 	
+	public float currentCapacity;
+	public float maxElectricityCapacity;
+	
 	public Generator() {
 		
 	}

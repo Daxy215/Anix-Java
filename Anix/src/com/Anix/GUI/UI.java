@@ -56,14 +56,22 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.Consumer;
 
 import org.lwjgl.BufferUtils;
+import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
+import org.lwjgl.opengl.GL15;
+import org.lwjgl.opengl.GL33;
 import org.lwjgl.system.MemoryStack;
+import org.lwjglx.debug.org.lwjgl.opengl.GL20;
+import org.lwjglx.debug.org.lwjgl.opengl.GL30;
+import org.lwjglx.debug.org.lwjgl.opengl.GL31;
 import org.lwjglx.util.glu.GLU;
 
+import com.Anix.IO.Application;
 import com.Anix.IO.Input;
 import com.Anix.IO.KeyCode;
 import com.Anix.IO.ProjectSettings;
@@ -94,6 +102,82 @@ public final class UI {
 			return isRightClicked;
 		}
 	}*/
+	
+	public static abstract class Element {
+		protected float[] instanceData;
+		
+		public abstract int getPrimitiveType();
+		public abstract int getVertexCount();
+		public float[] getInstanceData() {
+			return instanceData;
+		}
+	}
+	
+	private static class Line extends Element {
+		private float sx, sy, ex, ey;
+		
+		public Line(float sx, float sy, float ex, float ey, Color c) {
+			this.sx = sx;
+			this.sy = sy;
+			this.ex = ex;
+			this.ey = ey;
+			
+			instanceData = new float[] {
+					sx, sy, c.r, c.g, c.b,
+					ex, ey, c.r, c.g, c.b
+			};
+		}
+		
+		@Override
+		public int hashCode() {
+			return Objects.hash(ex, ey, sx, sy);
+		}
+		
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj)
+				return true;
+			if (obj == null)
+				return false;
+			if (getClass() != obj.getClass())
+				return false;
+			Line other = (Line) obj;
+			
+			return Float.floatToIntBits(ex) == Float.floatToIntBits(other.ex)
+					&& Float.floatToIntBits(ey) == Float.floatToIntBits(other.ey)
+					&& Float.floatToIntBits(sx) == Float.floatToIntBits(other.sx)
+					&& Float.floatToIntBits(sy) == Float.floatToIntBits(other.sy);
+		}
+		
+		@Override
+		public int getPrimitiveType() {
+			return GL11.GL_LINES;
+		}
+
+		@Override
+		public int getVertexCount() {
+			return 2;
+		}
+	}
+	
+	private static class Button extends Element {
+		public Button(float x, float y, float w, float h, Color c) {
+			instanceData = new float[] {
+					x, y, c.r, c.g, c.g,
+					x + w, y, c.r, c.g, c.g,
+					x + w, y + h, c.r, c.g, c.g,
+					x, y + h, c.r, c.g, c.g,
+			};
+		}
+		
+		public int getPrimitiveType() {
+			return GL11.GL_QUADS;
+		}
+		
+		public int getVertexCount() {
+			return 4;
+		};
+	}
 	
 	public static class Popup {
 		private String ID;
@@ -312,6 +396,11 @@ public final class UI {
 		}
 	}
 	
+	private static final int POSITION_ATTRIB = 0, COLOR_ATTRIB = 1;
+	private int vao = -1, vbo, instanceVOB;
+	
+	private static List<Element> elements = new ArrayList<>();
+	
 	//Textures
 	/**
 	 * This texture will be used when a popup menu has a child.<br>
@@ -326,9 +415,33 @@ public final class UI {
 	
 	public static Map<TrueTypeFont, Color> trueTypeFonts = new HashMap<TrueTypeFont, Color>();
 	
-	public static void init(String defaultFontName, int style, int size) {
+	public void init(String defaultFontName, int style, int size) {
 		defaultFont = new Font(defaultFontName, style, size);
 		fontMatrices = new FontMetrics(defaultFont) {private static final long serialVersionUID = 1L;};
+		
+		if(GLFW.glfwGetCurrentContext() != Application.getWindow()) {
+			System.err.println("really?");
+			return;
+		}
+		
+		/*vao = GL30.glGenVertexArrays();
+		GL30.glBindVertexArray(vao);
+		
+		vbo = GL15.glGenBuffers();
+		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, vbo);
+		GL20.glVertexAttribPointer(POSITION_ATTRIB, 2, GL11.GL_FLOAT, false, 7 * 4, 0);
+		GL20.glVertexAttribPointer(COLOR_ATTRIB, 3, GL11.GL_FLOAT, false, 7 * 4, 2 * 4);
+		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
+		
+		instanceVOB = GL15.glGenBuffers();
+		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, instanceVOB);
+		GL20.glVertexAttribPointer(POSITION_ATTRIB + 1, 2, GL11.GL_FLOAT, false, 7 * 4, 0);
+        GL20.glVertexAttribPointer(COLOR_ATTRIB + 1, 3, GL11.GL_FLOAT, false, 7 * 4, 2 * 4);
+        GL33.glVertexAttribDivisor(POSITION_ATTRIB + 1, 1);
+        GL33.glVertexAttribDivisor(COLOR_ATTRIB + 1, 1);
+        GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
+        
+        GL30.glBindVertexArray(0);*/
 	}
 	
 	public static void update() {
@@ -348,6 +461,50 @@ public final class UI {
 
 			popup.update();
 		}
+	}
+	
+	public static void render() {
+		if(defaultFont == null)
+			return;
+		
+		//GL30.glBindVertexArray(vao);
+		GL20.glEnableVertexAttribArray(POSITION_ATTRIB);
+		GL20.glEnableVertexAttribArray(COLOR_ATTRIB);
+		GL20.glEnableVertexAttribArray(POSITION_ATTRIB + 1);
+		GL20.glEnableVertexAttribArray(COLOR_ATTRIB + 1);
+		
+		FloatBuffer instanceData = BufferUtils.createFloatBuffer(elements.size() * 7);
+		
+		for(Element element : elements) {
+			instanceData.put(element.getInstanceData());
+		}
+		
+		instanceData.flip();
+		
+		//GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, instanceVOB);
+		GL15.glBufferData(GL15.GL_ARRAY_BUFFER, instanceData, GL15.GL_DYNAMIC_DRAW);
+		
+		for(Element element : elements) {
+			GL31.glDrawArraysInstanced(element.getPrimitiveType(), 0, element.getVertexCount(), elements.size());
+		}
+		
+		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
+	    GL20.glDisableVertexAttribArray(POSITION_ATTRIB + 1);
+	    GL20.glDisableVertexAttribArray(COLOR_ATTRIB + 1);
+	    GL20.glDisableVertexAttribArray(POSITION_ATTRIB);
+	    GL20.glDisableVertexAttribArray(COLOR_ATTRIB);
+	    GL30.glBindVertexArray(0);
+	}
+	
+	public static void addLine(float sx, float sy, float ex, float ey, Color c) {
+		Line l = new Line(sx, sx, ex, ex, c);
+		
+		if(!elements.contains(l))
+			elements.add(l);
+	}
+	
+	public static void addButton(float x, float y, float w, float h, Color c) {
+		elements.add(new Button(x, y, w, h, c));
 	}
 	
 	public static void addPopup(float z, Vector2f size, String ID, Color color, Color textColor, String[] menus, Consumer<String> func) {
@@ -1219,10 +1376,10 @@ public final class UI {
 		GLU.gluProject(startX, startY, startZ, modelview, projection, viewport, winStart);
 		GLU.gluProject(endX, endY, endZ, modelview, projection, viewport, winEnd);
 		
-		float distance = (float) Math.sqrt(Math.pow(endX - startX, 2) + Math.pow(endY - startY, 2) + Math.pow(endZ - startZ, 2));
-		float lineWidthWorldSpace = distance * 0.005f; // adjust this multiplier to change the line width in world space
+		//float distance = (float) Math.sqrt(Math.pow(endX - startX, 2) + Math.pow(endY - startY, 2) + Math.pow(endZ - startZ, 2));
+		//float lineWidthWorldSpace = distance * 0.005f; // adjust this multiplier to change the line width in world space
 		
-		GL11.glLineWidth(lineWidthWorldSpace);
+		GL11.glLineWidth(lineWidth);
 		
 		GL11.glBegin(GL11.GL_LINES);
 		GL11.glColor3f(color.getRed(), color.getGreen(), color.getBlue());
@@ -1296,7 +1453,7 @@ public final class UI {
 				    				
 				    				imageBuffer = ResourceLoader.ioResourceToByteBuffer(temp, 8 * 1024);
 				    			} catch(Exception x) {
-				    				x.printStackTrace();
+				    				//x.printStackTrace();
 				    				imageBuffer = null;
 				    			}
 				    		}

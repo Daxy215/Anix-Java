@@ -7,6 +7,9 @@ import com.Anix.IO.KeyCode;
 import Enums.ItemType;
 import Managers.WorldManager;
 import PlayerP.InventoryManager.Inventory;
+import WorldGeneration.BiomeGenerator;
+import WorldGeneration.Terrain;
+import WorldGeneration.World;
 
 public class Player extends Behaviour {
 	/*
@@ -40,5 +43,16 @@ public class Player extends Behaviour {
 		
 		if(Input.isKey(KeyCode.C))
 			inventory.addItem(ItemType.Log, 1);
+		
+		int x = (int) gameObject.getPosition().x;
+		int y = (int) gameObject.getPosition().y;
+		int tx = (int)(Math.round(x / World.terrainWidth) * World.terrainWidth);
+        int ty = (int)(Math.round(y / World.terrainHeight) * World.terrainHeight);
+        
+		Terrain terrain = World.instance.getTerrainAt(gameObject.getPosition().getXY());
+		
+		if(terrain != null) {
+			System.err.println("found terain at: " + tx + " " + ty + " block: " + BiomeGenerator.getBiomeAt(x, y));
+		}
 	}
 }

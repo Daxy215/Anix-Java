@@ -68,6 +68,12 @@ public class Spelter extends Building {
 		for(int i = 0; i < ores.size(); i++) {
 			OreData d = ores.get(i);
 			
+			if(d.obj.shouldBeRemoved) {
+				ores.remove(i);
+				i--;
+				continue;
+			}
+			
 			Vector2f dir = d.direction == 0 ? gameObject.getForward() :
 				(d.direction == 1 ? gameObject.getRight() : gameObject.getRight().mul(-1));
 			
