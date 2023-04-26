@@ -115,7 +115,7 @@ public class BuilderManager extends Behaviour {
 	public static List<Cable> cables;
 	public static List<ElectricityProduceData> electricityProcedurable;
 	
-	private static List<Vector2f> placedBuildingsPositions;
+	public static List<Vector2f> placedBuildingsPositions;
 	//public List<BuildingData> buildings;
 	public Map<String, BuildingData> buildings;
 	
@@ -192,7 +192,7 @@ public class BuilderManager extends Behaviour {
 		placeHolder.setPosition(pos.x, pos.y);
 		
 		if(Input.isMouseButtonDown(KeyCode.Mouse0)) {
-			if(selectedBuilding != null && !placedBuildingsPositions.contains(pos)) {
+			if(selectedBuilding != null && selectedBuilding.building.canBePlaced(pos)) {
 				if(placementData != null && placementData.cancelled) {
 					placementData = new PlacementData(true, pos, spaceCoord);
 				}

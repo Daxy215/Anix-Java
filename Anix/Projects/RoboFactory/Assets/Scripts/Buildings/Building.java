@@ -45,6 +45,10 @@ public abstract class Building extends Behaviour {
 		
 	}
 	
+	public boolean canBePlaced(Vector2f pos) {
+		return !BuilderManager.placedBuildingsPositions.contains(pos);
+	}
+	
 	public void updatePlacements(PlacementData placementData) {}
 	
 	public void startPlacing(PlacementData placementData) {

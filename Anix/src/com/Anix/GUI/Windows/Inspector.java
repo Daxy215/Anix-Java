@@ -119,7 +119,7 @@ public final class Inspector {
 
 		counter = 0;
 	}
-
+	
 	//Info
 	ImString name = new ImString("", 256);
 	float[] pos = new float[3];

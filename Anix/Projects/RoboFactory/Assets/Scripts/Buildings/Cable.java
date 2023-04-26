@@ -41,6 +41,11 @@ public class Cable extends Building {
 	}
 	
 	@Override
+	public boolean canBePlaced(Vector2f pos) {
+		return !super.canBePlaced(pos);
+	}
+	
+	@Override
 	public void updatePlacements(PlacementData placementData) {
 		if(source != null && target == null) {
 			Vector3f bPos = Camera.main.convertWorldToScreenSpace(source.gameObject.getPosition());

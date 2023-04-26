@@ -8,8 +8,6 @@ import com.Anix.Behaviours.Behaviour;
 import com.Anix.Behaviours.Camera;
 import com.Anix.GUI.Texture;
 import com.Anix.GUI.UI;
-import com.Anix.IO.Input;
-import com.Anix.IO.KeyCode;
 import com.Anix.Math.FastNoise;
 import com.Anix.Math.Vector2f;
 import com.Anix.Math.Vector3f;
@@ -129,7 +127,6 @@ public class World extends Behaviour {
 		int x = (int)(Math.round(Camera.main.gameObject.getPosition().x / terrainWidth) * terrainWidth);
         int y = (int)(Math.round(Camera.main.gameObject.getPosition().y / terrainHeight) * terrainHeight);
         
-        if(Input.isKey(KeyCode.H))
         for (int k = x - terrainWidth * renderDistance; k <= x + terrainWidth * renderDistance; k += terrainWidth) {
 			for(int i = y - terrainHeight * renderDistance; i <= y + terrainHeight * renderDistance; i += terrainHeight) {
 				Terrain terrain = new Terrain(new Vector3f(k, i, 0));
@@ -156,7 +153,7 @@ public class World extends Behaviour {
         	}
         }*/
 	}
-
+	
 	public Terrain getTerrainAt(Vector2f pos) {
 		int x = (int)(Math.round(pos.x / terrainWidth) * terrainWidth);
         int y = (int)(Math.round(pos.y / terrainHeight) * terrainHeight);

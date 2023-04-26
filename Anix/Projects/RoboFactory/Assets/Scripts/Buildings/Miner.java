@@ -43,6 +43,11 @@ public class Miner extends SourceAble {
 		
 		int x = (int)gameObject.getPosition().x;
 		int y = (int)gameObject.getPosition().y;
+
+		//int bx = (Math.round(x)) % World.terrainWidth;
+		//int by = (Math.round(y)) % World.terrainHeight;
+		
+		//System.err.println("terrain at: " + x + " " + y + " bxby: " + bx + " " + by + " - " + terrain.materials[bx][by]);
 		
 		int xx = 0, yy = 0;
 		float closest = Float.MAX_VALUE;

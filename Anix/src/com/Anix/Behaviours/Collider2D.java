@@ -148,35 +148,27 @@ public final class Collider2D {
 			return false;
 		}
 		
-		int invert = 1;
-		GameObject obj1ToEdit = obj1;
-		
-		if(obj1.getName().equals("NO")) {
-			obj1ToEdit = obj2;
-			invert = -1;
-		}
-		
 		if(overlap.width < overlap.height) { //Left | Right
 			if(rect1.x < overlap.x) { //Left
 				if(!bc1.isTrigger)
-					obj1ToEdit.addPosition(overlap.width * invert, 0, 0);
+					obj1.addPosition(overlap.width, 0, 0);
 				
 				return true;
 			} else { //Right
 				if(!bc1.isTrigger)
-					obj1ToEdit.addPosition(-overlap.width * invert, 0, 0);
+					obj1.addPosition(-overlap.width, 0, 0);
 				
 				return true;
 			}
 		} else { //Top | Bottom
 			if(rect1.y < overlap.y) { //Bottom
 				if(!bc1.isTrigger)
-					obj1ToEdit.addPosition(0, overlap.height * invert, 0);
+					obj1.addPosition(0, overlap.height, 0);
 				
 				return true;
 			} else { //Top
 				if(!bc1.isTrigger)
-					obj1ToEdit.addPosition(0, -overlap.height * invert, 0);
+					obj1.addPosition(0, -overlap.height, 0);
 				
 				return true;
 			}

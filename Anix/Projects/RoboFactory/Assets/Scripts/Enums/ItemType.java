@@ -5,7 +5,7 @@ public enum ItemType {
 	Metal("It's metal.."), IronBar(), IronPlate(),
 	Lithium("Lithium to..?", 0, false),
 	Sappling("Sapplings are pretty, no?", 60, true), Biomass("Some good burning material.", 7, true),
-	CopperWire("Wire, yup, just a wire."), Cable("A cable to connect things."),
+	CopperWire("Wire, yup, just a wire."), Cable("A cable to connect things together."),
 	
 	Chip(), Gear(), Motor();
 	

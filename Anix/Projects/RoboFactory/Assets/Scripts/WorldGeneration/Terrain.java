@@ -78,11 +78,12 @@ public class Terrain {
 				
                 //Ores
                 float noiseValue = World.fs.GetNoise(xx, yy);
+                //noiseValue = Math.pow((noiseValue + 1) / 20, 2);
+                
                 float treeProbability = (float) Math.pow((noiseValue + 1) / 16, 2);
                 double metalProbability = Math.pow((noiseValue + 1) / 16, 2);
                 double lithiumProbability = Math.pow((noiseValue + 1) / 8, 2);
                 double stoneProbability = Math.pow((noiseValue + 1) / 12, 2);
-                Math.pow((noiseValue + 1) / 20, 2);
                 
                 if(Math.random() < treeProbability) {
                 	materials[x][y] = MaterialType.Tree;
