@@ -36,7 +36,7 @@ public class Player extends Behaviour {
 	
 	@Override
 	public void start() {
-		gameObject.getMesh().setMaterial(WorldManager.material);
+		//gameObject.getMesh().setMaterial(WorldManager.material);
 		
 		requestUpdate();
 	}

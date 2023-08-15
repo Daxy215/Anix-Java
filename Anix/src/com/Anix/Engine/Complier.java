@@ -36,6 +36,7 @@ import com.Anix.Behaviours.Physics2D;
 import com.Anix.Behaviours.SpriteRenderer;
 import com.Anix.GUI.Windows.Console;
 import com.Anix.IO.ProjectSettings;
+import com.Anix.Main.Core;
 
 //https://stackoverflow.com/questions/5830581/getting-a-directory-inside-a-jar
 public final class Complier {
@@ -97,8 +98,12 @@ public final class Complier {
 			return;
 		}
 		
+		String fileSeparator = System.getProperty("file.separator");
+		
 		directories.add(new File("C:/Users/smsmk/Desktop/Game Engine/Anix.jar"));
-		File dir = new File("C:/Users/smsmk/git/Anix-Java/Anix/includes");
+		directories.add(new File(System.getProperty("user.dir") + fileSeparator + Core.getProjectName() + fileSeparator + "Data" + fileSeparator + "bin"));
+		
+		File dir = new File("D:/GitHub/Anix-Java/Anix/includes");
 		
 		getExternalLibraries(dir);
 		
@@ -133,7 +138,6 @@ public final class Complier {
 		
 		for(File f : files) {
 			try {
-				//TODO: java.lang.ClassFormatError: Truncated class file?????
 				String packageName = extractPackageNameFromSourceCode(f);
 				String className = f.getName().split(".java")[0].trim();
 				String fullyQualifiedName = packageName + "." + className;
@@ -145,7 +149,13 @@ public final class Complier {
 					//continue;
 				//}
 				
-				Class<?> clazz = Class.forName(fullyQualifiedName, true, classLoader);
+				Class<?> clazz = null;
+				
+				try {
+					clazz = Class.forName(fullyQualifiedName, true, classLoader);
+				} catch(ClassNotFoundException e) {
+					clazz = Class.forName(className, true, classLoader);
+				}
 				
 				if(clazz != null && !Modifier.isAbstract(clazz.getModifiers())) {
 					try {

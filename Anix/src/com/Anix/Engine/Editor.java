@@ -99,7 +99,7 @@ public final class Editor {
 			core.setProjectName("Projects\\" + projects[index].getName());
 		} else {
             ProjectSettings.projectType = ProjectType.D2;
-			core.setProjectName("Projects\\RoboFactory");
+			core.setProjectName("Projects\\my project");
 		}
 		
 		workSpaceDirectory += "\\" + core.getProjectName() + "\\";

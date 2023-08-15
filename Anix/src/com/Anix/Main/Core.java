@@ -91,7 +91,7 @@ import imgui.flag.ImGuiConfigFlags;
  * TODO: Update the parenting system and make it work with the hierarchy<br>
  */
 public final class Core implements Runnable {
-	private String projectName = "";
+	private static String projectName = "";
 	
 	private int frames = 0, fps = 0;
 	private double frameTime = 0;
@@ -580,12 +580,12 @@ public final class Core implements Runnable {
 		editor.addFolder(targetPath, null);
 	}
 	
-	public String getProjectName() {
+	public static String getProjectName() {
 		return projectName;
 	}
 	
 	public void setProjectName(String projectName) {
-		this.projectName = projectName;
+		Core.projectName = projectName;
 	}
 	
 	public static MasterRenderer getMasterRenderer() {
