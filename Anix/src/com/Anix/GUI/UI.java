@@ -1,30 +1,23 @@
 package com.Anix.GUI;
 
-import static java.lang.Math.round;
-import static org.lwjgl.opengl.GL11.GL_BLEND;
 import static org.lwjgl.opengl.GL11.GL_NEAREST;
-import static org.lwjgl.opengl.GL11.GL_ONE_MINUS_SRC_ALPHA;
 import static org.lwjgl.opengl.GL11.GL_QUADS;
 import static org.lwjgl.opengl.GL11.GL_RGB;
 import static org.lwjgl.opengl.GL11.GL_RGBA;
-import static org.lwjgl.opengl.GL11.GL_SRC_ALPHA;
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_MAG_FILTER;
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_MIN_FILTER;
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_WRAP_S;
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_WRAP_T;
-import static org.lwjgl.opengl.GL11.GL_UNPACK_ALIGNMENT;
 import static org.lwjgl.opengl.GL11.GL_UNSIGNED_BYTE;
 import static org.lwjgl.opengl.GL11.glBegin;
 import static org.lwjgl.opengl.GL11.glBindTexture;
-import static org.lwjgl.opengl.GL11.glBlendFunc;
 import static org.lwjgl.opengl.GL11.glColor3f;
 import static org.lwjgl.opengl.GL11.glDisable;
 import static org.lwjgl.opengl.GL11.glEnable;
 import static org.lwjgl.opengl.GL11.glEnd;
 import static org.lwjgl.opengl.GL11.glGenTextures;
 import static org.lwjgl.opengl.GL11.glLoadIdentity;
-import static org.lwjgl.opengl.GL11.glPixelStorei;
 import static org.lwjgl.opengl.GL11.glPopMatrix;
 import static org.lwjgl.opengl.GL11.glPushMatrix;
 import static org.lwjgl.opengl.GL11.glTexCoord2f;
@@ -34,21 +27,15 @@ import static org.lwjgl.opengl.GL11.glTranslatef;
 import static org.lwjgl.opengl.GL11.glVertex2f;
 import static org.lwjgl.opengl.GL12.GL_CLAMP_TO_EDGE;
 import static org.lwjgl.stb.STBImage.stbi_failure_reason;
-import static org.lwjgl.stb.STBImage.stbi_image_free;
 import static org.lwjgl.stb.STBImage.stbi_info_from_memory;
 import static org.lwjgl.stb.STBImage.stbi_load_from_memory;
-import static org.lwjgl.stb.STBImageResize.STBIR_ALPHA_CHANNEL_NONE;
-import static org.lwjgl.stb.STBImageResize.STBIR_COLORSPACE_SRGB;
-import static org.lwjgl.stb.STBImageResize.STBIR_EDGE_CLAMP;
-import static org.lwjgl.stb.STBImageResize.STBIR_FILTER_MITCHELL;
-import static org.lwjgl.stb.STBImageResize.STBIR_FLAG_ALPHA_PREMULTIPLIED;
-import static org.lwjgl.stb.STBImageResize.stbir_resize_uint8_generic;
 import static org.lwjgl.system.MemoryStack.stackPush;
 import static org.lwjgl.system.MemoryUtil.memAlloc;
 import static org.lwjgl.system.MemoryUtil.memFree;
 
 import java.awt.Font;
 import java.awt.FontMetrics;
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
@@ -64,12 +51,10 @@ import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL15;
-import org.lwjgl.opengl.GL33;
 import org.lwjgl.system.MemoryStack;
 import org.lwjglx.debug.org.lwjgl.opengl.GL20;
 import org.lwjglx.debug.org.lwjgl.opengl.GL30;
 import org.lwjglx.debug.org.lwjgl.opengl.GL31;
-import org.lwjglx.util.glu.GLU;
 
 import com.Anix.IO.Application;
 import com.Anix.IO.Input;
@@ -397,7 +382,7 @@ public final class UI {
 	}
 	
 	private static final int POSITION_ATTRIB = 0, COLOR_ATTRIB = 1;
-	private int vao = -1, vbo, instanceVOB;
+	//private int vao = -1, vbo, instanceVOB;
 	
 	private static List<Element> elements = new ArrayList<>();
 	
@@ -1392,108 +1377,36 @@ public final class UI {
 
 	public static Texture loadTexture(String fileName) {
 		Texture returnImage = null;
-		
+
 		try {
-			//InputStream is = null;
-			
-			//if(ProjectSettings.isEditor) {
-				/*is = UI.class.getResourceAsStream(fileName);
-			
-				if(is == null) {
-					String tempPath = "";
-					
-					if(!Files.exists(Paths.get(fileName))) {
-						tempPath = ProjectSettings.getProjectPath() + fileName;
-					} else {
-						tempPath = fileName;
-					}
-					
-					is = new FileInputStream(new File(tempPath));
-				}*/
-				
-			    ByteBuffer image;
-				
-			    //Listen.. I got too lazy ;-;
-			    ByteBuffer imageBuffer = null;
-			    
-			    try {
-			    	imageBuffer = ResourceLoader.ioResourceToByteBuffer((
-			    			ProjectSettings.isEditor ? "" : fileName.startsWith("/") ? "" : "/") +
-			    			ProjectSettings.getProjectPath() + fileName, 8 * 1024);
-			    } catch (Exception e) {
-			    	try {
-				    	imageBuffer = ResourceLoader.ioResourceToByteBuffer(fileName, 8 * 1024);
-			    	} catch(Exception ee) {
-			    		try {
-			    			imageBuffer = ResourceLoader.ioResourceToByteBuffer("resources/" + fileName, 8 * 1024);
-			    		} catch(Exception eee) {
-			    			try {
-				    			imageBuffer = ResourceLoader.ioResourceToByteBuffer("/" + fileName, 8 * 1024);
-				    		} catch(Exception eeee) {
-				    			try {
-				    				//resources
-				    				String temp = fileName.substring(9, fileName.length());
-				    				
-				    				imageBuffer = ResourceLoader.ioResourceToByteBuffer(temp, 8 * 1024);
-				    			} catch(Exception x) {
-				    				//x.printStackTrace();
-				    				imageBuffer = null;
-				    			}
-				    		}
-			    		}
-			    	}
-			    }
-			    
-			    if(imageBuffer == null) {
-    				System.err.println("[ERORR] Couldn't locate a texture with the name of " + fileName);
-			    	
-			    	return null;
-			    }
-			    
-				try (MemoryStack stack = stackPush()) {
-			        IntBuffer w    = stack.mallocInt(1);
-			        IntBuffer h    = stack.mallocInt(1);
-			        IntBuffer comp = stack.mallocInt(1);
-			        
-			        // Use info to read image metadata without decoding the entire image.
-			        // We don't need this for this demo, just testing the API.
-			        if (!stbi_info_from_memory(imageBuffer, w, h, comp)) {
-			        	System.err.println("[ERROR] Couldn't load an image with the name of: " + fileName);
-			            //throw new RuntimeException("Failed to read image information: " + stbi_failure_reason());
-			        }
-			        
-			        //System.out.println("Image width: " + w.get(0));
-			        //System.out.println("Image height: " + h.get(0));
-			        //System.out.println("Image components: " + comp.get(0));
-			        //System.out.println("Image HDR: " + stbi_is_hdr_from_memory(imageBuffer));
-			        
-			        // Decode the image
-			        image = stbi_load_from_memory(imageBuffer, w, h, comp, 0);
-			        
-			        if (image == null) {
-			            throw new RuntimeException("Failed to load image: " + stbi_failure_reason());
-			        }
-			        
-			        returnImage = new Texture(w.get(0), h.get(0), createTexture(w.get(0), h.get(0), comp.get(0), image));
-			    }
-				
-				//texture = TextureLoader.getTexture(fileName.split("[.]")[1], is);
-				
-				//is.close();
-			//} else {
-				/*if(!fileName.startsWith("/")) {
-					String temp = "/" + fileName;
-					fileName = temp;
+	        ByteBuffer image, imageBuffer = loadImageFromFile(fileName);
+
+			if(imageBuffer == null) {
+				System.err.println("[ERORR] Couldn't locate a texture with the name of " + fileName);
+
+				return null;
+			}
+
+			try (MemoryStack stack = stackPush()) {
+				IntBuffer w    = stack.mallocInt(1);
+				IntBuffer h    = stack.mallocInt(1);
+				IntBuffer comp = stack.mallocInt(1);
+
+				// Use info to read image metadata without decoding the entire image.
+				// We don't need this for this demo, just testing the API.
+				if (!stbi_info_from_memory(imageBuffer, w, h, comp)) {
+					System.err.println("[ERROR] Couldn't load an image with the name of: " + fileName);
 				}
-				
-				try (InputStream in = UI.class.getResourceAsStream(fileName)) {
-					//BufferedReader reader = new BufferedReader(new InputStreamReader(in));
-					
-					texture = TextureLoader.getTexture(fileName.split("[.]")[1], in);
-					
-					in.close();
-				}*/
-			//}
+
+				// Decode the image
+				image = stbi_load_from_memory(imageBuffer, w, h, comp, 0);
+
+				if (image == null) {
+					throw new RuntimeException("Failed to load image: " + stbi_failure_reason());
+				}
+
+				returnImage = new Texture(w.get(0), h.get(0), createTexture(w.get(0), h.get(0), comp.get(0), image));
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -1501,85 +1414,71 @@ public final class UI {
 		return returnImage;
 	}
 	
-	private static int createTexture(int w, int h, int comp, ByteBuffer image) {
-		int texID = glGenTextures();
-		
-		glBindTexture(GL_TEXTURE_2D, texID);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST/*GL_LINEAR_MIPMAP_LINEAR*/);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-		
-		int format;
-		if (comp == 3) {
-			if ((w & 3) != 0) {
-				glPixelStorei(GL_UNPACK_ALIGNMENT, 2 - (w & 1));
-			}
-			format = GL_RGB;
-		} else {
-			premultiplyAlpha(w, h, image);
-			
-			glEnable(GL_BLEND);
-			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-			
-			format = GL_RGBA;
-		}
-		
-		glTexImage2D(GL_TEXTURE_2D, 0, format, w, h, 0, format, GL_UNSIGNED_BYTE, image);
-		
-		ByteBuffer input_pixels = image;
-		int        input_w      = w;
-		int        input_h      = h;
-		int        mipmapLevel  = 0;
-		while (1 < input_w || 1 < input_h) {
-			int output_w = Math.max(1, input_w >> 1);
-			int output_h = Math.max(1, input_h >> 1);
+	private static ByteBuffer loadImageFromFile(String fileName) throws IOException {
+	    String[] possiblePaths = {
+	        ProjectSettings.getProjectPath() + fileName,
+	        fileName,
+	        "resources/" + fileName,
+	        "/" + fileName,
+	        fileName.substring(9)
+	    };
+	    
+	    ByteBuffer imageBuffer = null;
+	    for (String path : possiblePaths) {
+	        try {
+	            imageBuffer = ResourceLoader.ioResourceToByteBuffer(path, 8 * 1024);
+	            if (imageBuffer != null) {
+	                break;
+	            }
+	        } catch (Exception ignored) {
+	        }
+	    }
 
-			ByteBuffer output_pixels = memAlloc(output_w * output_h * comp);
-			stbir_resize_uint8_generic(
-					input_pixels, input_w, input_h, input_w * comp,
-					output_pixels, output_w, output_h, output_w * comp,
-					comp, comp == 4 ? 3 : STBIR_ALPHA_CHANNEL_NONE, STBIR_FLAG_ALPHA_PREMULTIPLIED,
-							STBIR_EDGE_CLAMP,
-							STBIR_FILTER_MITCHELL,
-							STBIR_COLORSPACE_SRGB
-					);
-			
-			if (mipmapLevel == 0) {
-				stbi_image_free(image);
-			} else {
-				memFree(input_pixels);
-			}
-			
-			glTexImage2D(GL_TEXTURE_2D, ++mipmapLevel, format, output_w, output_h, 0, format, GL_UNSIGNED_BYTE, output_pixels);
-			
-			input_pixels = output_pixels;
-			input_w = output_w;
-			input_h = output_h;
-		}
-		
-		if (mipmapLevel == 0) {
-			stbi_image_free(image);
-		} else {
-			memFree(input_pixels);
-		}
-		
-		return texID;
+	    if (imageBuffer == null) {
+	        System.err.println("[ERROR] Couldn't locate a texture with the name of " + fileName);
+	    }
+	    return imageBuffer;
 	}
 	
-	private static void premultiplyAlpha(int w, int h, ByteBuffer image) {
-        int stride = w * 4;
-        for (int y = 0; y < h; y++) {
-            for (int x = 0; x < w; x++) {
-                int i = y * stride + x * 4;
-                
-                float alpha = (image.get(i + 3) & 0xFF) / 255.0f;
-                image.put(i + 0, (byte)round(((image.get(i + 0) & 0xFF) * alpha)));
-                image.put(i + 1, (byte)round(((image.get(i + 1) & 0xFF) * alpha)));
-                image.put(i + 2, (byte)round(((image.get(i + 2) & 0xFF) * alpha)));
-            }
-        }
-    }
+	private static int createTexture(int width, int height, int components, ByteBuffer image) {
+		int texID = glGenTextures();
+
+	    glBindTexture(GL_TEXTURE_2D, texID);
+	    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+	    int format = (components == 3) ? GL_RGB : GL_RGBA;
+
+	    glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, image);
+
+	    generateMipmaps(format, width, height, image);
+
+	    return texID;
+	}
+	
+	private static void generateMipmaps(int format, int width, int height, ByteBuffer image) {
+	    ByteBuffer inputPixels = image;
+	    int mipmapLevel = 0;
+	    
+	    while (1 < width || 1 < height) {
+	        int outputWidth = Math.max(1, width >> 1);
+	        int outputHeight = Math.max(1, height >> 1);
+
+	        ByteBuffer outputPixels = memAlloc(outputWidth * outputHeight * 4);
+	        // ... (stbir_resize_uint8_generic call here)
+
+	        glTexImage2D(GL_TEXTURE_2D, ++mipmapLevel, format, outputWidth, outputHeight, 0, format, GL_UNSIGNED_BYTE, outputPixels);
+
+	        memFree(inputPixels);
+	        inputPixels = outputPixels;
+	        width = outputWidth;
+	        height = outputHeight;
+	    }
+
+	    memFree(inputPixels);
+	}
 	
 	public static Vector2f getScale(float width, float height, float scalerMatchWidthOrHeight) {
 		Vector2f scalerReferenceResolution = new Vector2f(height, width);

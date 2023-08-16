@@ -1,5 +1,8 @@
 import com.Anix.Engine.Graphics.Vertex;
+import com.Anix.Math.Vector2f;
 import com.Anix.Math.Vector3f;
+import com.Anix.Objects.GameObject;
+import java.util.Arrays;
 
 public class Chunk {
 	public static enum BlockType {
@@ -48,52 +51,28 @@ public class Chunk {
 	}
 	
 	public void generateVertices(World.Data data) {
-		generateBlocks();
-		
-		BlockType block = null;
-		
-		if(blocks == null)
-			return;
-		
-		for(int x = 1; x < World.chunkSizeX + 1; x++) {
-			for(int z = 1; z < World.chunkSizeZ + 1; z++) {
-				for(int y = 0; y < World.chunkSizeY; y++) {
-					block = blocks[x][y][z];
-					
-					if(block == BlockType.Air)
+	    generateBlocks();
+
+	    if (blocks == null)
+	        return;
+
+	    for (int x = 1; x < World.chunkSizeX + 1; x++) {
+	        for (int z = 1; z < World.chunkSizeZ + 1; z++) {
+	            for (int y = 0; y < World.chunkSizeY; y++) {
+	                BlockType block = blocks[x][y][z];
+
+	                if(block == BlockType.Air)
 						continue;
-					
-					int size = data.vertices.size();
+	                
+	                int size = data.vertices.size();
 					
 					generateVertices(x, y, z, data);
-					
-					int tl = 0;
-					int sizeTl = 0;
-					
-					if(LODLevel == 0) {
-						tl = data.vertices.size() - 1 * (Math.abs(data.vertices.size() - size));
-						sizeTl = 1;
-					} else if(LODLevel == 1) {
-						tl = data.vertices.size() - 2 * (Math.abs(data.vertices.size() - size) / 2);
-						sizeTl = 2;
-					} else if(LODLevel == 2) {
-						tl = data.vertices.size() - 4 * (Math.abs(data.vertices.size() - size) / 4);
-						sizeTl = 6;
-					}
-					
-					for(int i = 0; i < sizeTl; i++) {
-						data.indices.add(tl + i * 4);
-						data.indices.add(tl + i * 4 + 1);
-						data.indices.add(tl + i * 4 + 2);
-						data.indices.add(tl + i * 4);
-						data.indices.add(tl + i * 4 + 2);
-						data.indices.add(tl + i * 4 + 3);
-					}
-				}
-			}
-		}
+					generateIndices(size, data);
+	            }
+	        }
+	    }
 	}
-	
+
 	public void generateVertices(int x, int y, int z, World.Data data) {
 		//Back
 		if(blocks[x][y][z - 1] == BlockType.Air) {
@@ -216,6 +195,27 @@ public class Chunk {
 		}
 	}
 	
+	private void generateIndices(int tl, World.Data data) {
+	    int sizeTl = 0;
+	    
+	    if (LODLevel == 0) {
+	        sizeTl = 1;
+	    } else if (LODLevel == 1) {
+	        sizeTl = 2;
+	    } else if (LODLevel == 2) {
+	        sizeTl = 6;
+	    }
+	    
+	    for (int i = 0; i < sizeTl; i++) {
+	        int baseIndex = tl + i * 4;
+	        data.indices.addAll(Arrays.asList(
+	            baseIndex, baseIndex + 1, baseIndex + 2,
+	            baseIndex, baseIndex + 2, baseIndex + 3
+	        ));
+	    }
+	}
+
+	
 	//get the block type at a specific coordinate
     BlockType GetBlockType(float f, float g, float h) {
         //print(noise.GetSimplex(x, z));
@@ -280,7 +280,7 @@ public class Chunk {
         int result = 1;
         result = prime * result + x;
         result = prime * result + y;
-        result = prime * result + x;
+        result = prime * result + z;
         return result;
     }
 	

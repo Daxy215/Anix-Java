@@ -555,6 +555,14 @@ public class GameObject /*extends Entity*/ implements Cloneable, Serializable {
 		return new Vector2f((float) Math.cos(rZ), (float) Math.sin(rZ));
 	}
 	
+	public Vector3f getCenter() {
+		return new Vector3f(
+			    position.x + scale.x / 2.0f,
+			    position.y + scale.y / 2.0f,
+			    position.z + scale.z / 2.0f
+			);
+	}
+	
 	public void setPosition(Vector2f position) {
 		this.setPosition(position.x, position.y);
 	}

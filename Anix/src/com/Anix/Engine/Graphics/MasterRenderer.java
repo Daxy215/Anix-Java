@@ -2,6 +2,7 @@ package com.Anix.Engine.Graphics;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -15,12 +16,14 @@ import com.Anix.Behaviours.Camera;
 import com.Anix.IO.Application;
 import com.Anix.IO.Input;
 import com.Anix.IO.KeyCode;
-import com.Anix.Main.Core;
 import com.Anix.Math.Matrix4f;
 import com.Anix.Math.Vector3f;
+import com.Anix.Math.Vector4f;
 import com.Anix.Objects.GameObject;
 
 public final class MasterRenderer {
+    private final Vector4f[] frustumPlanes = new Vector4f[6];
+	
 	//private boolean testRender;//, updateCombiedObjects;
 	
 	//private Core core;
@@ -33,6 +36,10 @@ public final class MasterRenderer {
 	private Map<Mesh, List<GameObject>> entities = new HashMap<Mesh, List<GameObject>>();
 	
 	public MasterRenderer(/*Core core, boolean testRender*/) {
+		for (int i = 0; i < frustumPlanes.length; i++) {
+            frustumPlanes[i] = new Vector4f();
+        }
+		
 		//this.core = core;
 		//this.testRender = testRender;
 		
@@ -140,153 +147,75 @@ public final class MasterRenderer {
 	}
 	
 	private void r() {
-		if(Camera.main == null) {
-			return;
+		if (Camera.main == null) {
+		    return;
 		}
 		
-		Object[] meshes = null;
+		Matrix4f viewMatrix = Camera.main.getViewMatrix();
+		Matrix4f projectionMatrix = Application.getProjectionMatrix();
+		Matrix4f viewProjectionMatrix = Matrix4f.multiply(projectionMatrix, viewMatrix);
 		
-		try {
-			meshes = entities.keySet().toArray();
-		} catch(Exception e) {
-			System.err.println("Error :(2 " + e.getMessage());
-			
-			return;
-		}
+		updateFrustumPlanes(viewProjectionMatrix);
 		
-		if(meshes == null)
-			return;
-		
-		int amount = 0, meshesAmount = 0;
 		long start = System.currentTimeMillis();
-		
-		for(int i = 0; i < meshes.length; i++) {
-			mesh = (Mesh)meshes[i];
-			
-			if(mesh == null) {
-				entities.remove(mesh);
-				
-				continue;
-			}
-			
-			if(mesh.hasBeenDestoried) {
-				entities.remove(mesh);
-				
-				continue;
-			}
-			
-			if(mesh.vertices == null || mesh.vertices.length == 0
-					|| mesh.indices == null || mesh.indices.length == 0) {
-				entities.remove(mesh);
-				
-				continue;
-			}
-			
-			if(!mesh.hasBeenCreated()) {
-				continue;
-			}
-			
-			if(mesh.getMaterial() == null) {
-				continue;
-			}
-			
-			shader = mesh.getMaterial().getShader();
-			
-			if(shader == null) {
-				continue;
-			}
-			
-			shader.bind();
-			
-			shader.setUniform("view", Camera.main.getViewMatrix());
-			shader.setUniform("projection", Application.getProjectionMatrix());
-			//shader.setUniform("color", mesh.getMaterial().getColor());
-			
-			prepareMesh(mesh);
-			
-			List<GameObject> batch = entities.get(mesh);
-			
-			if(batch == null) {
-				entities.remove(mesh);
-				
-				return;
-			}
-			
-			if(batch.isEmpty()) {
-				if(mesh != null)
-					mesh.destroy();
-				
-				entities.remove(mesh);
-				Core.meshManager.pushRemove(mesh);
-			}
-			
-			for(int j = 0; j < batch.size(); j++) {
-				GameObject entity = batch.get(j);
-				
-				if(entity == null || entity.getMesh() == null) {
-					entities.get(mesh).remove(entity);
-					
-					continue;
-				}
-				
-				if(entity.shouldBeRemoved) {
-					entities.get(mesh).remove(entity);
-					
-					continue;
-				}
-				
-				if(entity.getMesh() != null && !entity.getMesh().equals(mesh)) { //If object's mesh has been changed. Update it.
-					if(entities.get(mesh) != null && entities.get(mesh).remove(entity)) {
-						addEntity(entity);
-					}
-					
-					continue;
-				}
-				
-				if(!entity.isEnabled()) {
-					continue;
-				}
-				
-				//if(MathD.distanceBetweenVector2(entity.getPosition().getXY(), Camera.main.gameObject.getPosition().getXY()) > 45 + Camera.main.gameObject.getPosition().z)
-				//	continue;
-				
-				if(entity.getTransform() == null) {
-					entity.updateTransform();
-					//System.err.println("[ERROR] Couldn't render a GameObject with the name of " + entity.getName());
-					
-					continue;
-				}
-				
-				//Slow method.
-				/*Vector3f pos = Camera.main.convertWorldToScreenSpace(entity.getTransform(), entity.getPosition());
-				
-				if(pos.x > Application.getFullWidth() + 64 || pos.x < -64
-						|| pos.y > Application.getFullHeight() + 64 || pos.y < -64) {
-					continue;
-				}*/
-				
-				shader.setUniform("model", entity.getTransform());
-				
-				if(GLFW.glfwGetCurrentContext() != Application.getWindow()) {
-					System.err.println("cannot share between contexts.. " + GLFW.glfwGetCurrentContext() + " - " + Application.getWindow());
-					
-					return;
-				}
-				
-				GL11.glDrawElements(GL11.GL_TRIANGLES, mesh.getIndices().length, GL11.GL_UNSIGNED_INT, 0);
-				amount++;
-			}
-			
-			unBindMesh(mesh);
-			
-			shader.unbind();
-			meshesAmount++;
+		int meshes = 0;
+
+		for (Iterator<Map.Entry<Mesh, List<GameObject>>> iterator = entities.entrySet().iterator(); iterator.hasNext();) {
+		    Map.Entry<Mesh, List<GameObject>> entry = iterator.next();
+		    Mesh mesh = entry.getKey();
+		    List<GameObject> batch = entry.getValue();
+		    
+		    if (mesh == null || mesh.hasBeenDestoried ||
+		        mesh.vertices == null || mesh.vertices.length == 0 ||
+		        mesh.indices == null || mesh.indices.length == 0 ||
+		        !mesh.hasBeenCreated() || mesh.getMaterial() == null ||
+		        mesh.getMaterial().getShader() == null || batch == null || batch.isEmpty()) {
+		        iterator.remove();
+		        continue;
+		    }
+		    
+		    Shader shader = mesh.getMaterial().getShader();
+		    shader.bind();
+		    shader.setUniform("view", Camera.main.getViewMatrix());
+		    shader.setUniform("projection", Application.getProjectionMatrix());
+		    
+		    prepareMesh(mesh);
+		    
+		    for (Iterator<GameObject> batchIterator = batch.iterator(); batchIterator.hasNext();) {
+		        GameObject entity = batchIterator.next();
+		        
+		        if (entity == null || entity.shouldBeRemoved ||
+		            entity.getMesh() == null || !entity.getMesh().equals(mesh) ||
+		            !entity.isEnabled() || entity.getTransform() == null) {
+		            batchIterator.remove();
+		            continue;
+		        }
+		        
+		        if (isObjectInFrustum(entity.getPosition())) {
+			        shader.setUniform("model", entity.getTransform());
+			        
+			        meshes++;
+			        
+			        if (GLFW.glfwGetCurrentContext() != Application.getWindow()) {
+			            System.err.println("cannot share between contexts.. " + GLFW.glfwGetCurrentContext() + " - " + Application.getWindow());
+			            return;
+			        }
+			        
+			        GL11.glDrawElements(GL11.GL_TRIANGLES, mesh.getIndices().length, GL11.GL_UNSIGNED_INT, 0);
+		        }
+		    }
+		    
+		    unBindMesh(mesh);
+		    shader.unbind();
 		}
 		
-		if(Input.isKeyDown(KeyCode.L)) {
-			System.err.println("Took " + (Math.abs(System.currentTimeMillis() - start) + "ms to render " + amount + " entities. With " + meshesAmount + " mesh(es)."));
+		if (Input.isKeyDown(KeyCode.L)) {
+		    long elapsedTime = Math.abs(System.currentTimeMillis() - start);
+		    int amount = entities.values().stream().mapToInt(List::size).sum();
+		    int meshesAmount = entities.size();
+		    System.err.println("Took " + elapsedTime + "ms to render " + amount + " entities. With (" + meshes + "/" + meshesAmount + ") mesh(es).");
 		}
-		
+
 		GL11.glDisable(GL11.GL_TEXTURE_2D);
 	}
 	
@@ -482,6 +411,68 @@ public final class MasterRenderer {
 		
 		//System.out.println("added: " + entity.getName() + " - " + entities.size());
 	}
+	
+	public void updateFrustumPlanes(Matrix4f inverseProjectionView) {
+        // Calculate the combined projection-view matrix
+		//inverseProjectionView.invert();
+        
+        // Left plane
+        frustumPlanes[0].set(inverseProjectionView.m30 + inverseProjectionView.m00,
+                             inverseProjectionView.m31 + inverseProjectionView.m01,
+                             inverseProjectionView.m32 + inverseProjectionView.m02,
+                             inverseProjectionView.m33 + inverseProjectionView.m03);
+        
+        // Right plane
+        frustumPlanes[1].set(inverseProjectionView.m30 - inverseProjectionView.m00,
+                             inverseProjectionView.m31 - inverseProjectionView.m01,
+                             inverseProjectionView.m32 - inverseProjectionView.m02,
+                             inverseProjectionView.m33 - inverseProjectionView.m03);
+        
+        // Bottom plane
+        frustumPlanes[2].set(inverseProjectionView.m30 + inverseProjectionView.m10,
+                             inverseProjectionView.m31 + inverseProjectionView.m11,
+                             inverseProjectionView.m32 + inverseProjectionView.m12,
+                             inverseProjectionView.m33 + inverseProjectionView.m13);
+        
+        // Top plane
+        frustumPlanes[3].set(inverseProjectionView.m30 - inverseProjectionView.m10,
+                             inverseProjectionView.m31 - inverseProjectionView.m11,
+                             inverseProjectionView.m32 - inverseProjectionView.m12,
+                             inverseProjectionView.m33 - inverseProjectionView.m13)
+        ;
+        // Near plane
+        frustumPlanes[4].set(inverseProjectionView.m30 + inverseProjectionView.m20,
+                             inverseProjectionView.m31 + inverseProjectionView.m21,
+                             inverseProjectionView.m32 + inverseProjectionView.m22,
+                             inverseProjectionView.m33 + inverseProjectionView.m23);
+        
+        // Far plane
+        frustumPlanes[5].set(inverseProjectionView.m30 - inverseProjectionView.m20,
+                             inverseProjectionView.m31 - inverseProjectionView.m21,
+                             inverseProjectionView.m32 - inverseProjectionView.m22,
+                             inverseProjectionView.m33 - inverseProjectionView.m23);
+        
+        // Normalize the planes
+        for (int i = 0; i < frustumPlanes.length; i++) {
+            frustumPlanes[i] = Vector4f.normlize(frustumPlanes[i]);
+        }
+    }
+	
+	public boolean isObjectInFrustum(Vector3f objectPosition) {
+        Vector4f objectPos4 = new Vector4f(objectPosition.x, objectPosition.y, objectPosition.z, 1.0f);
+        
+        for (Vector4f plane : frustumPlanes) {
+            if (dot(plane, objectPos4) < 0) {
+                return false;  // Object is outside the frustum
+            }
+        }
+        
+        return true;  // Object is inside the frustum
+    }
+	
+	public static float dot(Vector4f vector1, Vector4f vector2) {
+        return vector1.x * vector2.x + vector1.y * vector2.y + vector1.z * vector2.z + vector1.w * vector2.w;
+    }
 	
 	public void destroy() {
 		for(Mesh mesh : entities.keySet()) {

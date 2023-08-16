@@ -233,8 +233,8 @@ public class Mesh implements Serializable, Cloneable {
 		vertices = null;
 	    indices = null;
 		
-		if(sprite != null)
-			sprite.destroy();
+		//if(sprite != null)
+			//sprite.destroy();
 	}
 	
 	public String getPath() {

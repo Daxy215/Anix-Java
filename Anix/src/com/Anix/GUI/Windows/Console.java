@@ -105,7 +105,7 @@ public final class Console {
 			
 			return;
 		}
-				
+		
 		messages.put(msg, LogLevel.None);
 	}
 	

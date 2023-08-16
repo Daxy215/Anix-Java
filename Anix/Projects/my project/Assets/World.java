@@ -12,6 +12,7 @@ import com.Anix.Engine.Graphics.Vertex;
 import com.Anix.GUI.Sprite;
 import com.Anix.GUI.Texture;
 import com.Anix.GUI.UI;
+import com.Anix.GUI.Windows.Console;
 import com.Anix.IO.Application;
 import com.Anix.Main.Core;
 import com.Anix.Math.FastNoise;
@@ -43,7 +44,7 @@ public class World extends Behaviour {
 	}
 	
 	public static int chunkSizeX = 16, chunkSizeY = 16, chunkSizeZ = 16;
-	public static int renderDistanceX = 16, renderDistanceY = 4;
+	public int renderDistanceX = 2, renderDistanceY = 2;
 	
 	public static Texture texture;
 	
@@ -109,28 +110,30 @@ public class World extends Behaviour {
 			        int curChunkPosY = (int)Math.floor(Camera.main.gameObject.getPosition().y/16)*16;
 			        int curChunkPosZ = (int)Math.floor(Camera.main.gameObject.getPosition().z/16)*16;
 			        
+			        int k = 0;
+			        
 			        for(int i = curChunkPosX - 16 * renderDistanceX; i <= curChunkPosX + 16 * renderDistanceX; i += 16) {
 			        	for(int j = curChunkPosZ - 16 * renderDistanceX; j <= curChunkPosZ + 16 * renderDistanceX; j += 16) {
-			        		for(int k = curChunkPosY - 16 * renderDistanceY; k <= curChunkPosY + 16 * renderDistanceY; k += 16) {
-				        		if(k >= 32)
-				        			continue;
+			        		//for(int k = curChunkPosY - 16 * renderDistanceY; k <= curChunkPosY + 16 * renderDistanceY; k += 16) {
+				        		//if(k >= 32)
+				        		//	continue;
 				        		
-				        		byte LOD = 0;
+				        		byte LOD = 2;
 				        		double distance = MathD.distanceBetweenVector3(i, k, j, Camera.main.gameObject.getPosition());
 				        		
-				        		if(distance < 10000) {
-				        			LOD = 2;
-				        		} else if(distance > 150 && distance < 200) {
-				        			LOD = 1;
-				        		} else {
-				        			LOD = 0;
-				        		}
+				        		//if(distance < 10000) {
+				        		//	LOD = 0;
+				        		//} else if(distance > 150 && distance < 200) {
+				        		//	LOD = 1;
+				        		//} else {
+				        		//	LOD = 2;
+				        		//}
 				        		
 			        			Chunk chunk = new Chunk(LOD, i, k, j);
 				        		
 				        		if(!chunks.containsKey(chunk)) {
+									chunks.put(chunk, new GameObject(i + "-" + k + "-" + j, new Vector3f(i, k, j)));
 									chunksToGenerate.add(chunk);
-									chunks.put(chunk, new GameObject(getName(), new Vector3f(i, k, j)));
 				        		} else { //Chunk already exists.
 				        			/*for(Map.Entry<Chunk, GameObject> entry : chunks.entrySet()) {
 				        				if(entry.getKey().equals(chunk)) {
@@ -148,17 +151,17 @@ public class World extends Behaviour {
 				        				}
 				        			}*/
 				        		}
-			        		}
+			        		//}
 			        	}
 			        }
 			        
-			        for(Map.Entry<Chunk, GameObject> entry : chunks.entrySet()) {
-			        	if(MathD.distanceBetweenVector3(entry.getKey().x, entry.getKey().y, entry.getKey().z, Camera.main.gameObject.getPosition()) > renderDistanceX * 25) {
-			        		entry.getKey().destroy();
-			        		entry.getValue().destroy(true);
-			        		chunks.remove(entry.getKey());
-			        	}
-			        }
+//			        for(Map.Entry<Chunk, GameObject> entry : chunks.entrySet()) {
+//			        	if(MathD.distanceBetweenVector3(entry.getKey().x, entry.getKey().y, entry.getKey().z, Camera.main.gameObject.getPosition()) > renderDistanceX * 50) {
+//			        		entry.getKey().destroy();
+//			        		entry.getValue().destroy(true);
+//			        		chunks.remove(entry.getKey());
+//			        	}
+//			        }
 					
 					try {
 						Thread.sleep(250);
@@ -171,6 +174,8 @@ public class World extends Behaviour {
 		
 		thread.setName("World Thread");
 		thread.start();
+		
+		requestUpdate();
 	}
 	
 	@Override

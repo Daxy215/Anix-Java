@@ -516,6 +516,17 @@ public class Matrix4f implements Serializable {
 		return translationMatrix;
     }
     
+    public static Matrix4f transform(Vector4f transform) {
+    	Matrix4f translationMatrix = new Matrix4f();
+		translationMatrix = translate(transform.x, transform.y, transform.z);
+		translationMatrix = multiply(translationMatrix, rotate(1, 1, 0, 0));
+		translationMatrix = multiply(translationMatrix, rotate(1, 0, 1, 0));
+		translationMatrix = multiply(translationMatrix, rotate(1, 0, 0, 1));
+		translationMatrix = multiply(translationMatrix, scale(1, 1, 1));
+		
+		return translationMatrix;
+    }
+    
     /**
      * Creates a translation matrix. Similar to
      * <code>glTranslate(x, y, z)</code>.

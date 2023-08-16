@@ -91,13 +91,13 @@ public class CustomRenderer extends Behaviour {
 				continue;
 			}
 			
-        	if(MathD.distanceBetweenVector3(entry.getKey().x, entry.getKey().y, entry.getKey().z, Camera.main.gameObject.getPosition()) > World.renderDistanceX * 25) {
-        		entry.getKey().destroy();
-        		entry.getValue().destroy(true);
-        		World.chunks.remove(entry.getKey());
+        	//if(MathD.distanceBetweenVector3(entry.getKey().x, entry.getKey().y, entry.getKey().z, Camera.main.gameObject.getPosition()) > World.renderDistanceX * 25) {
+        	//	entry.getKey().destroy();
+        	//	entry.getValue().destroy(true);
+        	//	World.chunks.remove(entry.getKey());
         		
-        		continue;
-        	}
+        	//	continue;
+        	//}
 			
 			//Slow method.
 			/*Vector3f pos = Camera.main.convertWorldToScreenSpace(entity.getPosition());
