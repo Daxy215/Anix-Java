@@ -7,7 +7,9 @@ public class Vector2f implements Serializable {
 	
 	public float x, y;
 	
-	public Vector2f() {
+	public static Vector2f zero = new Vector2f();
+	
+ 	public Vector2f() {
 		this.x = 0;
 		this.y = 0;
 	}

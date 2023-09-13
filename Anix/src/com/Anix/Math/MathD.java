@@ -134,6 +134,10 @@ public class MathD {
 			   pos0.z - size0.z / 2.f < pos1.z + size1.z / 2.f && pos0.z + size0.z / 2.f > pos1.z - size1.z / 2.f;
 	}
 	
+	public static int floorToInt(float value) {
+		return (int) Math.floor(value);
+	}
+	
 	public static float hermite(float start, float end, float value) {
 		return lerp(start, end, value * value * (3.0f - 2.0f * value));
 	}

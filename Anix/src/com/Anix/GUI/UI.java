@@ -1376,6 +1376,9 @@ public final class UI {
 	}
 
 	public static Texture loadTexture(String fileName) {
+		if(fileName == null || fileName.isEmpty())
+			return Sprite.sprites.get(0).getTexture();
+		
 		Texture returnImage = null;
 
 		try {

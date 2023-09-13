@@ -1,11 +1,14 @@
 package com.Anix.GUI.Windows;
 
+import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Consumer;
 
 import com.Anix.Annotation.Header;
@@ -14,6 +17,8 @@ import com.Anix.Engine.Editor;
 import com.Anix.GUI.GUI;
 import com.Anix.IO.Application;
 import com.Anix.IO.AutoCorrector;
+import com.Anix.IO.Input;
+import com.Anix.IO.KeyCode;
 import com.Anix.Math.Color;
 import com.Anix.Math.Vector2f;
 import com.Anix.Math.Vector3f;
@@ -238,7 +243,7 @@ public final class Inspector {
 			if(ImGui.treeNodeEx(behaviour.getName(), flags)) {
 				try {
 					drawFields(behaviour);
-				} catch (IllegalArgumentException | IllegalAccessException e) {
+				} catch (IllegalArgumentException | IllegalAccessException | InstantiationException e) {
 					e.printStackTrace();
 				}
 
@@ -264,7 +269,7 @@ public final class Inspector {
 		}
 	}
 	
-	private void drawFields(Behaviour behaviour) throws IllegalArgumentException, IllegalAccessException {
+	private void drawFields(Behaviour behaviour) throws IllegalArgumentException, IllegalAccessException, InstantiationException {
 		for(int i = 0; i < behaviour.getFields().length; i++) {
 			try {
 				drawField(behaviour.getFields()[i], behaviour);
@@ -275,7 +280,7 @@ public final class Inspector {
 		}
 	}
 	
-	private void drawFields(Object object) {
+	private void drawFields(Object object) throws InstantiationException {
 		if(object == null)
 			return;
 		
@@ -298,7 +303,7 @@ public final class Inspector {
 	float[] fv = new float[3];
 	float[] cv = new float[3];
 	
-	private void drawField(Field f, Object object) throws IllegalArgumentException, IllegalAccessException, NoSuchMethodException, SecurityException, InvocationTargetException {
+	private void drawField(Field f, Object object) throws IllegalArgumentException, IllegalAccessException, NoSuchMethodException, SecurityException, InvocationTargetException, InstantiationException {
 		f.setAccessible(true);
 		
 		Class<?> type = f.getType();
@@ -321,9 +326,11 @@ public final class Inspector {
 			ImGui.text(header.value());
 		}
 		
-		ImGui.pushItemWidth(25);
-		ImGui.text(f.getName() + ": ");
-		ImGui.popItemWidth();
+		//if(!type.isArray()) {
+			ImGui.pushItemWidth(25);
+			ImGui.text(f.getName() + ": ");
+			ImGui.popItemWidth();
+		//}
 		
 		ImGui.sameLine();
 		
@@ -456,10 +463,48 @@ public final class Inspector {
 				f.set(object, c);
 			}
 		} else if(type.isArray()) {
-			//System.err.println("it's array");
+			Object[] array = (Object[]) f.get(object);
+			
+			if(Input.isKeyUp(KeyCode.P)) {
+				Console.Log("Adding..");
+				
+				if(array == null) {
+					Class<?> fieldType = f.getType();
+					array = (Object[]) Array.newInstance(fieldType, 1);
+					
+					Console.Log(array.getClass().getComponentType().getSimpleName());
+					
+					//TODO:@
+					f.set(object, array);
+				} else if(array.length > 0) {
+					// Create a new instance of the same type as the elements in the array
+				    Object newItem = array[0].getClass().getConstructor().newInstance();
+				    	
+				    array = addToArray(array, newItem);
+				}
+				
+			    // Update the field value
+			    f.set(object, array);
+			}
+			
+			if(array != null) {
+				ImGui.newLine();
+				
+				if(ImGui.treeNodeEx(type.getSimpleName())) {
+					ImGui.treePop();
+					ImGui.popItemWidth();
+					ImGui.popID();
+					
+					counter++;
+					
+					drawArray(f, array, object);
+					
+					return;
+				}
+			}
 		} else if(type.equals(List.class)) {
 			List<Object> list = (List<Object>) f.get(object);
-
+			
 			if(list != null) {
 				if(ImGui.treeNodeEx(type.getSimpleName())) {
 					//if(ImGui.collapsingHeader(type.getSimpleName())) {
@@ -470,7 +515,7 @@ public final class Inspector {
 					counter++;
 
 					drawList(f, list, object);
-
+					
 					/*for (int i = 0; i < list.size(); i++) {
 					    Object element = list.get(i);
 
@@ -496,7 +541,7 @@ public final class Inspector {
 				return;
 			}
 		}
-
+		
 		ImGui.popItemWidth();
 		ImGui.popID();
 
@@ -641,6 +686,15 @@ public final class Inspector {
 		counter++;
 	}
 	
+	private void drawArray(Field f, Object[] array, Object object) throws IllegalArgumentException, IllegalAccessException, NoSuchMethodException, SecurityException, InvocationTargetException, InstantiationException {
+		for(int i = 0; i < array.length; i++) {
+			for(int j = 0; j < array[i].getClass().getFields().length; j++) {
+				if(array[i] != null)
+					drawField(array[i].getClass().getFields()[j], array[i]);
+			}
+		}
+	}
+	
 	public static Consumer<Integer> toConsumer(Object annotated, Method m) {
 		return param -> {
 			try {
@@ -651,6 +705,14 @@ public final class Inspector {
 		};
 	}
 
+	
+	public static <T> T[] addToArray(T[] originalArray, T newItem) {
+        int length = originalArray.length;
+        T[] newArray = Arrays.copyOf(originalArray, length + 1);
+        newArray[length] = newItem;
+        return newArray;
+    }
+	
 	public float getStartX() {
 		return startX;
 	}

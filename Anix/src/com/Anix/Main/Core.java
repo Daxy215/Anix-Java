@@ -44,6 +44,8 @@ import imgui.flag.ImGuiConfigFlags;
 //https://stackoverflow.com/questions/6327482/how-can-i-read-the-registry-values-using-java
 //https://stackoverflow.com/questions/2846664/implementing-coroutines-in-java
 
+//TODO: When dragging and dropping a file from desktop to application, it adds it but it doesn't update the folders.
+
 /**Problems:<br><br>
  * TODO: Make 2 different camera positions<br>
  * one for editor mode and one for play mode.<br>
@@ -183,6 +185,67 @@ public final class Core implements Runnable {
 		return style;
 	}
 	
+	public ImGuiStyle testTheme() {
+		ImGuiStyle style = ImGui.getStyle();
+
+		style.setWindowMinSize(1, 1);
+		style.setFramePadding(4, 2);
+		style.setItemSpacing(6, 2);
+		style.setItemInnerSpacing(6, 4);
+		style.setAlpha(0.95f);
+		style.setWindowRounding(0.0f); //4.0f
+		style.setWindowBorderSize(1);
+		style.setFrameRounding(2.0f);
+		//style.setIndentSpacing(6.0f);
+		style.setItemInnerSpacing(2, 4);
+		style.setColumnsMinSpacing(50.0f);
+		style.setGrabMinSize(14.0f);
+		style.setGrabRounding(16.0f);
+		style.setScrollbarSize(12.0f);
+		style.setScrollbarRounding(16.0f);
+
+		style.setColor(ImGuiCol.Text, 0.85f, 0.90f, 0.92f, 1.00f);
+		style.setColor(ImGuiCol.TextDisabled, 0.85f, 0.90f, 0.92f, 0.50f);
+		style.setColor(ImGuiCol.WindowBg, 0.15f, 0.16f, 0.18f, 1.00f);
+		style.setColor(ImGuiCol.Border, 0.40f, 0.42f, 0.45f, 0.50f);
+		style.setColor(ImGuiCol.BorderShadow, 0.00f, 0.00f, 0.00f, 0.00f);
+		style.setColor(ImGuiCol.FrameBg, 0.22f, 0.24f, 0.26f, 1.00f);
+		style.setColor(ImGuiCol.FrameBgHovered, 0.84f, 0.26f, 0.31f, 0.80f);
+		style.setColor(ImGuiCol.FrameBgActive, 0.84f, 0.26f, 0.31f, 1.00f);
+		style.setColor(ImGuiCol.TitleBg, 0.18f, 0.20f, 0.22f, 1.00f);
+		style.setColor(ImGuiCol.TitleBgCollapsed, 0.18f, 0.20f, 0.22f, 0.75f);
+		style.setColor(ImGuiCol.TitleBgActive, 0.84f, 0.26f, 0.31f, 1.00f);
+		style.setColor(ImGuiCol.MenuBarBg, 0.18f, 0.20f, 0.22f, 0.47f);
+		style.setColor(ImGuiCol.ScrollbarBg, 0.18f, 0.20f, 0.22f, 1.00f);
+		style.setColor(ImGuiCol.ScrollbarGrab, 0.84f, 0.26f, 0.31f, 0.80f);
+		style.setColor(ImGuiCol.ScrollbarGrabHovered, 0.84f, 0.26f, 0.31f, 1.00f);
+		style.setColor(ImGuiCol.ScrollbarGrabActive, 0.84f, 0.26f, 0.31f, 1.00f);
+		style.setColor(ImGuiCol.CheckMark, 0.84f, 0.26f, 0.31f, 1.00f);
+		style.setColor(ImGuiCol.SliderGrab, 0.50f, 0.75f, 0.80f, 0.50f);
+		style.setColor(ImGuiCol.SliderGrabActive, 0.84f, 0.26f, 0.31f, 1.00f);
+		style.setColor(ImGuiCol.Button, 0.50f, 0.75f, 0.80f, 0.50f);
+		style.setColor(ImGuiCol.ButtonHovered, 0.84f, 0.26f, 0.31f, 0.75f);
+		style.setColor(ImGuiCol.ButtonActive, 0.94f, 0.36f, 0.41f, 1.00f);
+		style.setColor(ImGuiCol.Header, 0.84f, 0.26f, 0.31f, 0.76f);
+		style.setColor(ImGuiCol.HeaderHovered, 0.84f, 0.26f, 0.31f, 0.86f);
+		style.setColor(ImGuiCol.HeaderActive, 0.84f, 0.26f, 0.31f, 1.00f);
+		style.setColor(ImGuiCol.Separator, 0.28f, 0.30f, 0.32f, 1.00f);
+		style.setColor(ImGuiCol.SeparatorHovered, 0.84f, 0.26f, 0.31f, 0.78f);
+		style.setColor(ImGuiCol.SeparatorActive, 0.84f, 0.26f, 0.31f, 1.00f);
+		style.setColor(ImGuiCol.ResizeGrip, 0.50f, 0.75f, 0.80f, 0.10f);
+		style.setColor(ImGuiCol.ResizeGripHovered, 0.84f, 0.26f, 0.31f, 0.78f);
+		style.setColor(ImGuiCol.ResizeGripActive, 0.84f, 0.26f, 0.31f, 1.00f);
+		style.setColor(ImGuiCol.PlotLines, 0.85f, 0.90f, 0.92f, 0.63f);
+		style.setColor(ImGuiCol.PlotLinesHovered, 0.84f, 0.26f, 0.31f, 1.00f);
+		style.setColor(ImGuiCol.PlotHistogram, 0.85f, 0.90f, 0.92f, 0.63f);
+		style.setColor(ImGuiCol.PlotHistogramHovered, 0.84f, 0.26f, 0.31f, 1.00f);
+		style.setColor(ImGuiCol.TextSelectedBg, 0.84f, 0.26f, 0.31f, 0.43f);
+		style.setColor(ImGuiCol.PopupBg, 0.18f, 0.20f, 0.22f, 0.90f);
+		style.setColor(ImGuiCol.ModalWindowDimBg, 0.18f, 0.20f, 0.22f, 0.73f);
+
+		return style;
+	}
+	
 	private void init() {
 		//?
 		new Material(Shader.defaultShader);
@@ -218,6 +281,7 @@ public final class Core implements Runnable {
 		
 		ImGui.styleColorsDark();
 		redDarkTheme();
+		//testTheme();
 		
 		init();
 		Time.init();

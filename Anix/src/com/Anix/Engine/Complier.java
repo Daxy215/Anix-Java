@@ -55,8 +55,6 @@ public final class Complier {
 		files.clear();
 		
 		if (ProjectSettings.isEditor) {
-			System.err.println("Compling");
-			
 			if (classesDir.listFiles() != null) {
 				for (int i = 0; i < classesDir.listFiles().length; i++) {
 					if (!classesDir.listFiles()[i].isDirectory()

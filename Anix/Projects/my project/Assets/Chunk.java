@@ -214,7 +214,6 @@ public class Chunk {
 	        ));
 	    }
 	}
-
 	
 	//get the block type at a specific coordinate
     BlockType GetBlockType(float f, float g, float h) {

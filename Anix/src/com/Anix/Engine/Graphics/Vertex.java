@@ -16,6 +16,16 @@ public class Vertex implements Serializable, Cloneable {
 		
 	}
 	
+	public Vertex(Vector3f position) {
+		this.position = position;
+		this.textureCoord = Vector2f.zero;
+	}
+	
+	public Vertex(Vector3f position, Vector2f textureCoord) {
+		this.position = position;
+		this.textureCoord = textureCoord;
+	}
+	
 	public Vertex(Vector3f position, Vector3f normal, Vector2f textureCoord) {
 		this.position = position;
 		this.normal = normal;

@@ -2,10 +2,10 @@ package com.Anix.Engine.Graphics;
 
 import java.io.Serializable;
 
-import com.Anix.Annotation.ScriptAble;
+import com.Anix.Annotation.Scriptable;
 import com.Anix.Math.Color;
 
-@ScriptAble
+@Scriptable
 public class Material implements Serializable {
 	private static final long serialVersionUID = 9136794400485996252L;
 	

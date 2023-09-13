@@ -14,11 +14,14 @@ import com.Anix.GUI.Texture;
 import com.Anix.GUI.UI;
 import com.Anix.GUI.Windows.Console;
 import com.Anix.IO.Application;
+import com.Anix.IO.Input;
+import com.Anix.IO.KeyCode;
 import com.Anix.Main.Core;
 import com.Anix.Math.FastNoise;
 import com.Anix.Math.MathD;
 import com.Anix.Math.Vector2f;
 import com.Anix.Math.Vector3f;
+import com.Anix.Math.Vector4f;
 import com.Anix.Objects.GameObject;
 
 public class World extends Behaviour {
@@ -43,7 +46,7 @@ public class World extends Behaviour {
 		}
 	}
 	
-	public static int chunkSizeX = 16, chunkSizeY = 16, chunkSizeZ = 16;
+	public static int chunkSizeX = 32, chunkSizeY = 32, chunkSizeZ = 32;
 	public int renderDistanceX = 2, renderDistanceY = 2;
 	
 	public static Texture texture;
@@ -114,9 +117,9 @@ public class World extends Behaviour {
 			        
 			        for(int i = curChunkPosX - 16 * renderDistanceX; i <= curChunkPosX + 16 * renderDistanceX; i += 16) {
 			        	for(int j = curChunkPosZ - 16 * renderDistanceX; j <= curChunkPosZ + 16 * renderDistanceX; j += 16) {
-			        		//for(int k = curChunkPosY - 16 * renderDistanceY; k <= curChunkPosY + 16 * renderDistanceY; k += 16) {
-				        		//if(k >= 32)
-				        		//	continue;
+			        		for(k = curChunkPosY - 16 * renderDistanceY; k <= curChunkPosY + 16 * renderDistanceY; k += 16) {
+				        		if(k >= 32)
+				        			continue;
 				        		
 				        		byte LOD = 2;
 				        		double distance = MathD.distanceBetweenVector3(i, k, j, Camera.main.gameObject.getPosition());
@@ -151,17 +154,17 @@ public class World extends Behaviour {
 				        				}
 				        			}*/
 				        		}
-			        		//}
+			        		}
 			        	}
 			        }
 			        
-//			        for(Map.Entry<Chunk, GameObject> entry : chunks.entrySet()) {
-//			        	if(MathD.distanceBetweenVector3(entry.getKey().x, entry.getKey().y, entry.getKey().z, Camera.main.gameObject.getPosition()) > renderDistanceX * 50) {
-//			        		entry.getKey().destroy();
-//			        		entry.getValue().destroy(true);
-//			        		chunks.remove(entry.getKey());
-//			        	}
-//			        }
+			        for(Map.Entry<Chunk, GameObject> entry : chunks.entrySet()) {
+			        	if(MathD.distanceBetweenVector3(entry.getKey().x, entry.getKey().y, entry.getKey().z, Camera.main.gameObject.getPosition()) > renderDistanceX * 50) {
+			        		entry.getKey().destroy();
+			        		entry.getValue().destroy(true);
+			        		chunks.remove(entry.getKey());
+			        	}
+			        }
 					
 					try {
 						Thread.sleep(250);
@@ -180,6 +183,16 @@ public class World extends Behaviour {
 	
 	@Override
 	public void update() {
+		Vector4f pos = Camera.main.getWorldPositionFromScreen((float)Input.getMouseX(), (float)Input.getMouseY());
+		
+		GameObject cube = GameObject.find("Cube");
+		
+		if(cube != null && Input.isKey(KeyCode.C)) {
+			System.out.println("Position: " + pos);
+			
+			cube.setPosition(pos.getXYZ());
+		}
+		
 		while(!chunksData.isEmpty()) {
 			Data data = chunksData.remove(0);
 			

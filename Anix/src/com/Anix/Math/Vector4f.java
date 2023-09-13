@@ -67,6 +67,13 @@ public class Vector4f implements Serializable {
 		this.w += value;
 	}
 	
+	public void scale(float scale) {
+		x *= scale;
+		y *= scale;
+		z *= scale;
+		w *= scale;
+	}
+	
 	public static Vector4f sub(Vector4f vector1, Vector4f vector2) {
 		return new Vector4f(vector1.getX() - vector2.getX(), vector1.getY() - vector2.getY(), vector1.getZ() - vector2.getZ(), vector1.getW() - vector2.getW());
 	}

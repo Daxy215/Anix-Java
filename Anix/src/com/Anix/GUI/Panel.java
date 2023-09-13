@@ -53,7 +53,6 @@ public final class Panel implements Serializable {
 			this.color = color;
 		}
 
-		@SuppressWarnings("unused")
 		public Text(String text, int format, Vector2f size, Vector3f offset, Color color) {
 			this.text = text;
 			this.format = format;

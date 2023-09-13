@@ -20,7 +20,6 @@ import com.Anix.GUI.Texture;
 import com.Anix.IO.Application;
 import com.Anix.IO.KeyCode;
 import com.Anix.Main.Core;
-import com.Anix.Objects.GameObject;
 import com.Anix.SceneManager.SceneManager;
 
 import imgui.ImGui;

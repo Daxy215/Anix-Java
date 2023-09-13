@@ -216,6 +216,28 @@ public class Camera extends Behaviour {
 		return new Vector3f(pointx, pointy, pointz);
 	}
 	
+	public Vector4f getWorldPositionFromScreen(float x, float y) {
+		int screenWidth = Application.getWidth();
+		int screenHeight = Application.getHeight();
+		
+		// Convert mouse coordinates to NDC (Normalized Device Coordinates)
+	    float normalizedX = (2.0f * x) / screenWidth - 1.0f;
+	    float normalizedY = 1.0f - (2.0f * y) / screenHeight;
+		
+	    Vector4f normalizedMouseCoords = new Vector4f(normalizedX, normalizedY, -1.0f, 1.0f);
+	    
+	    Matrix4f projectionViewMatrix = Matrix4f.multiply(Application.getProjectionMatrix(), gameObject.getTransform());
+	    Matrix4f inverseMatrix = Matrix4f.invert(projectionViewMatrix);
+	    
+	    Vector4f worldCoords = Matrix4f.transform(inverseMatrix, normalizedMouseCoords, null);
+	    
+	    // Divide by w to obtain 3D position in world space
+	    worldCoords.scale(1.0f / worldCoords.w);
+	    
+	    // The worldCoords vector now holds the 3D position of the mouse in world space.
+	    return worldCoords;
+	}
+	
 	@Override
 	public void onEnable() {
 		if(main == null) {

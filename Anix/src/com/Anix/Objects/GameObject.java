@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import com.Anix.Annotation.ScriptAble;
+import com.Anix.Annotation.Scriptable;
 import com.Anix.Behaviours.Behaviour;
 import com.Anix.Behaviours.Camera;
 import com.Anix.Engine.Editor;
@@ -23,7 +23,7 @@ import com.Anix.Math.Vector3f;
 import com.Anix.SceneManager.Scene;
 import com.Anix.SceneManager.SceneManager;
 
-@ScriptAble
+@Scriptable
 public class GameObject /*extends Entity*/ implements Cloneable, Serializable {
 	private static final long serialVersionUID = 1L;
 	
@@ -564,7 +564,11 @@ public class GameObject /*extends Entity*/ implements Cloneable, Serializable {
 	}
 	
 	public void setPosition(Vector2f position) {
+		isDirty = 1;
+		
 		this.setPosition(position.x, position.y);
+		
+		updateTransformation();
 	}
 	
 	public void setPosition(Vector3f position) {

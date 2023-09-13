@@ -11,6 +11,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URISyntaxException;
+import java.nio.file.Files;
 import java.util.Enumeration;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
@@ -267,6 +268,15 @@ public class MenuBar {
 		engineJar.close();
 	}
 	
+	private static void copyFilesToTempDir(File tempDir) throws IOException {
+        // Copy your files to the temporary directory
+        // You can use Java's file copy methods or any other preferred method
+        // For example:
+        File sourceFile = new File("path/to/source/file");
+        File destFile = new File(System.getProperty("java.io.tmpdir"), "destination_file");
+        Files.copy(sourceFile.toPath(), destFile.toPath());
+    }
+	
 	private void addAssets(String path, JarOutputStream jos) {
 		System.out.println("Exporting to " + path + "..");
 		
@@ -346,7 +356,16 @@ public class MenuBar {
 		jos.flush();
 		jos.closeEntry();
 	}
-
+	
+	private static void deleteDirectory(File dir) {
+        if (dir.isDirectory()) {
+            for (File file : dir.listFiles()) {
+                deleteDirectory(file);
+            }
+        }
+        dir.delete();
+    }
+	
 	public int getWidth() {
 		return width;
 	}

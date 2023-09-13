@@ -324,6 +324,33 @@ public class Matrix4f implements Serializable {
             (m00 * (m11 * m22 - m21 * m12) + m10 * (m21 * m02 - m01 * m22) + m20 * (m01 * m12 - m11 * m02)) * s));
     }
     
+    public static Matrix4f invert(Matrix4f invert) {
+    	 float s = invert.determinant();
+         
+         if (s == 0.0f) {
+             return null;
+         }
+         
+         s = 1.0f / s;
+    	
+    	return new Matrix4f(new Vector4f((invert.m11 * (invert.m22 * invert.m33 - invert.m32 * invert.m23) + invert.m21 * (invert.m32 * invert.m13 - invert.m12 * invert.m33) + invert.m31 * (invert.m12 * invert.m23 - invert.m22 * invert.m31)) * s,
+                (invert.m12 * (invert.m20 * invert.m33 - invert.m30 * invert.m23) + invert.m22 * (invert.m30 * invert.m13 - invert.m10 * invert.m33) + invert.m32 * (invert.m10 * invert.m23 - invert.m20 * invert.m31)) * s,
+                (invert.m13 * (invert.m20 * invert.m31 - invert.m30 * invert.m21) + invert.m23 * (invert.m30 * invert.m11 - invert.m10 * invert.m31) + invert.m33 * (invert.m10 * invert.m21 - invert.m20 * invert.m11)) * s,
+                (invert.m10 * (invert.m31 * invert.m22 - invert.m21 * invert.m32) + invert.m20 * (invert.m11 * invert.m32 - invert.m31 * invert.m12) + invert.m30 * (invert.m21 * invert.m12 - invert.m11 * invert.m22)) * s),
+            new Vector4f((invert.m21 * (invert.m02 * invert.m33 - invert.m32 * invert.m03) + invert.m31 * (invert.m22 * invert.m03 - invert.m02 * invert.m23) + invert.m01 * (invert.m32 * invert.m23 - invert.m22 * invert.m33)) * s,
+                (invert.m22 * (invert.m00 * invert.m33 - invert.m30 * invert.m03) + invert.m32 * (invert.m20 * invert.m03 - invert.m00 * invert.m23) + invert.m02 * (invert.m30 * invert.m23 - invert.m20 * invert.m33)) * s,
+                (invert.m23 * (invert.m00 * invert.m31 - invert.m30 * invert.m01) + invert.m33 * (invert.m20 * invert.m01 - invert.m00 * invert.m21) + invert.m03 * (invert.m30 * invert.m21 - invert.m20 * invert.m13)) * s,
+                (invert.m20 * (invert.m31 * invert.m02 - invert.m01 * invert.m32) + invert.m30 * (invert.m01 * invert.m22 - invert.m21 * invert.m02) + invert.m00 * (invert.m21 * invert.m32 - invert.m31 * invert.m22)) * s),
+            new Vector4f((invert.m31 * (invert.m02 * invert.m13 - invert.m12 * invert.m03) + invert.m01 * (invert.m12 * invert.m33 - invert.m32 * invert.m13) + invert.m11 * (invert.m32 * invert.m03 - invert.m02 * invert.m33)) * s,
+                (invert.m32 * (invert.m00 * invert.m13 - invert.m10 * invert.m03) + invert.m02 * (invert.m10 * invert.m33 - invert.m30 * invert.m13) + invert.m12 * (invert.m30 * invert.m03 - invert.m00 * invert.m33)) * s,
+                (invert.m33 * (invert.m00 * invert.m11 - invert.m10 * invert.m01) + invert.m03 * (invert.m10 * invert.m31 - invert.m30 * invert.m11) + invert.m13 * (invert.m30 * invert.m01 - invert.m00 * invert.m13)) * s,
+                (invert.m30 * (invert.m11 * invert.m02 - invert.m01 * invert.m21) + invert.m00 * (invert.m31 * invert.m12 - invert.m11 * invert.m32) + invert.m10 * (invert.m01 * invert.m32 - invert.m31 * invert.m02)) * s),
+            new Vector4f((invert.m01 * (invert.m22 * invert.m13 - invert.m12 * invert.m23) + invert.m11 * (invert.m02 * invert.m23 - invert.m22 * invert.m03) + invert.m21 * (invert.m12 * invert.m03 - invert.m02 * invert.m31)) * s,
+                (invert.m02 * (invert.m20 * invert.m13 - invert.m10 * invert.m23) + invert.m12 * (invert.m00 * invert.m23 - invert.m20 * invert.m03) + invert.m22 * (invert.m10 * invert.m03 - invert.m00 * invert.m31)) * s,
+                (invert.m03 * (invert.m20 * invert.m11 - invert.m10 * invert.m21) + invert.m13 * (invert.m00 * invert.m21 - invert.m20 * invert.m01) + invert.m23 * (invert.m10 * invert.m01 - invert.m00 * invert.m11)) * s,
+                (invert.m00 * (invert.m11 * invert.m22 - invert.m21 * invert.m12) + invert.m10 * (invert.m21 * invert.m02 - invert.m01 * invert.m22) + invert.m20 * (invert.m01 * invert.m12 - invert.m11 * invert.m02)) * s));
+    }
+    
     /**
      * Stores the matrix in a given Buffer.
      *

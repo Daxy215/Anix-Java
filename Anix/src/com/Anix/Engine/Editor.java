@@ -98,11 +98,16 @@ public final class Editor {
 			File[] projects = getProjects();
 			core.setProjectName("Projects\\" + projects[index].getName());
 		} else {
-            ProjectSettings.projectType = ProjectType.D2;
-			core.setProjectName("Projects\\my project");
+            ProjectSettings.projectType = ProjectType.D3;
+            //Scanner scanner = new Scanner(System.in);
+            //System.out.println("What project would you like to load: ");
+            
+			//core.setProjectName("Projects\\RoboFactory");
+            core.setProjectName("Projects\\Minecraft Clone");
+            //core.setProjectName("Projects\\" + scanner.nextLine());
 		}
 		
-		workSpaceDirectory += "\\" + core.getProjectName() + "\\";
+		workSpaceDirectory += "\\" + Core.getProjectName() + "\\";
 		
 		InputStream is = Core.class.getResourceAsStream("/Project.Settings");
 		
@@ -168,8 +173,6 @@ public final class Editor {
 			
 			if(!isPlaying) {
 				reLoad();
-				
-				System.err.println("reloaded: " + Core.getMasterRenderer().getEntities().size());
 			}
 		} else if(!lastIsFocused) {
 			if(!once) {
@@ -655,7 +658,7 @@ public final class Editor {
 			//To update files.
 			core.getGUI().getAssets().getFolders().clear();
 			
-			File file = new File(fullPath + fileSeparator + core.getProjectName() + fileSeparator + "Assets");
+			File file = new File(fullPath + fileSeparator + Core.getProjectName() + fileSeparator + "Assets");
 			
 			if(file.exists() && file.listFiles() != null) {
 				for(int i = 0; i < file.listFiles().length; i++) {
@@ -746,11 +749,11 @@ public final class Editor {
 		Path srcPath = null;
 		
 		if(ProjectSettings.isEditor) {
-			srcPath = Paths.get(System.getProperty("user.dir") + fileSeparator + core.getProjectName() + fileSeparator + "Data" + fileSeparator + "bin", name[name.length - 1]);
+			srcPath = Paths.get(System.getProperty("user.dir") + fileSeparator + Core.getProjectName() + fileSeparator + "Data" + fileSeparator + "bin", name[name.length - 1]);
 			
-			if(!Files.exists(Paths.get(System.getProperty("user.dir") + fileSeparator + core.getProjectName() + fileSeparator + "Data" + fileSeparator + "bin"))) {
+			if(!Files.exists(Paths.get(System.getProperty("user.dir") + fileSeparator + Core.getProjectName() + fileSeparator + "Data" + fileSeparator + "bin"))) {
 				try {
-					Files.createDirectory((Paths.get(System.getProperty("user.dir") + fileSeparator + core.getProjectName() + fileSeparator + "Data" + fileSeparator + "bin")));
+					Files.createDirectory((Paths.get(System.getProperty("user.dir") + fileSeparator + Core.getProjectName() + fileSeparator + "Data" + fileSeparator + "bin")));
 				} catch (IOException e1) {
 					e1.printStackTrace();
 				}
@@ -830,7 +833,7 @@ public final class Editor {
 			String fileSeparator = System.getProperty("file.separator");
 			
 			//Loading assets
-			File file = new File(fullPath + fileSeparator + core.getProjectName() + fileSeparator + "Assets");
+			File file = new File(fullPath + fileSeparator + Core.getProjectName() + fileSeparator + "Assets");
 			
 			if(file.exists() && file.listFiles() != null) {
 				for(int i = 0; i < file.listFiles().length; i++) {
@@ -838,7 +841,7 @@ public final class Editor {
 				}
 			}
 			
-			File fff = new File(fullPath + fileSeparator + core.getProjectName() + fileSeparator + "Data" + fileSeparator + "Data.bin");
+			File fff = new File(fullPath + fileSeparator + Core.getProjectName() + fileSeparator + "Data" + fileSeparator + "Data.bin");
 			fff.getParentFile().mkdirs();
 			
 			if(fff.exists()) {
@@ -966,7 +969,7 @@ public final class Editor {
 			String full = System.getProperty("user.dir");
 			String fileSeparator = System.getProperty("file.separator");
 			
-			fullPath = full + fileSeparator + core.getProjectName() + fileSeparator + "Assets" + fileSeparator;
+			fullPath = full + fileSeparator + Core.getProjectName() + fileSeparator + "Assets" + fileSeparator;
 			
 			if(core.getGUI().getAssets().getInFolder() != null) {
 				String path = core.getGUI().getAssets().getInFolder().getName();

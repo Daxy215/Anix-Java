@@ -27,6 +27,8 @@ public final class MasterRenderer {
 	//private boolean testRender;//, updateCombiedObjects;
 	
 	//private Core core;
+    
+    private boolean useFrustum = true;
 	
 	private Mesh mesh;
 	private Shader shader;
@@ -131,6 +133,12 @@ public final class MasterRenderer {
 					combinedObjects.add(combineObjects(entities.get(mesm)));
 			}
 		}*/
+		
+		if(Input.isKeyDown(KeyCode.O)) {
+			useFrustum = !useFrustum;
+			
+			System.out.println("Use: " + useFrustum);
+		}
 	}
 	
 	public void render() {
@@ -159,7 +167,7 @@ public final class MasterRenderer {
 		
 		long start = System.currentTimeMillis();
 		int meshes = 0;
-
+		
 		for (Iterator<Map.Entry<Mesh, List<GameObject>>> iterator = entities.entrySet().iterator(); iterator.hasNext();) {
 		    Map.Entry<Mesh, List<GameObject>> entry = iterator.next();
 		    Mesh mesh = entry.getKey();
@@ -171,6 +179,9 @@ public final class MasterRenderer {
 		        !mesh.hasBeenCreated() || mesh.getMaterial() == null ||
 		        mesh.getMaterial().getShader() == null || batch == null || batch.isEmpty()) {
 		        iterator.remove();
+		        
+		        System.out.println("Deleteed " + batch + " \nverts: " + mesh.vertices);
+		        
 		        continue;
 		    }
 		    
@@ -191,7 +202,8 @@ public final class MasterRenderer {
 		            continue;
 		        }
 		        
-		        if (isObjectInFrustum(entity.getPosition())) {
+		        //Occlusion Culling
+		        if (!useFrustum || (useFrustum && isObjectInFrustum(entity.getPosition()))) {
 			        shader.setUniform("model", entity.getTransform());
 			        
 			        meshes++;
@@ -462,7 +474,7 @@ public final class MasterRenderer {
         Vector4f objectPos4 = new Vector4f(objectPosition.x, objectPosition.y, objectPosition.z, 1.0f);
         
         for (Vector4f plane : frustumPlanes) {
-            if (dot(plane, objectPos4) < 0) {
+            if (dot(plane, objectPos4) < -32) {
                 return false;  // Object is outside the frustum
             }
         }

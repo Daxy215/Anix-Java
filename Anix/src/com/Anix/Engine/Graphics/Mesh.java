@@ -137,12 +137,16 @@ public class Mesh implements Serializable, Cloneable {
 			positionData[i * 3 + 1] = vertices[i].getPosition().getY();
 			positionData[i * 3 + 2] = vertices[i].getPosition().getZ();
 			
-			textureData[i * 2 + 0] = vertices[i].getTextureCoord().getX();
-			textureData[i * 2 + 1] = vertices[i].getTextureCoord().getY();
+			if(vertices[i].getTextureCoord() != null) {
+				textureData[i * 2 + 0] = vertices[i].getTextureCoord().getX();
+				textureData[i * 2 + 1] = vertices[i].getTextureCoord().getY();
+			}
 			
-			normalData[i * 3]     = vertices[i].getNormal().getX();
-			normalData[i * 3 + 1] = vertices[i].getNormal().getY();
-			normalData[i * 3 + 2] = vertices[i].getNormal().getZ();
+			if(vertices[i].getNormal() != null) {
+				normalData[i * 3]     = vertices[i].getNormal().getX();
+				normalData[i * 3 + 1] = vertices[i].getNormal().getY();
+				normalData[i * 3 + 2] = vertices[i].getNormal().getZ();
+			}
 		}
 		
 		positionBuffer.put(positionData);
@@ -201,6 +205,7 @@ public class Mesh implements Serializable, Cloneable {
 	
 	public void updateMesh() {
 		destroy();
+		
 		create();
 	}
 	
@@ -230,8 +235,8 @@ public class Mesh implements Serializable, Cloneable {
 		
 		GL30.glDeleteVertexArrays(vao);
 		
-		vertices = null;
-	    indices = null;
+		//vertices = null;
+	    //indices = null;
 		
 		//if(sprite != null)
 			//sprite.destroy();

@@ -1,7 +1,6 @@
 package com.Anix.Behaviours;
 
 import com.Anix.IO.Application;
-import com.Anix.IO.Input;
 import com.Anix.Math.Color;
 import com.Anix.Math.Vector2f;
 import com.Anix.Math.Vector3f;
