@@ -98,10 +98,10 @@ public final class Complier {
 		
 		String fileSeparator = System.getProperty("file.separator");
 		
-		directories.add(new File("C:/Users/smsmk/Desktop/Game Engine/Anix.jar"));
+		directories.add(new File(System.getProperty("user.dir") + "/Projects/Anix.jar"));
 		directories.add(new File(System.getProperty("user.dir") + fileSeparator + Core.getProjectName() + fileSeparator + "Data" + fileSeparator + "bin"));
 		
-		File dir = new File("D:/GitHub/Anix-Java/Anix/includes");
+		File dir = new File(System.getProperty("user.dir") + "/includes");
 		
 		getExternalLibraries(dir);
 		

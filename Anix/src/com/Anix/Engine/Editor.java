@@ -35,6 +35,7 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.Objects;
 import java.util.Properties;
+import java.util.Scanner;
 import java.util.UUID;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
@@ -98,12 +99,12 @@ public final class Editor {
 			File[] projects = getProjects();
 			core.setProjectName("Projects\\" + projects[index].getName());
 		} else {
-            ProjectSettings.projectType = ProjectType.D3;
+            ProjectSettings.projectType = ProjectType.D2;
             //Scanner scanner = new Scanner(System.in);
             //System.out.println("What project would you like to load: ");
             
-			//core.setProjectName("Projects\\RoboFactory");
-            core.setProjectName("Projects\\Minecraft Clone");
+			core.setProjectName("Projects\\RoboFactory");
+            //core.setProjectName("Projects\\Minecraft Clone");
             //core.setProjectName("Projects\\" + scanner.nextLine());
 		}
 		
@@ -279,7 +280,7 @@ public final class Editor {
 		
 		if(ProjectSettings.isEditor) {
 			fff.getParentFile().mkdirs();
-
+			
 			if(!fff.exists()) {
 				try {
 					fff.createNewFile();
@@ -288,7 +289,7 @@ public final class Editor {
 				}
 			}
 		}
-
+		
 		try {
 			FileOutputStream fos = new FileOutputStream(fff, false);
 			DataOutputStream dos = new DataOutputStream(fos);
